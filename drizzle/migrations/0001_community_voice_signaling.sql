@@ -1,0 +1,2 @@
+CREATE POLICY "Community members receive voice signaling" ON realtime.messages FOR SELECT TO authenticated USING (realtime.topic() LIKE 'senai-voice:%');
+CREATE POLICY "Community members send voice signaling" ON realtime.messages FOR INSERT TO authenticated WITH CHECK (realtime.topic() LIKE 'senai-voice:%');

@@ -1,0 +1,44 @@
+SENAI CONECTA — Comunidade independente de Sorocaba
+
+Este ZIP contém o código-fonte, imagens e migrações do site.
+Não inclui senhas, chaves privadas, dependências instaladas ou dados de usuários.
+
+DESENVOLVIMENTO
+  Com npm:  npm.cmd install --legacy-peer-deps   e depois   npm.cmd run dev
+  Com Bun:  bun install   e depois   bun run dev
+  O arquivo .env já aponta para o projeto Supabase "Discordterceiros"
+  (só chaves publicáveis; nunca coloque a chave service_role/secret aqui).
+  As tabelas e permissões já foram criadas nesse projeto (migrações em drizzle/migrations).
+
+  Para alunos conseguirem criar conta, desligue a confirmação por email:
+  painel do Supabase → Authentication → Sign In / Providers → Email → "Confirm email" desligado.
+  (O envio de email padrão do Supabase só entrega para membros da equipe do projeto.)
+
+CHAMADAS DE VOZ E COMPARTILHAMENTO DE TELA
+  Arquivos principais:
+    src/lib/voice/engine.ts         motor WebRTC (conexões, áudio, tela, indicador de fala)
+    src/lib/voice/ice.ts            servidores STUN/TURN
+    src/hooks/use-community-call.ts sala (Supabase Realtime: presença + sinalização)
+    src/components/voice-room.tsx   interface da sala
+
+  Como funciona:
+  - Cada pessoa abre uma conexão direta com cada outra (malha, bom para até ~6 pessoas).
+  - Cada conexão já nasce com 3 canais: microfone, vídeo da tela e som da tela.
+    Ligar/desligar o microfone ou a tela não renegocia nada (isso era o que quebrava antes).
+  - Quem tem o menor id cria a oferta; o outro só responde. Se a oferta se perder, o motor
+    tenta de novo sozinho (reinício de ICE e, se preciso, conexão nova).
+  - A presença de cada pessoa mostra se ela está mutada, surda ou ao vivo.
+  - Mesmo sem microfone (ou com ele bloqueado), dá para entrar e ouvir.
+  - Compartilhar tela funciona no computador (Chrome, Edge, Firefox). No Chrome/Edge,
+    marque "Compartilhar áudio" para transmitir também o som da aba ou do sistema.
+
+  IMPORTANTE — servidor TURN:
+  Em redes de escola, empresa e 4G/5G, a conexão direta costuma ser bloqueada.
+  Sem um servidor TURN essas pessoas não se ouvem. Configure uma das opções no .env
+  (veja .env.example):
+    A) TURN próprio:  VITE_TURN_URLS, VITE_TURN_USERNAME, VITE_TURN_CREDENTIAL
+    B) Metered.ca (plano gratuito): VITE_METERED_DOMAIN e VITE_METERED_API_KEY
+
+  Para testar: abra o site em dois navegadores (ou um normal e um anônimo) com
+  DUAS contas diferentes, entre na mesma sala e permita o microfone.
+  A mesma conta em duas abas também funciona agora (cada aba é um participante).
