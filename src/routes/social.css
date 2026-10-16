@@ -1,0 +1,190 @@
+﻿.social-page {
+  --social-bg: #191a1e;
+  --social-panel: #242529;
+  --social-raised: #2d2e33;
+  --social-text: #f3f3f4;
+  --social-muted: #a1a2ab;
+  --social-accent: #e53750;
+  min-height: 100dvh;
+  background: var(--social-bg);
+  color: var(--social-text);
+  font-family: Inter, system-ui, sans-serif;
+  padding: 36px 24px;
+  isolation: isolate;
+}
+.social-page *, .social-page *::before, .social-page *::after { box-sizing: border-box; border: 0; }
+.social-layout { max-width: 1320px; margin: auto; display: grid; grid-template-columns: 228px minmax(0, 1fr) 280px; gap: 28px; align-items: start; }
+.social-side, .social-right { position: sticky; top: 28px; }
+.social-side { padding: 22px 14px; background: var(--social-panel); border-radius: 22px; }
+.social-brand { display: flex; align-items: center; gap: 10px; padding: 0 10px; margin-bottom: 34px; color: var(--social-text); text-decoration: none; font-size: 17px; font-weight: 750; }
+.social-brand svg { width: 30px; height: 30px; }
+.social-brand .brand-logo { min-width: 0; gap: 8px; }
+.social-brand .brand-mark { flex: none; }
+.social-brand .brand-logo-text { font-size: 16px; white-space: nowrap; }
+.social-brand b, .social-red { color: var(--social-accent); }
+.social-nav { width: 100%; display: flex; align-items: center; gap: 13px; padding: 15px; margin: 5px 0; border-radius: 12px; background: var(--social-panel); color: var(--social-muted); text-decoration: none; font: inherit; font-size: 14px; font-weight: 650; text-align: left; cursor: pointer; }
+.social-nav:hover, .social-nav.selected { background: var(--social-raised); color: var(--social-text); }
+.social-nav.selected svg { color: var(--social-accent); }
+.social-side-note { margin: 28px 14px 8px; color: var(--social-muted); font-size: 12px; line-height: 1.8; }
+.social-publish { display: flex; justify-content: center; align-items: center; gap: 9px; width: 100%; margin-top: 24px; padding: 14px; border-radius: 28px; background: var(--social-accent); color: white; font-weight: 750; cursor: pointer; }
+.social-main { min-width: 0; }
+.social-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 4px 26px; }
+.social-header h1 { font-size: 34px; letter-spacing: -1.3px; font-weight: 800; margin: 5px 0 7px; }
+.social-header p { color: var(--social-muted); font-size: 13px; margin: 0; }
+.social-kicker { color: var(--social-muted); font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+.social-online { color: #b7d2bf; background: var(--social-panel); border-radius: 20px; padding: 9px 12px; font-size: 11px; }
+.social-tabs { display: flex; gap: 6px; padding: 6px; background: var(--social-panel); border-radius: 14px; margin-bottom: 18px; }
+.social-tabs button { flex: 1; padding: 12px 5px; color: var(--social-muted); background: var(--social-panel); border-radius: 9px; font-size: 13px; font-weight: 650; cursor: pointer; }
+.social-tabs button.active { background: var(--social-raised); color: var(--social-text); }
+.social-compose { display: flex; gap: 13px; padding: 23px; margin-bottom: 20px; background: var(--social-panel); border-radius: 18px; }
+.social-avatar { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 15px; background: #493139; color: #ffc4ce; font-size: 16px; font-weight: 750; }
+.social-compose-body, .social-post-body { flex: 1; min-width: 0; }
+.social-compose textarea { display: block; resize: vertical; width: 100%; min-height: 88px; padding: 10px 0; background: var(--social-panel); color: var(--social-text); font: inherit; font-size: 16px; outline: none; }
+.social-compose textarea::placeholder { color: var(--social-muted); }
+.social-compose-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; color: var(--social-muted); font-size: 11px; }
+.social-compose-footer button, .social-signin { display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 24px; background: var(--social-accent); color: white; font-size: 13px; font-weight: 750; cursor: pointer; }
+.social-compose-footer button:disabled { background: #60323d; color: #b58f98; cursor: not-allowed; }
+.social-post { display: flex; gap: 13px; padding: 24px; margin-bottom: 14px; border-radius: 18px; background: var(--social-panel); }
+.social-post-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 9px; font-size: 13px; }
+.social-post-top strong { font-weight: 750; }
+.social-post-top span { color: var(--social-muted); font-size: 11px; }
+.social-post-text { margin: 12px 0 22px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.75; }
+.social-actions { display: flex; justify-content: space-between; gap: 6px; max-width: 420px; }
+.social-actions button { display: flex; align-items: center; gap: 7px; padding: 7px; margin-left: -7px; background: var(--social-panel); color: var(--social-muted); border-radius: 9px; font-size: 11px; cursor: pointer; }
+.social-actions button:hover { background: var(--social-raised); color: var(--social-text); }
+.social-actions .liked { color: #fa7188; }
+.social-actions .liked svg { fill: #fa7188; }
+.social-reply { margin-top: 14px; padding: 13px 15px; background: var(--social-raised); border-radius: 12px; font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.social-reply b { display: block; }
+.social-repost-label, .social-reply-label { display: flex; gap: 6px; align-items: center; color: var(--social-muted); font-size: 11px; margin-top: 9px; }
+.social-reply-label button { background: var(--social-panel); color: var(--social-text); cursor: pointer; text-decoration: underline; }
+.social-search { display: flex; align-items: center; gap: 10px; padding: 15px 18px; background: var(--social-panel); color: var(--social-muted); border-radius: 24px; }
+.social-search input { min-width: 0; width: 100%; outline: none; background: var(--social-panel); color: var(--social-text); font-size: 12px; }
+.social-info { margin-top: 18px; padding: 23px; background: var(--social-panel); border-radius: 18px; }
+.social-info h3 { margin: 0 0 16px; font-size: 15px; font-weight: 750; }
+.social-info p { margin: 12px 0 0; font-size: 12px; color: var(--social-muted); line-height: 1.8; }
+.social-profile { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+.social-profile small { display: block; color: var(--social-muted); margin-top: 4px; }
+.social-stats { display: flex; gap: 18px; margin-top: 20px; }
+.social-stats strong { display: block; color: var(--social-text); font-size: 17px; }
+.social-stats span { color: var(--social-muted); font-size: 11px; }
+.social-person { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
+.social-person > span { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 12px; }
+.social-person button { background: var(--social-raised); color: var(--social-text); padding: 8px 12px; border-radius: 18px; font-size: 11px; cursor: pointer; }
+.social-footer { padding: 18px 7px; color: var(--social-muted); font-size: 10px; line-height: 1.8; }
+.social-error { padding: 20px; background: #492932; color: #ffd1da; border-radius: 14px; font-size: 13px; }
+.social-status { text-align: center; padding: 48px 24px; color: var(--social-muted); font-size: 13px; background: var(--social-panel); border-radius: 18px; }
+.social-page button:focus-visible, .social-page a:focus-visible, .social-page input:focus-visible, .social-page textarea:focus-visible { outline: 2px solid var(--social-accent); outline-offset: 4px; }
+@media (max-width: 1150px) { .social-layout { grid-template-columns: 200px minmax(0, 1fr); max-width: 950px; gap: 22px; } .social-right { display: none; } }
+@media (max-width: 700px) {
+  .social-page { padding: 0 12px 24px; }
+  .social-layout { display: block; }
+  .social-side { position: static; display: flex; flex-wrap: wrap; gap: 4px; padding: 16px 0; border-radius: 0; background: var(--social-bg); }
+  .social-brand { width: 100%; padding: 4px; margin-bottom: 10px; }
+  .social-nav { flex: 1; width: auto; justify-content: center; padding: 11px 6px; font-size: 11px; gap: 6px; margin: 0; background: var(--social-bg); }
+  .social-nav svg { width: 16px; height: 16px; }
+  .social-side-note, .social-publish { display: none; }
+  .social-header { padding: 14px 5px 22px; }
+  .social-header h1 { font-size: 29px; }
+  .social-online { display: none; }
+  .social-compose, .social-post { padding: 18px 14px; gap: 10px; border-radius: 14px; }
+  .social-avatar { width: 36px; height: 36px; border-radius: 12px; }
+  .social-tabs button { font-size: 11px; }
+  .social-post-top span { font-size: 10px; }
+}
+/* Continuous timeline layout. */
+.social-page { padding: 0 24px; background: var(--social-bg); }
+.social-app { max-width: 1260px; margin: auto; min-height: 100dvh; }
+.social-layout { max-width: none; grid-template-columns: 240px minmax(0, 600px) minmax(240px, 1fr); gap: 26px; }
+.social-side { display: flex; flex-direction: column; min-height: 100dvh; position: sticky; top: 0; padding: 14px 12px 20px 0; background: var(--social-bg); border-radius: 0; }
+.social-brand { padding: 8px 12px; margin: 0 0 28px; }
+.social-menu { display: flex; flex-direction: column; gap: 10px; }
+.social-menu button, .social-menu a { display: flex; align-items: center; gap: 18px; width: fit-content; max-width: 100%; padding: 14px 16px; border-radius: 28px; background: var(--social-bg); color: var(--social-text); font: inherit; font-size: 19px; text-decoration: none; cursor: pointer; }
+.social-menu svg { width: 25px; height: 25px; flex: none; }
+.social-menu .selected { font-weight: 750; }
+.social-menu .selected svg { color: var(--social-accent); }
+.social-menu button:hover, .social-menu a:hover { background: var(--social-panel); }
+.social-publish { display: flex; gap: 9px; align-items: center; justify-content: center; width: 100%; padding: 15px 20px; margin-top: 26px; border-radius: 28px; background: var(--social-accent); color: white; font: inherit; font-weight: 750; cursor: pointer; }
+.social-account { display: flex; align-items: center; gap: 12px; margin-top: auto; padding: 14px 8px; background: var(--social-bg); color: var(--social-text); text-align: left; cursor: pointer; }
+.social-account > div:nth-child(2) { flex: 1; min-width: 0; }
+.social-account strong { display: block; max-width: 135px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.social-account small { display: block; color: var(--social-muted); font-size: 12px; margin-top: 4px; }
+.social-avatar { border-radius: 50%; }
+.social-main { min-height: 100dvh; }
+.social-tabs { position: sticky; top: 0; z-index: 5; display: flex; gap: 0; padding: 0; margin: 0; border-radius: 0; background: var(--social-bg); }
+.social-tabs button { position: relative; padding: 22px 4px; border-radius: 0; background: var(--social-bg); font-size: 13px; }
+.social-tabs button.active { background: var(--social-bg); }
+.social-tabs button.active::after { content: ''; position: absolute; bottom: 0; left: 28%; right: 28%; height: 3px; border-radius: 3px; background: var(--social-accent); }
+.social-tabs button:hover { background: var(--social-panel); }
+.social-compose { padding: 20px 16px; margin: 0 0 10px; background: var(--social-bg); border-radius: 0; }
+.social-compose textarea { background: var(--social-bg); font-size: 19px; min-height: 75px; resize: vertical; }
+.social-compose-footer button { border-radius: 24px; }
+.social-post { padding: 20px 16px; margin: 0; border-radius: 0; background: var(--social-bg); }
+.social-post + .social-post { margin-top: 6px; }
+.social-post:hover { background: #1d1e22; }
+.social-post-top { gap: 5px 8px; font-size: 14px; }
+.social-post-top span { font-size: 12px; }
+.social-post-text { margin: 7px 0 16px; font-size: 15px; line-height: 1.6; }
+.social-actions { max-width: none; justify-content: space-between; }
+.social-actions button { background: var(--social-bg); padding: 7px; }
+.social-post:hover .social-actions button { background: #1d1e22; }
+.social-reply { background: var(--social-panel); border-radius: 0; }
+.social-right { top: 8px; padding-top: 8px; }
+.social-search { background: var(--social-panel); border-radius: 28px; padding: 14px 16px; margin-bottom: 22px; }
+.social-search input { background: var(--social-panel); }
+.social-info { padding: 18px 8px; background: var(--social-bg); margin: 0 0 20px; border-radius: 0; }
+.social-info h3 { font-size: 20px; letter-spacing: -.4px; }
+.social-trends h3 { display: flex; justify-content: space-between; }
+.social-trends h3 > span { color: var(--social-muted); }
+.social-trend { display: flex; flex-direction: column; gap: 5px; width: 100%; padding: 17px 0; text-align: left; background: var(--social-bg); color: var(--social-text); cursor: pointer; }
+.social-trend small, .social-trend > span { color: var(--social-muted); font-size: 11px; }
+.social-trend strong { font-size: 14px; }
+.social-trend:hover strong { color: var(--social-accent); }
+.social-trends-empty { padding: 10px 0; }
+.social-trends-empty > span { display: none; }
+.social-trends-empty strong { font-size: 14px; }
+.social-profile-link { padding: 14px 0 0; background: var(--social-bg); color: var(--social-accent); font-size: 13px; cursor: pointer; }
+.social-status { min-height: 220px; display: grid; place-items: center; margin: 0; border-radius: 0; background: var(--social-bg); }
+.social-person .social-avatar { width: 34px; height: 34px; font-size: 12px; }
+@media(max-width:1100px) {
+ .social-layout { grid-template-columns: 76px minmax(0, 600px) minmax(220px,1fr); gap: 18px; }
+ .social-side { align-items: center; padding-right: 0; }
+ .social-brand { padding: 8px; }
+ .social-brand .brand-logo-text, .social-menu span, .social-publish span, .social-account > div:nth-child(2), .social-account > span { display: none; }
+ .social-menu button, .social-menu a { padding: 15px; }
+ .social-publish { width: 52px; height: 52px; padding: 0; }
+ .social-account { padding: 14px 0; }
+ .social-right { display: block; }
+}
+@media(max-width:850px) {
+ .social-layout { grid-template-columns: 76px minmax(0,600px); justify-content: center; }
+ .social-right { display: none; }
+ .social-menu button:nth-child(2) { display: none; }
+}
+@media(max-width:700px) {
+ .social-page { padding: 0; }
+ .social-layout { display: block; }
+ .social-side { position: fixed; inset: auto 0 0; z-index: 20; min-height: 0; padding: 5px 8px; background: var(--social-bg); }
+ .social-menu { width: 100%; flex-direction: row; justify-content: space-around; gap: 0; }
+ .social-menu button, .social-menu a { padding: 12px; }
+ .social-side .social-brand, .social-side .social-account { display: none; }
+ .social-publish { position: absolute; bottom: 78px; right: 18px; box-shadow: 0 4px 14px #101013; }
+ .social-main { padding-bottom: 78px; width: 100%; }
+ .social-tabs button { font-size: 12px; padding: 20px 4px; }
+ .social-compose textarea { font-size: 17px; }
+ .social-post, .social-compose { padding: 18px 14px; }
+ .social-right { display: none; }
+}
+/* Use the same site shell and scene as the landing page. */
+.social-site-content { padding: 0 28px; }
+.social-site-shell .social-page { --social-bg: transparent; --social-accent: var(--red); padding: 0; background: transparent; font-family: var(--font-sans); }
+.social-site-shell .social-app { max-width: 1100px; min-height: 100%; }
+.social-site-shell .social-layout { display: grid; grid-template-columns: minmax(0, 680px) minmax(230px, 310px); justify-content: center; gap: 36px; }
+.social-site-shell .social-main { min-height: 100%; padding-bottom: 40px; }
+.social-site-shell .social-tabs { background: #101010; }
+.social-site-shell .social-tabs button, .social-site-shell .social-tabs button.active { background: #101010; }
+.social-site-shell .social-tabs button:hover { background: #222; }
+.social-site-shell .social-post:hover, .social-site-shell .social-post:hover .social-actions button { background: rgb(255 255 255 / .025); }
+.social-site-shell .social-right { top: 12px; }
+@media(max-width:1100px) { .social-site-shell .social-layout { grid-template-columns: minmax(0,1fr) 245px; gap: 22px; } }
+@media(max-width:700px) { .social-site-content { padding: 0 10px; } .social-site-shell .social-layout { display: block; } .social-site-shell .social-right { display: block; position: static; } .social-site-shell .social-right .social-info, .social-site-shell .social-right .social-footer { display: none; } .social-site-shell .social-right { grid-row: 1; } .social-site-shell .social-layout { display: flex; flex-direction: column-reverse; gap: 0; } .social-site-shell .social-search { margin: 8px 0; } }

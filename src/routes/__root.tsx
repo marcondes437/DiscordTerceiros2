@@ -1,3 +1,4 @@
+import { ActivityPresence } from '@/components/activity-presence';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -123,7 +124,7 @@ function RootShell({ children }: { children: ReactNode }) {
 /**
  * Fundo do site inteiro, no clima da seção da rivalidade: preto profundo, brilho
  * vermelho, grade em perspectiva e partículas. Fica montado entre rotas (sem tela branca).
- * Na comunidade não há partículas, para não atrapalhar a leitura das mensagens.
+ * Social e comunidade compartilham as partículas da página inicial.
  */
 function Scene({ particles }: { particles: boolean }) {
   return (
@@ -140,13 +141,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Scene particles={pathname === '/'} />
+      <ActivityPresence><Scene particles={pathname === '/' || pathname === '/social' || pathname === '/comunidade'} />
       {/* A chave muda a cada rota: a nova página entra com fade + zoom suave. */}
       <div className="page-transition" key={pathname}>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <AccountGate><Outlet /></AccountGate>
       </div>
       <Toaster theme="dark" richColors position="top-center" />
-    </QueryClientProvider>
+    </ActivityPresence></QueryClientProvider>
   );
 }

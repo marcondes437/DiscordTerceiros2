@@ -1,6 +1,9 @@
+import { useActivityPresence } from '@/components/activity-presence';
+import { DeletedChannels } from '@/components/deleted-channels';
+﻿import { AvatarDecoration } from '@/components/profile-decorations';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import type { RealtimeChannel, User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import {
   Check,
   ChevronDown,
@@ -27,6 +30,7 @@ import {
   Wrench,
   X,
   Zap,
+  Settings,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -36,11 +40,16 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { CommunityAuth } from '@/components/community-auth';
 import { VoiceRoom, initials } from '@/components/voice-room';
 import { BrandLogo } from '@/components/brand-logo';
+import { DirectMessages } from '@/components/direct-messages';
+import { CommunityProfileEditor } from '@/components/community-profile-editor';
+import { CommunityProfileCard } from '@/components/community-profile-card';
+import { useCommunityProfiles } from '@/hooks/use-community-profiles';
+import { useChannelNames } from '@/hooks/use-channel-names';
+import { RenameChannel, type RenameTarget } from '@/components/rename-channel';
 import { useCommunityCall } from '@/hooks/use-community-call';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
-import { memberClass, visibleSpaces, spaceChannel, visibleRoom, type Space } from '@/lib/community-spaces';
-import labImage from '@/assets/community-lab.jpg';
+import { memberClass, visibleSpaces, spaceChannel, type Space } from '@/lib/community-spaces';
 
 export const Route = createFileRoute('/comunidade')({
   head: () => ({
@@ -57,7 +66,6 @@ export const Route = createFileRoute('/comunidade')({
 });
 
 type Message = Database['public']['Tables']['community_messages']['Row'];
-type OnlineMember = { id: string; name: string; room: string | null };
 type Panel = 'invite' | 'explore' | 'members' | 'about' | null;
 
 const generalGroups: { label: string; channels: { id: string; name: string; about: string }[] }[] = [
@@ -87,13 +95,14 @@ const baseRooms = [
   { id: 'grupo-de-estudos', name: 'Grupo de estudos' },
   { id: 'laboratorio-de-ideias', name: 'Laboratório de ideias' },
 ];
-const roomName = (id: string | null) => baseRooms.find((r) => r.id === id?.split(':').at(-1))?.name ?? '';
+const defaultRoomName = (id: string | null) => baseRooms.find((r) => r.id === id?.split(':').at(-1))?.name ?? '';
 
-function Avatar({ name, online = false, tone = 'brand' }: { name: string; online?: boolean; tone?: 'brand' | 'plain' }) {
+function Avatar({ name, src, decoration, online = false, tone = 'brand' }: { name: string; src?: string; decoration?: string; online?: boolean; tone?: 'brand' | 'plain' }) {
   return (
     <div className={`avatar ${tone === 'plain' ? 'is-plain' : ''}`} aria-hidden>
-      {initials(name)}
+      {src ? <img src={src} alt=""/> : initials(name)}
       {online && <span className="online-dot" />}
+      <AvatarDecoration theme={decoration}/>
     </div>
   );
 }
@@ -122,27 +131,47 @@ function Community() {
   const [sending, setSending] = useState(false);
   const [drawer, setDrawer] = useState(false);
   const [panel, setPanel] = useState<Panel>(null);
-  const [online, setOnline] = useState<OnlineMember[]>([]);
+  const activity = useActivityPresence();
+  const online = space === 'geral' ? activity.online : activity.classOnline;
   const [loading, setLoading] = useState(false);
   const [showMembers, setShowMembers] = useState(true);
+  const [renameTarget, setRenameTarget] = useState<RenameTarget | null>(null);
+  const [showDeletedChannels, setShowDeletedChannels] = useState(false);
+  const { channelName, isChannelDeleted, deletedChannels, refresh: refreshChannelNames } = useChannelNames(user?.id);
+  const roomName = (id: string | null) => id ? channelName(id, 'voice', defaultRoomName(id)) : '';
+  const [directView, setDirectView] = useState(false);
+  const [directRecipient, setDirectRecipient] = useState<string | null>(null);
+  const [profileView, setProfileView] = useState(false);
+  const { profiles, refresh: refreshProfiles } = useCommunityProfiles(user?.id);
+  const [directSidebar, setDirectSidebar] = useState<HTMLDivElement | null>(null);
+  const [directMain, setDirectMain] = useState<HTMLDivElement | null>(null);
 
   const call = useCommunityCall();
   const bottom = useRef<HTMLDivElement>(null);
-  const onlineChannel = useRef<RealtimeChannel | null>(null);
-  const liveRoom = call.room && !call.connecting ? call.room : null;
-  const liveRoomRef = useRef<string | null>(null);
 
-  const name = String(user?.user_metadata?.['display_name'] || user?.user_metadata?.['full_name'] || user?.email?.split('@')[0] || 'Visitante');
+  const liveRoom = call.room && !call.connecting ? call.room : null;
+
+
+  const name = profiles[user?.id ?? '']?.display_name || String(user?.user_metadata?.['display_name'] || user?.user_metadata?.['full_name'] || user?.email?.split('@')[0] || 'Visitante');
+  function openProfileEditor() { setProfileView(true); setDirectView(false); setDrawer(false); }
+  function openPrivateChat(id: string) { setDirectRecipient(id); setDirectView(true); setProfileView(false); setPanel(null); setDrawer(false); }
   const turma = memberClass(user?.app_metadata);
   const availableSpaces = visibleSpaces(turma);
-  const groups = space === 'geral' ? generalGroups : classGroups;
+  const groups = (space === 'geral' ? generalGroups : classGroups).map(group => ({ ...group, channels: group.channels.filter(c => !isChannelDeleted(spaceChannel(space, c.id), 'text')).map(c => ({ ...c, name: channelName(spaceChannel(space, c.id), 'text', c.name) })) }));
   const allChannels = groups.flatMap((g) => g.channels);
   const messageChannel = spaceChannel(space, active);
-  const rooms = baseRooms.map((r) => ({ ...r, id: spaceChannel(space, r.id) }));
+  const rooms = baseRooms.filter(r => !isChannelDeleted(spaceChannel(space, r.id), 'voice')).map((r) => ({ ...r, id: spaceChannel(space, r.id), name: channelName(spaceChannel(space, r.id), 'voice', r.name) }));
   const spaceName = availableSpaces.find((s) => s.id === space)?.name ?? 'Geral';
   const selectedChannel = useRef(messageChannel);
   selectedChannel.current = messageChannel;
-  const channel = allChannels.find((c) => c.id === active) ?? allChannels[0]!;
+  const channel = allChannels.find((c) => c.id === active) ?? allChannels[0] ?? { id: '', name: 'Nenhum canal', about: '' };
+  const textUnavailable = !active || isChannelDeleted(messageChannel, 'text');
+  const nextActive = allChannels.some(c => c.id === active) ? active : allChannels[0]?.id ?? '';
+  const voiceUnavailable = !!voiceView && isChannelDeleted(voiceView, 'voice');
+  const joinedUnavailable = !!call.room && isChannelDeleted(call.room, 'voice');
+  useEffect(() => { if (nextActive !== active) { setActive(nextActive); setDraft(''); } }, [nextActive, active]);
+  useEffect(() => { if (voiceUnavailable) setVoiceView(null); }, [voiceUnavailable]);
+  useEffect(() => { if (joinedUnavailable) call.leave(); }, [joinedUnavailable, call.leave]);
 
   // Sessão
   useEffect(() => {
@@ -153,7 +182,7 @@ function Community() {
 
   // Mensagens do canal
   useEffect(() => {
-    if (!user) {
+    if (!user || textUnavailable) {
       setMessages([]);
       return;
     }
@@ -176,39 +205,9 @@ function Community() {
       live = false;
       void supabase.removeChannel(ch);
     };
-  }, [messageChannel, user?.id]);
+  }, [messageChannel, user?.id, textUnavailable]);
 
-  // Quem está online (e em qual sala de voz)
-  useEffect(() => {
-    if (!user) {
-      setOnline([]);
-      return;
-    }
-    const ch = supabase.channel(space === 'geral' ? 'senai-voice:online' : `senai-voice:${space}:online`, { config: { private: true, presence: { key: user.id } } });
-    onlineChannel.current = ch;
-    ch.on('presence', { event: 'sync' }, () => {
-      const byId = new Map<string, OnlineMember>();
-      for (const metas of Object.values(ch.presenceState<OnlineMember>())) {
-        for (const m of metas) {
-          if (!m?.id) continue;
-          const prev = byId.get(m.id);
-          byId.set(m.id, { id: m.id, name: m.name, room: visibleRoom(m.room ?? prev?.room ?? null, space) });
-        }
-      }
-      setOnline([...byId.values()].sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')));
-    }).subscribe((status) => {
-      if (status === 'SUBSCRIBED') void ch.track({ id: user.id, name, room: visibleRoom(liveRoomRef.current, space) });
-    });
-    return () => {
-      onlineChannel.current = null;
-      void supabase.removeChannel(ch);
-    };
-  }, [user?.id, name, space]);
-
-  useEffect(() => {
-    liveRoomRef.current = liveRoom;
-    if (user) void onlineChannel.current?.track({ id: user.id, name, room: visibleRoom(liveRoom, space) });
-  }, [liveRoom, space]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { activity.setRoom(liveRoom); return () => activity.setRoom(null); }, [liveRoom, activity.setRoom]);
 
   useEffect(() => {
     bottom.current?.scrollIntoView({ behavior: 'smooth' });
@@ -244,9 +243,10 @@ function Community() {
   }
 
   function selectSpace(next: Space) {
+    setProfileView(false);
+    setDirectView(false);
     if (!availableSpaces.some((s) => s.id === next) || next === space) return;
     call.leave();
-    setOnline([]);
     setMessages([]);
     setDraft('');
     setSearch('');
@@ -256,6 +256,7 @@ function Community() {
   }
 
   function selectChannel(id: string) {
+    setProfileView(false);
     if (!allChannels.some((c) => c.id === id)) return;
     setMessages([]);
     setDraft('');
@@ -265,6 +266,7 @@ function Community() {
     setSearch('');
   }
   function selectRoom(id: string) {
+    setProfileView(false);
     if (!rooms.some((r) => r.id === id)) return;
     setVoiceView(id);
     setDrawer(false);
@@ -289,9 +291,14 @@ function Community() {
   };
 
   return (
-    <div className={`community-app ${showMembers && !voiceView ? '' : 'no-members'}`}>
+    <div className={`community-app ${showMembers && !voiceView ? '' : 'no-members'} ${directView ? 'is-direct-view' : ''} ${profileView && user ? 'is-profile-view' : ''}`}>
       {/* ───────── Barra lateral ───────── */}
       <aside className={`sidebar ${drawer ? 'is-open' : ''}`} aria-label="Canais">
+        <nav className="community-spaces" aria-label="Espaços da comunidade">
+          <DirectMessages user={user} profiles={profiles} requestedRecipient={directRecipient} onSignIn={() => setAuthOpen(true)} open={directView} setOpen={(open) => { setDirectView(open); if (open) { setProfileView(false); setDirectRecipient(null); } }} sidebarTarget={directSidebar} mainTarget={directMain} />
+          {availableSpaces.map((s) => <button key={s.id} type="button" title={s.name} aria-label={s.name} aria-pressed={space === s.id} onClick={() => selectSpace(s.id)}><strong>{s.badge}</strong><span>{s.name}</span></button>)}
+        </nav>
+        <div className="direct-sidebar-target" ref={setDirectSidebar} />
         <div className="brand">
           <Link to="/" className="brand-home" aria-label="SENAI Conecta, página inicial">
             <BrandLogo />
@@ -308,6 +315,11 @@ function Community() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuItem onSelect={() => { if (user) { setProfileView(true); setDirectView(false); setDrawer(false); } else setAuthOpen(true); }}>
+                  <Settings />Editar perfil
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setShowDeletedChannels(true)}><Trash2/>Canais excluídos</DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/jogos">Jogos</Link></DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setPanel('invite')}>
                   <UserPlus />
                   Convidar pessoas
@@ -332,17 +344,16 @@ function Community() {
         </div>
 
         <nav className="sidebar-scroll">
-          <div className="community-spaces" aria-label="Espaços da comunidade">{availableSpaces.map((s) => <button key={s.id} type="button" aria-pressed={space === s.id} onClick={() => selectSpace(s.id)}><strong>{s.badge}</strong><span>{s.name}</span></button>)}</div>
           <div className="space-heading"><strong>{spaceName}</strong><small>{space === 'geral' ? 'Terceiro A + Terceiro B' : 'Somente membros da sua turma'}</small></div>
           {!turma && <p className="space-missing">Sua conta ainda não tem uma turma vinculada. O espaço Geral continua disponível.</p>}
           {groups.map((g) => (
             <section className="nav-group" key={g.label}>
               <h2 className="nav-label">{g.label}</h2>
               {g.channels.map((c) => (
-                <button key={c.id} type="button" className={`nav-item ${active === c.id && !voiceView ? 'is-active' : ''}`} onClick={() => selectChannel(c.id)}>
+                <div className="channel-nav-row" key={c.id}><button type="button" className={`nav-item ${active === c.id && !voiceView ? 'is-active' : ''}`} onClick={() => selectChannel(c.id)}>
                   <Hash />
                   <span className="truncate">{c.name}</span>
-                </button>
+                </button>{user && <button type="button" className="channel-rename-button" title={`Renomear #${c.name}`} aria-label={`Renomear canal ${c.name}`} onClick={() => setRenameTarget({ id: spaceChannel(space, c.id), kind: 'text', name: c.name })}><Settings size={14}/></button>}</div>
               ))}
             </section>
           ))}
@@ -353,11 +364,11 @@ function Community() {
               const people = peopleIn(r.id);
               return (
                 <Fragment key={r.id}>
-                  <button type="button" className={`nav-item ${voiceView === r.id ? 'is-active' : ''} ${call.room === r.id ? 'is-joined' : ''}`} onClick={() => selectRoom(r.id)}>
+                  <div className="channel-nav-row"><button type="button" className={`nav-item ${voiceView === r.id ? 'is-active' : ''} ${call.room === r.id ? 'is-joined' : ''}`} onClick={() => selectRoom(r.id)}>
                     <Volume2 />
                     <span className="truncate">{r.name}</span>
                     {people.length > 0 && <span className="nav-count">{people.length}</span>}
-                  </button>
+                  </button>{user && <button type="button" className="channel-rename-button" title={`Renomear ${r.name}`} aria-label={`Renomear sala ${r.name}`} onClick={() => setRenameTarget({ id: r.id, kind: 'voice', name: r.name })}><Settings size={14}/></button>}</div>
                   {people.length > 0 && (
                     <ul className="room-people">
                       {people.map((p) => (
@@ -402,11 +413,12 @@ function Community() {
         )}
 
         <div className="me">
-          <Avatar name={name} online={!!user} />
+          {user ? <CommunityProfileCard id={user.id} name={name} profile={profiles[user.id]} online self onMessage={openPrivateChat} onEdit={openProfileEditor}><Avatar name={name} src={profiles[user.id]?.avatarSrc} decoration={profiles[user.id]?.avatar_decoration} online/></CommunityProfileCard> : <Avatar name={name}/>}
           <div className="me-text">
             <div className="me-name truncate">{name}</div>
             <div className="me-status">{user ? 'Online' : 'Não conectado'}</div>
           </div>
+          <Button variant="ghost" size="icon" title="Editar perfil" onClick={() => { if (user) { setProfileView(true); setDirectView(false); setDrawer(false); } else setAuthOpen(true); }}><Settings /></Button>
           <Button variant="ghost" size="icon" title={user ? 'Sair da conta' : 'Entrar'} onClick={() => (user ? void supabase.auth.signOut() : setAuthOpen(true))}>
             {user ? <LogOut /> : <LogIn />}
           </Button>
@@ -441,7 +453,7 @@ function Community() {
           </div>
         </header>
 
-        {voiceView ? (
+        {!allChannels.length && !voiceView ? <div className="channel-empty-state"><Hash size={36}/><h2>Nenhum canal de texto neste espaço</h2><p>Você pode restaurar os canais excluídos ou entrar em uma sala de voz.</p><Button onClick={() => setShowDeletedChannels(true)}>Ver canais excluídos</Button></div> : voiceView ? (
           <VoiceRoom
             roomId={voiceView}
             roomName={roomName(voiceView)}
@@ -456,15 +468,6 @@ function Community() {
               <div className="chat-scroll">
                 {!search && (
                   <div className="intro">
-                    {active === 'geral' && (
-                      <figure className="cover">
-                        <img src={labImage} width={1536} height={640} alt="Estudantes colaborando em um laboratório de robótica" />
-                        <figcaption>
-                          <strong>Aprender junto vai mais longe.</strong>
-                          <span>Converse com sua turma, mostre seus projetos e entre nas salas de voz.</span>
-                        </figcaption>
-                      </figure>
-                    )}
                     <h2 className="intro-title">Bem-vindo a #{channel.name}</h2>
                     <p className="intro-copy">{channel.about}. Seja gentil e compartilhe o que sabe.</p>
                   </div>
@@ -495,11 +498,11 @@ function Community() {
                           </li>
                         )}
                         <li className={`message ${grouped ? 'is-grouped' : ''}`}>
-                          {grouped ? <time className="message-gutter-time">{timeLabel(m.created_at)}</time> : <Avatar name={m.display_name} tone={m.user_id === user?.id ? 'brand' : 'plain'} />}
+                          {grouped ? <time className="message-gutter-time">{timeLabel(m.created_at)}</time> : <CommunityProfileCard id={m.user_id} name={m.display_name} profile={profiles[m.user_id]} online={online.some(p => p.id === m.user_id)} self={m.user_id === user?.id} onMessage={openPrivateChat} onEdit={openProfileEditor}><Avatar name={profiles[m.user_id]?.display_name || m.display_name} src={profiles[m.user_id]?.avatarSrc} decoration={profiles[m.user_id]?.avatar_decoration} tone={m.user_id === user?.id ? 'brand' : 'plain'}/></CommunityProfileCard>}
                           <div className="message-body">
                             {!grouped && (
                               <div className="message-head">
-                                <span className="message-author">{m.display_name}</span>
+                                <CommunityProfileCard id={m.user_id} name={m.display_name} profile={profiles[m.user_id]} online={online.some(p => p.id === m.user_id)} self={m.user_id === user?.id} onMessage={openPrivateChat} onEdit={openProfileEditor}><span className="message-author">{profiles[m.user_id]?.display_name || m.display_name}</span></CommunityProfileCard>
                                 <time className="message-time">{timeLabel(m.created_at)}</time>
                               </div>
                             )}
@@ -533,10 +536,10 @@ function Community() {
               <h2 className="nav-label">{online.length ? `${online.length} online` : 'Online'}</h2>
               {online.map((m) => (
                 <div className="member" key={m.id}>
-                  <Avatar name={m.name} online tone={m.id === user?.id ? 'brand' : 'plain'} />
+                  <CommunityProfileCard id={m.id} name={m.name} profile={profiles[m.id]} online room={m.room ? roomName(m.room) : undefined} self={m.id === user?.id} onMessage={openPrivateChat} onEdit={openProfileEditor} onRoom={() => m.room && selectRoom(m.room)}><Avatar name={profiles[m.id]?.display_name || m.name} src={profiles[m.id]?.avatarSrc} decoration={profiles[m.id]?.avatar_decoration} online tone={m.id === user?.id ? 'brand' : 'plain'}/></CommunityProfileCard>
                   <div className="min-w-0">
                     <div className="member-name truncate">
-                      {m.name}
+                      <CommunityProfileCard id={m.id} name={m.name} profile={profiles[m.id]} online room={m.room ? roomName(m.room) : undefined} self={m.id === user?.id} onMessage={openPrivateChat} onEdit={openProfileEditor} onRoom={() => m.room && selectRoom(m.room)}>{profiles[m.id]?.display_name || m.name}</CommunityProfileCard>
                       {m.id === user?.id ? ' (você)' : ''}
                     </div>
                     {m.room && (
@@ -554,6 +557,10 @@ function Community() {
           </div>
         )}
       </main>
+      <div className="direct-main-target" ref={setDirectMain} />
+      <DeletedChannels open={showDeletedChannels} onOpenChange={setShowDeletedChannels} channels={deletedChannels.filter(c => space === 'geral' ? !c.channel_id.includes(':') : c.channel_id.startsWith(space + ':'))} onRestored={refreshChannelNames}/>
+      <RenameChannel target={renameTarget} userId={user?.id} onClose={() => setRenameTarget(null)} onSaved={refreshChannelNames}/>
+      {profileView && user && <div className="profile-main-target"><CommunityProfileEditor key={profiles[user.id] ? user.id : 'loading'} user={user} profile={profiles[user.id]} onClose={() => setProfileView(false)} onSaved={refreshProfiles}/></div>}
 
       <CommunityAuth open={authOpen} onOpenChange={setAuthOpen} />
 
@@ -610,8 +617,8 @@ function Community() {
               <div className="grid gap-3">
                 {online.map((m) => (
                   <div className="member" key={m.id}>
-                    <Avatar name={m.name} online tone="plain" />
-                    <div className="member-name">{m.name}</div>
+                    <Avatar name={profiles[m.id]?.display_name || m.name} src={profiles[m.id]?.avatarSrc} decoration={profiles[m.id]?.avatar_decoration} online tone="plain" />
+                    <div className="member-name">{profiles[m.id]?.display_name || m.name}</div>
                     {m.room && <span className="ml-auto text-xs text-muted-foreground">{roomName(m.room)}</span>}
                   </div>
                 ))}

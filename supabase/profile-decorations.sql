@@ -1,0 +1,1 @@
+alter table public.social_profiles add column avatar_decoration text not null default 'none' check (avatar_decoration in ('none','sakura','lunar','web','neon')), add column profile_effect text not null default 'none' check(profile_effect in ('none','sakura','lunar','web','neon')); notify pgrst, 'reload schema';

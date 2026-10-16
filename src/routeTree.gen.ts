@@ -11,6 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ComunidadeRouteImport } from './routes/comunidade'
+import { Route as JogosRouteImport } from './routes/jogos'
+import { Route as PerfilJogosRouteImport } from './routes/perfil-jogos'
+import { Route as SocialRouteImport } from './routes/social'
+import { Route as TurmasRouteImport } from './routes/turmas'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +26,75 @@ const ComunidadeRoute = ComunidadeRouteImport.update({
   path: '/comunidade',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JogosRoute = JogosRouteImport.update({
+  id: '/jogos',
+  path: '/jogos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilJogosRoute = PerfilJogosRouteImport.update({
+  id: '/perfil-jogos',
+  path: '/perfil-jogos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SocialRoute = SocialRouteImport.update({
+  id: '/social',
+  path: '/social',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TurmasRoute = TurmasRouteImport.update({
+  id: '/turmas',
+  path: '/turmas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/comunidade': typeof ComunidadeRoute
+  '/jogos': typeof JogosRoute
+  '/perfil-jogos': typeof PerfilJogosRoute
+  '/social': typeof SocialRoute
+  '/turmas': typeof TurmasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/comunidade': typeof ComunidadeRoute
+  '/jogos': typeof JogosRoute
+  '/perfil-jogos': typeof PerfilJogosRoute
+  '/social': typeof SocialRoute
+  '/turmas': typeof TurmasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/comunidade': typeof ComunidadeRoute
+  '/jogos': typeof JogosRoute
+  '/perfil-jogos': typeof PerfilJogosRoute
+  '/social': typeof SocialRoute
+  '/turmas': typeof TurmasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/comunidade'
+  fullPaths:
+    '/' | '/comunidade' | '/jogos' | '/perfil-jogos' | '/social' | '/turmas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/comunidade'
-  id: '__root__' | '/' | '/comunidade'
+  to: '/' | '/comunidade' | '/jogos' | '/perfil-jogos' | '/social' | '/turmas'
+  id:
+    | '__root__'
+    | '/'
+    | '/comunidade'
+    | '/jogos'
+    | '/perfil-jogos'
+    | '/social'
+    | '/turmas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ComunidadeRoute: typeof ComunidadeRoute
+  JogosRoute: typeof JogosRoute
+  PerfilJogosRoute: typeof PerfilJogosRoute
+  SocialRoute: typeof SocialRoute
+  TurmasRoute: typeof TurmasRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +113,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ComunidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/jogos': {
+      id: '/jogos'
+      path: '/jogos'
+      fullPath: '/jogos'
+      preLoaderRoute: typeof JogosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil-jogos': {
+      id: '/perfil-jogos'
+      path: '/perfil-jogos'
+      fullPath: '/perfil-jogos'
+      preLoaderRoute: typeof PerfilJogosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/social': {
+      id: '/social'
+      path: '/social'
+      fullPath: '/social'
+      preLoaderRoute: typeof SocialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/turmas': {
+      id: '/turmas'
+      path: '/turmas'
+      fullPath: '/turmas'
+      preLoaderRoute: typeof TurmasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComunidadeRoute: ComunidadeRoute,
+  JogosRoute: JogosRoute,
+  PerfilJogosRoute: PerfilJogosRoute,
+  SocialRoute: SocialRoute,
+  TurmasRoute: TurmasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

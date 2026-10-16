@@ -1,0 +1,1 @@
+alter table public.social_profiles drop constraint social_profiles_profile_effect_check; alter table public.social_profiles add constraint social_profiles_profile_effect_check check(profile_effect in ('none','sakura','lunar','web','neon','shadow')); notify pgrst, 'reload schema';
