@@ -15,6 +15,13 @@
       "when": 1792087531089,
       "tag": "0001_community_voice_signaling",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792121141843,
+      "tag": "0002_community_class_spaces",
+      "breakpoints": true
     }
   ]
 }

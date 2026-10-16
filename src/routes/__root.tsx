@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -13,6 +14,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "sonner";
+import { AmbientParticles } from "../components/ambient-particles";
+import { AccountGate } from "../components/account-gate";
 
 function NotFoundComponent() {
   return (
@@ -94,7 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -105,7 +108,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className="dark">
       <head>
         <HeadContent />
       </head>
@@ -117,14 +120,33 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Fundo do site inteiro, no clima da seção da rivalidade: preto profundo, brilho
+ * vermelho, grade em perspectiva e partículas. Fica montado entre rotas (sem tela branca).
+ * Na comunidade não há partículas, para não atrapalhar a leitura das mensagens.
+ */
+function Scene({ particles }: { particles: boolean }) {
+  return (
+    <div className="scene" aria-hidden>
+      <div className="scene-grid" />
+      {particles && <AmbientParticles />}
+    </div>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-      <Toaster richColors position="top-center" />
+      <Scene particles={pathname === '/'} />
+      {/* A chave muda a cada rota: a nova página entra com fade + zoom suave. */}
+      <div className="page-transition" key={pathname}>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <AccountGate><Outlet /></AccountGate>
+      </div>
+      <Toaster theme="dark" richColors position="top-center" />
     </QueryClientProvider>
   );
 }
