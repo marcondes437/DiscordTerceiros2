@@ -68,6 +68,22 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
+it('opens the theme store directly below message requests and returns to friends', async () => {
+  const sidebar = document.createElement('div');
+  const main = document.createElement('div');
+  document.body.append(sidebar, main);
+  const choose = vi.fn();
+  render(<DirectMessages user={{id:'member',user_metadata:{}} as User} onSignIn={vi.fn()} open setOpen={vi.fn()} sidebarTarget={sidebar} mainTarget={main} onSelectSkin={choose}/>);
+  const store = screen.getByRole('button',{name:'Loja de temas Novo'});
+  expect(screen.getByRole('button',{name:'Solicitações de mensagens'}).nextElementSibling).toBe(store);
+  fireEvent.click(store);
+  expect(screen.getByRole('heading',{name:'Loja de temas'})).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button',{name:'Usar tema Ocean'}));
+  expect(choose).toHaveBeenCalledWith('ocean');
+  fireEvent.click(screen.getByRole('button',{name:'Voltar para amigos'}));
+  expect(screen.queryByRole('heading',{name:'Loja de temas'})).not.toBeInTheDocument();
+});
+
 it("lets the sender delete their own message without exposing deletion on someone else's", async () => {
   fixtures.friends = [
     { id: "friend", requester_id: "member", recipient_id: "colleague", status: "accepted" },

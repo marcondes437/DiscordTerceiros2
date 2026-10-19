@@ -2,13 +2,22 @@ import { useFriendships } from "@/hooks/use-friendships";
 import { friendshipState, friendshipWith, conversationIds } from "@/lib/friendships";
 import { FriendActions } from "./friend-actions";
 import { CommunityPeople } from "./community-people";
+import { CommunityThemeStore } from "./community-theme-store";
 import { useActivityPresence, mergeActivity } from "./activity-presence";
 import "@/routes/community-people.css";
 import { AvatarDecoration, ProfileEffect } from "./profile-decorations";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import type { User } from "@supabase/supabase-js";
-import { ArrowLeft, MessageCircle, SendHorizontal, Users, Trash2, Mail } from "lucide-react";
+import {
+  ArrowLeft,
+  MessageCircle,
+  SendHorizontal,
+  Users,
+  Trash2,
+  Mail,
+  Palette,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { CommunityProfile } from "@/hooks/use-community-profiles";
 
@@ -26,6 +35,9 @@ const db = supabase as any;
 
 export function DirectMessages({
   themeControl,
+  selectedSkin = "dark-matter",
+  onSelectSkin,
+  storageNotice = "",
   user,
   onSignIn,
   open,
@@ -36,6 +48,9 @@ export function DirectMessages({
   requestedRecipient,
 }: {
   themeControl?: ReactNode;
+  selectedSkin?: string;
+  onSelectSkin?: (id: string) => void;
+  storageNotice?: string;
   requestedRecipient?: string | null;
   profiles?: Record<string, CommunityProfile>;
   user: User | null;
@@ -46,7 +61,7 @@ export function DirectMessages({
   mainTarget: HTMLElement | null;
 }) {
   const friends = useFriendships(user?.id);
-  const [section, setSection] = useState<"friends" | "requests">("friends");
+  const [section, setSection] = useState<"friends" | "requests" | "themes">("friends");
   const activity = useActivityPresence();
   const livePeople = mergeActivity([...activity.online, ...activity.classOnline]);
   const [people, setPeople] = useState<Person[]>([]);
@@ -272,6 +287,20 @@ export function DirectMessages({
               <span>Solicitações de mensagens</span>
               {pendingMessages > 0 && <span className="inbox-badge">{pendingMessages}</span>}
             </button>
+            {onSelectSkin && (
+              <button
+                type="button"
+                className={`direct-directory-link ${!selected && section === "themes" ? "is-active" : ""}`}
+                onClick={() => {
+                  setSelected(null);
+                  setSection("themes");
+                }}
+              >
+                <Palette size={18} />
+                <span>Loja de temas</span>
+                <small className="theme-store-nav-badge">Novo</small>
+              </button>
+            )}
             <div className="direct-inbox-heading">
               <MessageCircle size={18} />
               <strong>Mensagens diretas</strong>
@@ -317,10 +346,18 @@ export function DirectMessages({
                 <button onClick={() => void friends.refresh()}>Atualizar amizades</button>
               </div>
             )}
-            {!selected ? (
+            {!selected && section === "themes" && onSelectSkin ? (
+              <CommunityThemeStore
+                selectedId={selectedSkin}
+                onSelect={onSelectSkin}
+                onBack={() => setSection("friends")}
+                storageNotice={storageNotice}
+                themeControl={themeControl}
+              />
+            ) : !selected ? (
               <>
                 <CommunityPeople
-                  section={section}
+                  section={section === "requests" ? "requests" : "friends"}
                   themeControl={themeControl}
                   selfId={user?.id || ""}
                   friendships={friends.rows}

@@ -4,7 +4,8 @@ import { CommunityThemeToggle } from "@/components/community-theme-toggle";
 import "./community-layout.css";
 import { CommunityHub } from "@/components/community-hub";
 import "./community-hub.css";
-import "./dark-matter.css";
+import "./community-skin-tokens.css";
+import "./community-skins.css";
 import { useActivityPresence } from '@/components/activity-presence';
 import { DeletedChannels } from '@/components/deleted-channels';
 ﻿import { AvatarDecoration } from '@/components/profile-decorations';
@@ -129,13 +130,13 @@ const timeLabel = (iso: string) => new Date(iso).toLocaleTimeString('pt-BR', { h
 
 function Community() {
   const {dm: notificationDm}=Route.useSearch();
-  const {theme: communityTheme,toggle: toggleCommunityTheme}=useCommunityTheme();
-  const themeControl=<><NotificationBell/><CommunityThemeToggle theme={communityTheme} onToggle={toggleCommunityTheme}/></>;
   const [overview, setOverview] = useState(true);
   const [space, setSpace] = useState<Space>('geral');
   const [active, setActive] = useState('geral');
   const [voiceView, setVoiceView] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const {theme: communityTheme,skin: communitySkin,selectSkin,toggle: toggleCommunityTheme,storageNotice}=useCommunityTheme(user?.id);
+  const themeControl=<><NotificationBell/><CommunityThemeToggle theme={communityTheme} onToggle={toggleCommunityTheme}/></>;
   const [authOpen, setAuthOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState('');
@@ -310,11 +311,11 @@ function Community() {
   };
 
   return (
-    <div data-community-theme={communityTheme} className={`community-app ${showMembers && !voiceView ? '' : 'no-members'} ${directView ? 'is-direct-view' : ''} ${profileView && user ? 'is-profile-view' : ''}`}>
+    <div data-community-theme={communityTheme} data-community-skin={communitySkin.id} className={`community-app ${showMembers && !voiceView ? '' : 'no-members'} ${directView ? 'is-direct-view' : ''} ${profileView && user ? 'is-profile-view' : ''}`}>
       {/* ───────── Barra lateral ───────── */}
       <aside className={`sidebar ${drawer ? 'is-open' : ''}`} aria-label="Canais">
         <nav className="community-spaces" aria-label="Espaços da comunidade">
-          <DirectMessages themeControl={themeControl} user={user} profiles={profiles} requestedRecipient={directRecipient} onSignIn={() => setAuthOpen(true)} open={directView} setOpen={(open) => { setDirectView(open); if (open) { setProfileView(false); setDirectRecipient(null); } }} sidebarTarget={directSidebar} mainTarget={directMain} />
+          <DirectMessages themeControl={themeControl} selectedSkin={communitySkin.id} onSelectSkin={selectSkin} storageNotice={storageNotice} user={user} profiles={profiles} requestedRecipient={directRecipient} onSignIn={() => setAuthOpen(true)} open={directView} setOpen={(open) => { setDirectView(open); if (open) { setProfileView(false); setDirectRecipient(null); } }} sidebarTarget={directSidebar} mainTarget={directMain} />
           {availableSpaces.map((s) => <button key={s.id} type="button" title={s.name} aria-label={s.name} aria-pressed={space === s.id} onClick={() => selectSpace(s.id)}><strong>{s.badge}</strong><span>{s.name}</span></button>)}
         </nav>
         <div className="direct-sidebar-target" ref={setDirectSidebar} />

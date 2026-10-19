@@ -1,0 +1,272 @@
+/* Native Conecta adaptations: no Discord selectors or remote stylesheet imports. */
+.dark .community-app.community-app[data-community-skin] {
+  background: var(--skin-canvas);
+  color: var(--foreground);
+  font-family: var(--skin-font);
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(
+    .main,
+    .workspace,
+    .chat,
+    .direct-workspace,
+    .direct-chat,
+    .community-hub,
+    .people-body,
+    .people-main
+  ) {
+  background: transparent;
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(.chat, .direct-chat, .people-main, .theme-store-scroll) {
+  background: color-mix(in srgb, var(--background) 65%, transparent);
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(
+    .sidebar,
+    .sidebar-scroll,
+    .direct-inbox,
+    .members,
+    .hub-right,
+    .people-activity,
+    .direct-person-profile
+  ) {
+  background: var(--skin-panel);
+  backdrop-filter: blur(var(--skin-blur));
+}
+.dark .community-app.community-app[data-community-skin] :is(.community-spaces, .me) {
+  background: var(--ink-0);
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(.topbar, .brand, .direct-topbar, .people-toolbar) {
+  background: var(--skin-header);
+  border-bottom: 1px solid var(--border);
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(
+    .intro,
+    .hub-player,
+    .hub-room,
+    .hub-channel,
+    .people-activity-card,
+    .people-activity-empty,
+    .direct-profile-note
+  ) {
+  background: var(--card);
+  border-color: var(--border);
+  border-radius: var(--skin-radius);
+  box-shadow: none;
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(.nav-item.is-active, .direct-directory-link.is-active, .community-overview-link.is-active) {
+  background: var(--brand-soft);
+  color: var(--community-cyan);
+  box-shadow: inset 3px 0 var(--primary);
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(.composer input, .direct-compose input, .people-search, .search) {
+  background: var(--ink-1);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--skin-radius);
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(input, textarea, button, a):focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(.message, .direct-line, .people-row):hover {
+  background: var(--brand-soft);
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(
+    .message-text,
+    .direct-line p,
+    .message-author,
+    .member-name,
+    .people-row strong,
+    .hub-person strong,
+    .hub-channel h4
+  ) {
+  color: var(--foreground);
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(.hub-invite, .hub-game-banner, .hub-room-icon) {
+  background: var(--brand-soft);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+.dark .community-app.community-app[data-community-skin] .hub-room.is-live {
+  border-color: var(--primary);
+}
+.dark .community-app.community-app[data-community-skin] .hub-welcome::after {
+  background: linear-gradient(90deg, var(--ink-0), transparent);
+}
+.dark .community-app.community-app[data-community-skin] .voice-room {
+  background: var(--stage);
+}
+.dark .community-app.community-app[data-community-skin] .voice-tile {
+  background: var(--stage-raised);
+  border-color: var(--stage-line);
+}
+.dark .community-app.community-app[data-community-skin] * {
+  scrollbar-color: var(--secondary) transparent;
+  scrollbar-width: thin;
+}
+.dark .community-app.community-app[data-community-skin] ::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+body:has(.community-app.community-app[data-community-skin])
+  :is([role="dialog"], [role="menu"], .community-profile-card, .notification-popover) {
+  background: var(--card);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+body:has(.community-app.community-app[data-community-skin])
+  .community-profile-card
+  :is(
+    .community-profile-handle,
+    .community-profile-content h3,
+    .community-profile-since p,
+    .community-profile-voice > strong
+  ) {
+  color: var(--muted-foreground);
+}
+body:has(.community-app.community-app[data-community-skin])
+  .community-profile-card
+  :is(
+    .community-profile-status,
+    .community-profile-voice,
+    .community-profile-action,
+    .community-profile-voice button
+  ) {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+body:has(.community-app.community-app[data-community-skin]) .community-profile-photo {
+  background: var(--secondary);
+  color: var(--foreground);
+  box-shadow: 0 0 0 6px var(--card);
+}
+body:has(.community-app.community-app[data-community-skin]) .community-profile-photo > span {
+  border-color: var(--card);
+}
+body:has(.community-app.community-app[data-community-skin]) .community-profile-action:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.dark
+  .community-app.community-app[data-community-skin]
+  :is(.notification-bell > span, .inbox-badge, .people-toolbar nav button span) {
+  color: var(--primary-foreground);
+}
+/* Individual signatures go beyond changing the accent color. */
+.dark
+  .community-app.community-app[data-community-skin="skeuocord"]
+  :is(.nav-item, .direct-directory-link, .hub-room, .hub-channel, .intro) {
+  background-image: linear-gradient(#ffffff0c, #00000026);
+  box-shadow:
+    inset 0 1px #ffffff16,
+    0 1px 2px #0006;
+  border-radius: 3px;
+}
+.dark
+  .community-app.community-app[data-community-skin="skeuocord"]
+  :is(.avatar, .mini-avatar, .people-avatar) {
+  border-radius: 3px;
+  outline: 1px solid #989899;
+  box-shadow: 0 1px 4px #0009;
+}
+.dark
+  .community-app.community-app[data-community-skin="nier-light"]
+  :is(.topbar-title, .nav-label, .people-toolbar h1, .theme-store h2) {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.dark
+  .community-app.community-app[data-community-skin="nier-light"]
+  :is(.intro, .hub-room, .hub-channel, .theme-store-card) {
+  border-left: 4px solid var(--primary);
+  border-radius: 0;
+}
+.dark .community-app.community-app[data-community-skin="spotify-discord"] .main {
+  background: var(--background);
+  margin: 8px 8px 8px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.dark .community-app.community-app[data-community-skin="spotify-discord"] .sidebar {
+  border: 8px solid #000;
+  border-right-width: 6px;
+  border-radius: 16px;
+}
+.dark
+  .community-app.community-app[data-community-skin="spotify-discord"]
+  :is(.composer button[type="submit"], .direct-compose button[type="submit"]) {
+  border-radius: 999px;
+}
+.dark
+  .community-app.community-app[data-community-skin="dark-neon"]
+  :is(.topbar, .brand, .hub-room.is-live, .theme-store-card.is-selected) {
+  box-shadow: 0 1px 10px #04d9ff30;
+}
+.dark
+  .community-app.community-app[data-community-skin="dark-neon"]
+  :is(.nav-item.is-active, .community-overview-link.is-active) {
+  text-shadow: 0 0 10px #04d9ff66;
+}
+.dark .community-app.community-app[data-community-skin="translucence"] :is(.message, .direct-line) {
+  border-radius: 18px;
+}
+.dark
+  .community-app.community-app[data-community-skin="translucence"]
+  :is(.composer input, .direct-compose input) {
+  border-radius: 28px;
+  background: #ffffff14;
+}
+.dark
+  .community-app.community-app[data-community-skin="fallout-terminal"]
+  :is(.message-author, .topbar-title, .nav-label, .theme-store h2) {
+  text-shadow: 0 0 6px #4aef9833;
+}
+.dark
+  .community-app.community-app[data-community-skin="fallout-terminal"]
+  :is(.intro, .hub-room, .hub-channel, .theme-store-card) {
+  border: 1px solid var(--primary);
+  border-radius: 0;
+}
+.dark .community-app.community-app[data-community-skin="fallout-terminal"] .hub-welcome > img,
+.dark .community-app.community-app[data-community-skin="nier-light"] .hub-welcome > img {
+  filter: grayscale(1);
+  opacity: 0.3;
+}
+@media (max-width: 760px) {
+  .dark .community-app.community-app[data-community-skin="spotify-discord"] .main {
+    margin: 0;
+    border-radius: 0;
+  }
+  .dark .community-app.community-app[data-community-skin="spotify-discord"] .sidebar {
+    border: 0;
+    border-radius: 0;
+  }
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .dark
+    .community-app.community-app[data-community-skin]
+    :is(.sidebar, .members, .hub-right, .people-activity, .direct-person-profile) {
+    background: var(--background);
+  }
+}
