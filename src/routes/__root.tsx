@@ -17,7 +17,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "sonner";
 import { AccountGate } from "../components/account-gate";
 import compactCss from "../compact.css?url";
-import craftCss from "../craft.css?url";
+import communityCss from "../community-theme.css?url";
 
 function NotFoundComponent() {
   return (
@@ -99,11 +99,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "stylesheet", href: compactCss },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap",
-      },
-      { rel: "stylesheet", href: craftCss },
+      { rel: "stylesheet", href: communityCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
     ],
   }),

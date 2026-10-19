@@ -11,6 +11,7 @@ import { useChannelNames } from "@/hooks/use-channel-names";
 import { supabase } from "@/integrations/supabase/client";
 import { games } from "@/data/games";
 import { ProfilePhoto } from "@/components/profile-photo";
+import bannerImage from "@/assets/community-lab.jpg";
 import "@/routes/home.css";
 type Post = { id: string; author_id: string; body: string; created_at: string };
 const defaults: Record<string, string> = {
@@ -109,18 +110,16 @@ export function LiveHome() {
           <small>{new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}</small>
         </header>
         <section className="live-hero">
-          <div className="craft-wordmark" aria-hidden="true">
-            CONECTA<span>EST. 2026 — SOROCABA, BR</span>
-          </div>
+          <img src={bannerImage} alt="" className="community-hero-art" />
           <div className="live-hero-shade" />
           <div className="live-hero-copy">
             <span className="home-featured-label">
-              <Radio size={13} /> INDEPENDENTE POR NATUREZA. CONECTADO POR ESCOLHA.
+              <Radio size={13} /> SEU PONTO DE ENCONTRO
             </span>
             <h1>
-              Um lugar para criar.
+              Sua turma. Seu espaço.
               <br />
-              <span>E ficar junto.</span>
+              <span>Bora se conectar.</span>
             </h1>
             <p>
               Conversas que viram ideias. Partidas que viram histórias. O espaço da nossa turma,
@@ -191,7 +190,7 @@ export function LiveHome() {
         <section className="live-section" id="salas">
           <div className="live-heading">
             <div>
-              <span>01 / ENCONTRE A TURMA</span>
+              <span>CANAIS DE VOZ</span>
               <h2>
                 <Volume2 size={21} /> A turma está em voz
               </h2>
@@ -235,7 +234,7 @@ export function LiveHome() {
         <section className="live-section" id="live-games">
           <div className="live-heading">
             <div>
-              <span>02 / FORA DO ÓBVIO</span>
+              <span>JOGUE JUNTO</span>
               <h2>
                 <Gamepad2 size={22} /> Quem está jogando
               </h2>
@@ -282,7 +281,7 @@ export function LiveHome() {
         <section className="live-section">
           <div className="live-heading">
             <div>
-              <span>03 / FEITO PELA TURMA</span>
+              <span>NA COMUNIDADE</span>
               <h2>
                 <MessageCircle size={21} /> Acabou de sair no Social
               </h2>

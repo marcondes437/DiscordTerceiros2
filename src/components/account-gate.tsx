@@ -44,7 +44,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
       </header>
       <div className="account-layout">
         <section className="account-story" aria-label="Terceiro A e Terceiro B">
-          <div className="craft-login-mark" aria-hidden="true">
+          <div className="community-login-mark" aria-hidden="true">
             conecta<span>ESTUDANTES / SOROCABA</span>
           </div>
           <span className="account-eyebrow">

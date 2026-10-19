@@ -1,0 +1,731 @@
+/* Shared gaming community theme. The approved console profile owns its layout. */
+html.dark {
+  --ink-0: #101117;
+  --ink-1: #181a23;
+  --background: #1e202a;
+  --foreground: #eef0f8;
+  --white: #eef0f8;
+  --grey: #a4a9bc;
+  --card: #252834;
+  --primary: #7655df;
+  --primary-foreground: #fff;
+  --secondary: #2b2e3d;
+  --muted: #151720;
+  --muted-foreground: #a4a9bc;
+  --accent: #323447;
+  --border: #ffffff0e;
+  --brand-soft: #9775fa22;
+  --community-cyan: #53e0da;
+  --community-purple: #b5a0ff;
+  --glass: #181a23;
+  --glass-strong: #151720;
+  --glass-soft: #252834;
+  --glass-line: #ffffff0e;
+  --glass-line-hi: #ffffff20;
+  --stage: #101117;
+  --stage-raised: #181a23;
+  --stage-hover: #2b2e3d;
+  --stage-line: #ffffff14;
+  --stage-fg: #eef0f8;
+  --stage-muted: #a4a9bc;
+}
+.dark ::selection {
+  background: #7655df80;
+}
+.dark :focus-visible {
+  outline-color: var(--community-cyan);
+  outline-offset: 3px;
+}
+.dark .win-header {
+  height: 62px;
+  min-height: 62px;
+  background: var(--ink-0);
+  border-bottom: 1px solid var(--border);
+}
+.dark .brand-logo-text {
+  font-weight: 750;
+  letter-spacing: -0.5px;
+}
+.dark .win-side {
+  background: var(--ink-1);
+  padding: 24px 12px;
+}
+.dark .side-nav {
+  gap: 5px;
+}
+.dark .side-link {
+  border-radius: 9px;
+  min-height: 42px;
+  font-size: 13px;
+}
+.dark .side-link.is-active {
+  background: var(--brand-soft);
+  color: #f1edff;
+  box-shadow: inset 3px 0 var(--community-purple);
+}
+.dark .side-link.is-active svg {
+  color: var(--community-purple);
+}
+.dark .side-link:hover {
+  background: var(--secondary);
+}
+.dark .side-label,
+.dark .nav-label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--muted-foreground);
+}
+.dark .btn-red,
+.dark .social-publish,
+.dark .social-signin {
+  background: var(--primary);
+  color: white;
+  border-radius: 8px;
+  border: 1px solid #ffffff10;
+  box-shadow: 0 4px 16px #7655df20;
+}
+.dark .btn-red:hover,
+.dark .social-publish:hover {
+  background: #8868ed;
+}
+.dark .user-avatar,
+.dark .live-avatar {
+  background: #3c3458;
+}
+.dark .icon-btn {
+  border-radius: 8px;
+}
+
+/* Discovery: image banner, compact destinations and live friends rail. */
+.dark .live-home {
+  max-width: 1600px;
+  grid-template-columns: minmax(0, 1fr) 250px;
+}
+.dark .live-center {
+  padding: 26px 30px;
+}
+.dark .live-top {
+  font-size: 10px;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.dark .live-top small {
+  font-size: 11px;
+}
+.dark .live-hero {
+  min-height: 330px;
+  border-radius: 16px;
+  background: #272039;
+  border: 1px solid #ffffff12;
+  overflow: hidden;
+}
+.dark .live-hero > img {
+  object-position: center 40%;
+  opacity: 0.8;
+}
+.dark .live-hero-shade {
+  background:
+    linear-gradient(90deg, #181329f5 5%, #292043b8 53%, #17444345),
+    linear-gradient(0deg, #151722a0, transparent);
+}
+.dark .live-hero-copy {
+  max-width: 610px;
+  padding: 38px;
+}
+.dark .home-featured-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #c7baff;
+  font-size: 9px;
+  letter-spacing: 1.3px;
+}
+.dark .home-featured-label svg {
+  color: var(--community-cyan);
+}
+.dark .live-hero h1 {
+  font-family: var(--font-sans);
+  font-size: clamp(30px, 3.1vw, 46px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+  margin: 17px 0;
+}
+.dark .live-hero h1 span {
+  color: var(--community-cyan);
+}
+.dark .live-hero p {
+  color: #c1c2d3;
+  max-width: 410px;
+  font-size: 13px;
+  line-height: 1.75;
+}
+.dark .home-featured-actions {
+  gap: 10px;
+  margin-top: 22px;
+}
+.dark .home-secondary-action {
+  border-radius: 8px;
+  background: #ffffff0a;
+  border: 1px solid #ffffff24;
+  font-size: 12px;
+}
+.dark .home-secondary-action:hover {
+  background: #ffffff16;
+}
+.dark .live-hero-label {
+  font-size: 10px;
+  color: #e0dbee;
+}
+.dark .home-destinations {
+  gap: 12px;
+  margin: 18px 0;
+}
+.dark .home-destinations > a {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 17px 13px;
+  transition: background 0.15s;
+}
+.dark .home-destinations > a:hover {
+  background: #303343;
+}
+.dark .home-destinations > a > span {
+  color: var(--community-purple);
+  background: #9775fa18;
+  border-radius: 10px;
+}
+.dark .home-destinations > a:nth-child(2) > span {
+  color: var(--community-cyan);
+  background: #53e0da12;
+}
+.dark .home-destinations strong {
+  font-size: 12px;
+}
+.dark .home-destinations small {
+  font-size: 10px;
+  color: var(--muted-foreground);
+}
+.dark .live-stats {
+  margin: 0 0 30px;
+  gap: 12px;
+}
+.dark .live-stats > a {
+  border-radius: 10px;
+  background: var(--ink-1);
+  border: 1px solid var(--border);
+}
+.dark .live-stats svg {
+  color: var(--community-cyan);
+}
+.dark .live-stats strong {
+  font-size: 23px;
+  font-weight: 700;
+}
+.dark .live-stats span {
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.dark .live-heading {
+  border: 0;
+  padding: 0;
+  margin-bottom: 18px;
+}
+.dark .live-heading > div > span {
+  color: var(--community-purple);
+  font-size: 9px;
+  letter-spacing: 1.4px;
+}
+.dark .live-heading h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+.dark .live-heading h2 svg {
+  color: var(--muted-foreground);
+  width: 18px;
+}
+.dark .live-heading > a {
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.dark .live-game,
+.dark .live-call,
+.dark .live-empty,
+.dark .live-post {
+  border-radius: 13px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: none;
+}
+.dark .live-game {
+  overflow: hidden;
+}
+.dark .live-game-cover img {
+  transition: transform 0.25s;
+}
+.dark .live-game:hover .live-game-cover img {
+  transform: scale(1.035);
+}
+.dark .live-game-info {
+  padding: 20px;
+}
+.dark .live-online {
+  background: var(--ink-1);
+  border-left: 1px solid var(--border);
+  padding: 28px 16px;
+}
+.dark .live-online-title h2 {
+  font-size: 13px;
+  font-weight: 700;
+}
+.dark .live-online-title > span {
+  border-radius: 6px;
+  background: #53e0da14;
+  color: var(--community-cyan);
+}
+.dark .live-online input {
+  border: 1px solid var(--border);
+  background: var(--ink-0);
+  border-radius: 8px;
+}
+.dark .live-person {
+  padding: 11px 8px;
+  border-radius: 8px;
+}
+.dark .live-person:hover {
+  background: var(--secondary);
+}
+.dark .live-person strong {
+  font-size: 12px;
+}
+.dark .live-person small {
+  color: var(--muted-foreground);
+}
+.dark .live-sidebar-note {
+  background: #7655df12;
+  border: 1px solid #9775fa20;
+  border-radius: 12px;
+  padding: 18px;
+}
+.dark .live-sidebar-note > svg {
+  color: var(--community-purple);
+}
+.dark .home-classes {
+  border-top-color: var(--border);
+}
+.dark .home-classes > a {
+  border-radius: 12px;
+  background: var(--card);
+}
+
+/* Channels and conversation follow a compact three-column gaming client. */
+.dark .community-app {
+  --sidebar-w: 302px;
+  --members-w: 244px;
+  background: var(--background);
+}
+.dark .community-app .sidebar {
+  grid-template-columns: 64px minmax(0, 1fr);
+  background: var(--ink-1);
+}
+.dark .community-app .community-spaces {
+  background: var(--ink-0);
+  gap: 12px;
+}
+.dark .community-app .community-spaces strong {
+  border-radius: 16px;
+  background: var(--secondary);
+  color: #c7c9d6;
+}
+.dark .community-app .community-spaces button[aria-pressed="true"] strong {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 0 18px #7655df30;
+}
+.dark .community-app .brand,
+.dark .community-app .topbar {
+  height: 62px;
+  min-height: 62px;
+  border-bottom: 1px solid var(--border);
+  background: var(--ink-1);
+  box-shadow: none;
+}
+.dark .community-app .topbar {
+  background: var(--background);
+}
+.dark .community-app .nav-item {
+  border-radius: 7px;
+  min-height: 34px;
+}
+.dark .community-app .nav-item.is-active {
+  background: var(--brand-soft);
+  color: #ece6ff;
+  box-shadow: inset 2px 0 var(--community-purple);
+}
+.dark .community-app .nav-item.is-joined {
+  color: var(--community-cyan);
+}
+.dark .community-app .members {
+  background: var(--ink-1);
+  padding: 24px 12px;
+  border-left: 1px solid var(--border);
+}
+.dark .community-app .message {
+  border-radius: 7px;
+  padding-block: 7px 4px;
+}
+.dark .community-app .message:hover {
+  background: #ffffff04;
+}
+.dark .community-app .message-author {
+  color: #ddd4ff;
+}
+.dark .community-app .message-text {
+  color: #d0d3e0;
+  line-height: 1.65;
+}
+.dark .community-app .cover {
+  background: linear-gradient(115deg, #312843, #1a3940);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.dark .community-app .composer {
+  padding: 12px 22px 22px;
+}
+.dark .community-app .composer input {
+  border-radius: 10px;
+  background: var(--secondary);
+  border: 1px solid #ffffff0a;
+  height: 46px;
+}
+.dark .community-app .composer button {
+  border-radius: 9px;
+}
+.dark .community-app .voice-tile {
+  border-radius: 14px;
+}
+.dark .community-app .voice-dock {
+  background: #53e0da09;
+  border-top: 1px solid #53e0da18;
+}
+.dark .community-app .dock-state {
+  color: var(--community-cyan);
+}
+.dark .direct-message.is-mine {
+  background: #3f335b;
+}
+
+/* Social: spacious media cards, separate composer, suggestions on the right. */
+.dark .social-site-content {
+  padding: 24px 28px;
+}
+.dark .social-site-shell .social-page {
+  --social-accent: var(--community-purple);
+  --social-border: var(--border);
+}
+.dark .social-site-shell .social-layout {
+  grid-template-columns: minmax(0, 720px) minmax(220px, 280px);
+  gap: 26px;
+}
+.dark .social-site-shell .social-tabs {
+  background: transparent;
+  border: 0;
+  margin-bottom: 18px;
+  gap: 8px;
+}
+.dark .social-site-shell .social-tabs button {
+  background: transparent;
+  border-radius: 8px;
+  color: var(--muted-foreground);
+  padding: 12px 17px;
+}
+.dark .social-site-shell .social-tabs button.active {
+  background: var(--brand-soft);
+  color: #e3d9ff;
+}
+.dark .social-site-shell .social-tabs button.active::after {
+  display: none;
+}
+.dark .social-site-shell .social-compose {
+  background: var(--card);
+  border: 1px solid #9775fa20;
+  border-radius: 15px;
+  padding: 23px;
+  margin-bottom: 22px;
+}
+.dark .social-site-shell .social-compose textarea {
+  background: transparent;
+  font-size: 15px;
+  line-height: 1.65;
+}
+.dark .social-site-shell .social-compose-footer button {
+  background: var(--primary);
+  border-radius: 8px;
+  color: white;
+}
+.dark .social-site-shell .social-avatar {
+  background: #423459;
+  color: #e6d9ff;
+}
+.dark .social-site-shell .social-post {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 26px 24px 18px;
+  border-radius: 15px;
+  margin-bottom: 18px;
+}
+.dark .social-site-shell .social-post:hover {
+  background: #282b38;
+}
+.dark .social-site-shell .social-post-body > p {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.dark .social-site-shell .social-actions {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 18px;
+}
+.dark .social-site-shell .social-actions button {
+  background: transparent;
+  color: var(--muted-foreground);
+}
+.dark .social-site-shell .social-actions button:hover {
+  color: var(--community-purple);
+  background: #9775fa12;
+}
+.dark .social-site-shell .social-info {
+  background: var(--ink-1);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+}
+.dark .social-site-shell .social-info h2 {
+  font-size: 15px;
+  letter-spacing: -0.3px;
+}
+.dark .social-site-shell .social-search {
+  background: var(--ink-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.dark .social-site-shell .social-person {
+  border-radius: 8px;
+  padding-block: 12px;
+}
+.dark .social-site-shell .social-trend:hover {
+  background: var(--secondary);
+}
+.dark .gaming-capture-preview img,
+.dark .gaming-capture-preview video {
+  border-radius: 10px;
+}
+
+/* Game discovery and sign-in use the same purple/cyan accents. */
+.dark .games-hero {
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 24px 24px 0;
+  border: 1px solid var(--border);
+}
+.dark .games-hero h1 {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(44px, 6cqw, 76px);
+  letter-spacing: -2px;
+}
+.dark .games-play-button {
+  background: var(--primary);
+  border-radius: 9px;
+  color: white !important;
+}
+.dark .games-play-button:hover {
+  background: #8868ed;
+  box-shadow: none;
+}
+.dark .games-categories button {
+  border-radius: 9px;
+}
+.dark .games-categories button[aria-pressed="true"] {
+  background: var(--brand-soft);
+  border-color: #9775fa50;
+  color: #d9cdff;
+}
+.dark .game-card-art {
+  border-radius: 13px;
+}
+.dark .gaming-lobby-intro {
+  background: linear-gradient(120deg, #292139, #17363b);
+  border-radius: 15px;
+}
+.dark .gaming-lobby-intro > span,
+.dark .gaming-post-link {
+  color: var(--community-cyan) !important;
+}
+.dark .gaming-room-grid > article,
+.dark .gaming-scoreboard {
+  border-radius: 13px;
+}
+.dark .account-page {
+  background:
+    radial-gradient(ellipse at 15% 25%, #7655df17, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, #53e0da09, transparent 45%), var(--ink-0);
+}
+.dark .account-layout {
+  max-width: 1080px;
+  gap: 70px;
+}
+.community-login-mark {
+  color: var(--community-purple);
+  font-size: 58px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -3px;
+  margin-bottom: 28px;
+}
+.community-login-mark > span {
+  display: block;
+  color: var(--muted-foreground);
+  font-size: 9px;
+  letter-spacing: 2px;
+  margin-top: 14px;
+}
+.dark .account-story h2 {
+  font-size: 43px;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+}
+.dark .account-story h2 span {
+  color: var(--community-cyan);
+}
+.dark .account-channel-icon {
+  border-radius: 11px;
+  color: var(--community-purple);
+  background: #9775fa14;
+  border-color: #9775fa20;
+}
+.dark .account-card {
+  border-radius: 18px;
+  background: var(--ink-1);
+  border: 1px solid #ffffff10;
+  box-shadow: 0 20px 70px #0003;
+  padding: 32px;
+}
+.dark .auth-tabs {
+  border-radius: 9px;
+  background: var(--ink-0);
+}
+.dark .auth-tabs button[aria-pressed="true"] {
+  background: var(--secondary);
+  color: #e5dcff;
+  border-radius: 7px;
+}
+.dark .auth-form input:not([type="radio"]) {
+  border-radius: 8px;
+  border-color: #ffffff14;
+  background: var(--ink-0);
+}
+.dark .auth-form form > button {
+  background: var(--primary);
+  border-radius: 8px;
+  color: white;
+}
+.dark .auth-switch button {
+  color: var(--community-purple);
+}
+@media (max-width: 1250px) {
+  .dark .live-home {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dark .live-online {
+    display: none;
+  }
+  .dark .account-layout {
+    gap: 35px;
+  }
+}
+@media (max-width: 1100px) {
+  .dark .social-site-shell .social-layout {
+    grid-template-columns: minmax(0, 1fr) 230px;
+    gap: 18px;
+  }
+}
+@media (max-width: 900px) {
+  .dark .account-layout {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+  }
+  .dark .win-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dark .win-side {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .dark .live-center {
+    padding: 18px 14px;
+  }
+  .dark .live-hero {
+    min-height: 350px;
+  }
+  .dark .live-hero-copy {
+    padding: 28px 22px 48px;
+  }
+  .dark .live-hero h1 {
+    font-size: 32px;
+  }
+  .dark .live-hero-label {
+    right: 18px;
+    font-size: 9px;
+  }
+  .dark .home-destinations {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .dark .home-destinations > a {
+    padding: 13px;
+  }
+  .dark .live-stats {
+    gap: 7px;
+  }
+  .dark .live-stats > a {
+    padding: 12px 9px;
+    column-gap: 5px;
+  }
+  .dark .live-stats span {
+    font-size: 9px;
+  }
+  .dark .live-heading h2 {
+    font-size: 18px;
+  }
+  .dark .social-site-content {
+    padding: 14px 10px;
+  }
+  .dark .social-site-shell .social-layout {
+    display: flex;
+    gap: 0;
+  }
+  .dark .social-site-shell .social-compose,
+  .dark .social-site-shell .social-post {
+    padding: 18px 14px;
+    border-radius: 12px;
+  }
+  .dark .games-hero {
+    margin: 12px 12px 0;
+  }
+  .dark .games-hero h1 {
+    font-size: 48px;
+  }
+  .dark .account-card {
+    padding: 26px 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dark .live-game-cover img,
+  .dark .home-destinations > a {
+    transition: none;
+  }
+}
