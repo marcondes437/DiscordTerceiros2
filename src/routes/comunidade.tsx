@@ -1,3 +1,5 @@
+import { CommunityHub } from "@/components/community-hub";
+import "./community-hub.css";
 import { useActivityPresence } from '@/components/activity-presence';
 import { DeletedChannels } from '@/components/deleted-channels';
 ﻿import { AvatarDecoration } from '@/components/profile-decorations';
@@ -120,6 +122,7 @@ function dayLabel(iso: string) {
 const timeLabel = (iso: string) => new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
 function Community() {
+  const [overview, setOverview] = useState(true);
   const [space, setSpace] = useState<Space>('geral');
   const [active, setActive] = useState('geral');
   const [voiceView, setVoiceView] = useState<string | null>(null);
@@ -243,6 +246,9 @@ function Community() {
   }
 
   function selectSpace(next: Space) {
+    setOverview(true);
+    setVoiceView(null);
+    setDrawer(false);
     setProfileView(false);
     setDirectView(false);
     if (!availableSpaces.some((s) => s.id === next) || next === space) return;
@@ -257,9 +263,10 @@ function Community() {
 
   function selectChannel(id: string) {
     setProfileView(false);
+    setDirectView(false);
+    setOverview(false);
     if (!allChannels.some((c) => c.id === id)) return;
-    setMessages([]);
-    setDraft('');
+    if (id !== active) { setMessages([]); setDraft(''); }
     setActive(id);
     setVoiceView(null);
     setDrawer(false);
@@ -267,6 +274,8 @@ function Community() {
   }
   function selectRoom(id: string) {
     setProfileView(false);
+    setDirectView(false);
+    setOverview(false);
     if (!rooms.some((r) => r.id === id)) return;
     setVoiceView(id);
     setDrawer(false);
@@ -344,13 +353,14 @@ function Community() {
         </div>
 
         <nav className="sidebar-scroll">
+          <button type="button" className={`community-overview-link ${overview && !directView && !profileView ? "is-active" : ""}`} onClick={() => { setOverview(true); setDirectView(false); setProfileView(false); setVoiceView(null); setDrawer(false); }}><House size={17}/><span>Explorar comunidade</span></button>
           <div className="space-heading"><strong>{spaceName}</strong><small>{space === 'geral' ? 'Terceiro A + Terceiro B' : 'Somente membros da sua turma'}</small></div>
           {!turma && <p className="space-missing">Sua conta ainda não tem uma turma vinculada. O espaço Geral continua disponível.</p>}
           {groups.map((g) => (
             <section className="nav-group" key={g.label}>
               <h2 className="nav-label">{g.label}</h2>
               {g.channels.map((c) => (
-                <div className="channel-nav-row" key={c.id}><button type="button" className={`nav-item ${active === c.id && !voiceView ? 'is-active' : ''}`} onClick={() => selectChannel(c.id)}>
+                <div className="channel-nav-row" key={c.id}><button type="button" className={`nav-item ${active === c.id && !voiceView && !overview ? 'is-active' : ''}`} onClick={() => selectChannel(c.id)}>
                   <Hash />
                   <span className="truncate">{c.name}</span>
                 </button>{user && <button type="button" className="channel-rename-button" title={`Renomear #${c.name}`} aria-label={`Renomear canal ${c.name}`} onClick={() => setRenameTarget({ id: spaceChannel(space, c.id), kind: 'text', name: c.name })}><Settings size={14}/></button>}</div>
@@ -432,17 +442,17 @@ function Community() {
           <Button variant="ghost" size="icon" className="menu-button" title="Abrir canais" onClick={() => setDrawer(true)}>
             <Menu />
           </Button>
-          {voiceView ? <Volume2 className="topbar-icon" /> : <Hash className="topbar-icon" />}
-          <h1 className="topbar-title">{voiceView ? roomName(voiceView) : channel.name}</h1>
-          {!voiceView && <span className="topbar-about">{channel.about}</span>}
+          {overview ? <House className="topbar-icon" /> : voiceView ? <Volume2 className="topbar-icon" /> : <Hash className="topbar-icon" />}
+          <h1 className="topbar-title">{overview ? "Explorar comunidade" : voiceView ? roomName(voiceView) : channel.name}</h1>
+          {!voiceView && <span className="topbar-about">{overview ? spaceName : channel.about}</span>}
           <div className="topbar-tools">
-            {!voiceView && (
+            {!voiceView && !overview && (
               <label className="search">
                 <Search />
                 <Input aria-label="Buscar mensagens" placeholder="Buscar" value={search} onChange={(e) => setSearch(e.target.value)} />
               </label>
             )}
-            {!voiceView && (
+            {!voiceView && !overview && (
               <Button variant="ghost" size="icon" className="members-toggle" title={showMembers ? 'Ocultar membros' : 'Mostrar membros'} aria-pressed={showMembers} onClick={() => setShowMembers(!showMembers)}>
                 <Users />
               </Button>
@@ -453,7 +463,7 @@ function Community() {
           </div>
         </header>
 
-        {!allChannels.length && !voiceView ? <div className="channel-empty-state"><Hash size={36}/><h2>Nenhum canal de texto neste espaço</h2><p>Você pode restaurar os canais excluídos ou entrar em uma sala de voz.</p><Button onClick={() => setShowDeletedChannels(true)}>Ver canais excluídos</Button></div> : voiceView ? (
+        {overview ? <CommunityHub name={name} avatar={profiles[user?.id ?? '']?.avatarSrc} space={spaceName} online={online.map(p => ({ id: p.id, name: profiles[p.id]?.display_name || p.name, avatar: profiles[p.id]?.avatarSrc, room: p.room }))} groups={groups} rooms={rooms.map(r => ({ ...r, people: peopleIn(r.id).map(p => ({ ...p, name: profiles[p.id]?.display_name || p.name, avatar: profiles[p.id]?.avatarSrc })) }))} joinedRoom={call.room} onChannel={selectChannel} onRoom={id => { selectRoom(id); if (call.room !== id) joinRoom(id); }} onPerson={id => id === user?.id ? openProfileEditor() : openPrivateChat(id)} onInvite={() => setPanel('invite')} onProfile={openProfileEditor}/> : !allChannels.length && !voiceView ? <div className="channel-empty-state"><Hash size={36}/><h2>Nenhum canal de texto neste espaço</h2><p>Você pode restaurar os canais excluídos ou entrar em uma sala de voz.</p><Button onClick={() => setShowDeletedChannels(true)}>Ver canais excluídos</Button></div> : voiceView ? (
           <VoiceRoom
             roomId={voiceView}
             roomName={roomName(voiceView)}
