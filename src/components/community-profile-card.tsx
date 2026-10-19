@@ -5,6 +5,7 @@ import { MessageCircle, Settings, Volume2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import type { CommunityProfile } from '@/hooks/use-community-profiles';
 import { CommunityFullProfile } from './community-full-profile';
+import { ProfileFriendButton } from './profile-friend-button';
 
 export function CommunityProfileCard({ children, id, name, profile, online = false, room, self = false, onMessage, onEdit, onRoom }: { children: ReactNode; id: string; name: string; profile?: CommunityProfile; online?: boolean; room?: string; self?: boolean; onMessage: (id: string) => void; onEdit?: () => void; onRoom?: () => void }) {
   const [open, setOpen] = useState(false);
@@ -14,6 +15,7 @@ export function CommunityProfileCard({ children, id, name, profile, online = fal
     <PopoverTrigger asChild><button type="button" className="profile-card-trigger" aria-label={`Ver perfil de ${displayName}`}>{children}</button></PopoverTrigger>
     <PopoverContent className="community-profile-card" side="left" align="start" sideOffset={14} collisionPadding={12} onCloseAutoFocus={event => { if (expanded) event.preventDefault(); }} aria-label={`Perfil de ${displayName}`}>
       <ProfileEffect theme={profile?.profile_effect}/>
+      {!self && open && <ProfileFriendButton id={id} name={displayName}/>}
       <div className="community-profile-cover" style={{ backgroundColor: profile?.banner_color || '#18181b' }}>{profile?.bannerSrc && <img src={profile.bannerSrc} alt="Capa do perfil"/>}</div>
       <div className="community-profile-content">
         <button type="button" className="community-profile-photo" title="Ver perfil completo" aria-label={`Abrir perfil completo de ${displayName}`} onClick={() => { setOpen(false); setExpanded(true); }}>{profile?.avatarSrc ? <ProfilePhoto src={profile.avatarSrc} alt={`Foto de ${displayName}`}/> : displayName.slice(0,1).toUpperCase()}<span className={online ? 'is-online' : ''} aria-label={online ? 'Online' : 'Offline'}/><AvatarDecoration theme={profile?.avatar_decoration}/></button>
