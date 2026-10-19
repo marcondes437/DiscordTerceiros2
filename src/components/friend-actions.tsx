@@ -5,24 +5,40 @@ export function FriendActions({
   onAction,
   canMessage = false,
   onMessage,
+  allowConversationRequest = false,
+  messageRequest = false,
 }: {
   state: FriendshipState;
   busy: boolean;
   onAction: (action: FriendAction) => void;
   canMessage?: boolean;
   onMessage?: () => void;
+  allowConversationRequest?: boolean;
+  messageRequest?: boolean;
 }) {
   return (
     <div className="friend-actions">
       {state === "none" && (
-        <button type="button" disabled={busy} onClick={() => onAction("request")}>
-          Adicionar amigo
-        </button>
+        <>
+          <button type="button" disabled={busy} onClick={() => onAction("request")}>
+            Adicionar amigo
+          </button>
+          {allowConversationRequest && (
+            <button
+              type="button"
+              className="friend-secondary"
+              disabled={busy}
+              onClick={() => onAction("request-message")}
+            >
+              Solicitar conversa
+            </button>
+          )}
+        </>
       )}
       {state === "incoming" && (
         <>
           <button type="button" disabled={busy} onClick={() => onAction("accept")}>
-            Aceitar
+            {messageRequest ? "Aceitar e adicionar amigo" : "Aceitar"}
           </button>
           <button
             type="button"

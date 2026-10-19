@@ -8,6 +8,18 @@ A barra de mensagens diretas mostra pessoas com quem já existe histórico e o a
 
 As solicitações são atualizadas a cada cinco segundos enquanto a aba está visível e ao voltar à janela. Falhas ao verificar amizades bloqueiam o envio na interface.
 
+## Solicitações de conversa, exclusão e aparência
+
+**Pendentes** reúne pedidos comuns de amizade. **Solicitações de mensagens**, no menu lateral, reúne pedidos de conversa sem texto. Em **Adicionar amigos**, a busca por nome ignora maiúsculas e acentos. Cada resultado permite adicionar como amigo ou solicitar uma conversa. Aceitar uma solicitação de conversa adiciona a amizade e libera as mensagens; recusar ou cancelar remove apenas o pedido.
+
+O botão de lixeira permite apagar somente mensagens próprias. A exclusão vale para todos os participantes, não apenas para o navegador de quem apagou. Não há permissão para excluir mensagens de outras pessoas. O histórico restante é preservado.
+
+O botão de sol/lua no topo alterna o tema da comunidade entre claro e escuro. A preferência é salva no navegador. O tema se aplica aos canais, mensagens privadas, amigos, solicitações e menus; não muda o perfil de jogos aprovado.
+
+Depois de `friendships.sql`, aplique `message-deletion.sql` e `message-requests.sql`. Essas duas alterações já foram aplicadas ao projeto conectado. `message-requests.verify.sql` verificou solicitações sem texto, aceite pelo destinatário, isolamento de terceiros, exclusão pelo autor e preservação das demais mensagens em uma transação com rollback.
+
+Validação desta atualização: 57 testes locais passaram, além do teste de integração no Supabase e da compilação de produção. A aparência não foi verificada em um navegador nesta sessão.
+
 ## Banco e validação
 
 `supabase/friendships.sql` deve ser aplicado depois de `supabase/direct-messages.sql` e `supabase/social.sql`. A alteração foi aplicada no projeto conectado via migração `community_friend_requests_and_private_message_access`.

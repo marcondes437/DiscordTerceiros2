@@ -1,14 +1,14 @@
 import { useFriendships } from "@/hooks/use-friendships";
-import { friendshipState, conversationIds } from "@/lib/friendships";
+import { friendshipState, friendshipWith, conversationIds } from "@/lib/friendships";
 import { FriendActions } from "./friend-actions";
 import { CommunityPeople } from "./community-people";
 import { useActivityPresence, mergeActivity } from "./activity-presence";
 import "@/routes/community-people.css";
 import { AvatarDecoration, ProfileEffect } from "./profile-decorations";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import type { User } from "@supabase/supabase-js";
-import { ArrowLeft, MessageCircle, SendHorizontal, Users } from "lucide-react";
+import { ArrowLeft, MessageCircle, SendHorizontal, Users, Trash2, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { CommunityProfile } from "@/hooks/use-community-profiles";
 
@@ -25,6 +25,7 @@ type Person = { id: string; display_name: string };
 const db = supabase as any;
 
 export function DirectMessages({
+  themeControl,
   user,
   onSignIn,
   open,
@@ -34,6 +35,7 @@ export function DirectMessages({
   profiles = {},
   requestedRecipient,
 }: {
+  themeControl?: ReactNode;
   requestedRecipient?: string | null;
   profiles?: Record<string, CommunityProfile>;
   user: User | null;
@@ -44,6 +46,7 @@ export function DirectMessages({
   mainTarget: HTMLElement | null;
 }) {
   const friends = useFriendships(user?.id);
+  const [section, setSection] = useState<"friends" | "requests">("friends");
   const activity = useActivityPresence();
   const livePeople = mergeActivity([...activity.online, ...activity.classOnline]);
   const [people, setPeople] = useState<Person[]>([]);
@@ -59,8 +62,16 @@ export function DirectMessages({
   const [draft, setDraft] = useState("");
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
   const unread = messages.filter((m) => m.recipient_id === user?.id && !m.read_at).length;
+  const pendingFriends = friends.rows.filter(
+    (f) => f.recipient_id === user?.id && f.status === "pending" && f.request_kind !== "message",
+  ).length;
+  const pendingMessages = friends.rows.filter(
+    (f) => f.recipient_id === user?.id && f.status === "pending" && f.request_kind === "message",
+  ).length;
+  const notificationCount = unread + pendingFriends + pendingMessages;
   const directory = people.map((p) => ({ ...p, ...profiles[p.id] }));
   const existingIds = conversationIds(messages, user?.id);
   const inbox = directory.filter(
@@ -180,6 +191,26 @@ export function DirectMessages({
     }
   }
 
+  async function removeMessage(message: Message) {
+    if (!user || message.sender_id !== user.id || deleting) return;
+    setDeleting(message.id);
+    try {
+      const result = await db
+        .from("direct_messages")
+        .delete()
+        .eq("id", message.id)
+        .eq("sender_id", user.id)
+        .select("id");
+      if (result.error) throw result.error;
+      setMessages((current) => current.filter((m) => m.id !== message.id));
+      setError("");
+    } catch {
+      setError("Não foi possível apagar a mensagem. Tente novamente.");
+    } finally {
+      setDeleting(null);
+    }
+  }
+
   return (
     <>
       <button
@@ -187,13 +218,17 @@ export function DirectMessages({
         type="button"
         title="Mensagens privadas"
         aria-pressed={open}
-        aria-label={`Mensagens privadas${unread ? `, ${unread} não lidas` : ""}`}
+        aria-label={`Amigos e mensagens${notificationCount ? `, ${notificationCount} notificações` : ""}`}
         onClick={() => (user ? setOpen(true) : onSignIn())}
       >
         <strong>
           <MessageCircle size={24} />
         </strong>
-        {unread > 0 && <span className="direct-unread">{unread > 99 ? "99+" : unread}</span>}
+        {notificationCount > 0 && (
+          <span className="direct-unread">
+            {notificationCount > 99 ? "99+" : notificationCount}
+          </span>
+        )}
       </button>
       <div className="direct-rail-separator" />
       {open &&
@@ -215,11 +250,27 @@ export function DirectMessages({
             </button>
             <button
               type="button"
-              className={`direct-directory-link ${!selected ? "is-active" : ""}`}
-              onClick={() => setSelected(null)}
+              className={`direct-directory-link ${!selected && section === "friends" ? "is-active" : ""}`}
+              onClick={() => {
+                setSelected(null);
+                setSection("friends");
+              }}
             >
               <Users size={18} />
               <strong>Amigos</strong>
+              {pendingFriends > 0 && <span className="inbox-badge">{pendingFriends}</span>}
+            </button>
+            <button
+              type="button"
+              className={`direct-directory-link ${!selected && section === "requests" ? "is-active" : ""}`}
+              onClick={() => {
+                setSelected(null);
+                setSection("requests");
+              }}
+            >
+              <Mail size={18} />
+              <span>Solicitações de mensagens</span>
+              {pendingMessages > 0 && <span className="inbox-badge">{pendingMessages}</span>}
             </button>
             <div className="direct-inbox-heading">
               <MessageCircle size={18} />
@@ -269,6 +320,8 @@ export function DirectMessages({
             {!selected ? (
               <>
                 <CommunityPeople
+                  section={section}
+                  themeControl={themeControl}
                   selfId={user?.id || ""}
                   friendships={friends.rows}
                   busy={friends.busy}
@@ -315,6 +368,7 @@ export function DirectMessages({
                   </span>
                   <h1>{person?.display_name ?? "Mensagens diretas"}</h1>
                   <span className="direct-private-label">Conversa privada</span>
+                  {themeControl}
                 </header>
                 <div className="direct-workspace-body">
                   <section className="direct-chat" aria-label="Conversa privada">
@@ -377,6 +431,18 @@ export function DirectMessages({
                                 </header>
                                 <p>{m.body}</p>
                               </div>
+                              {m.sender_id === user?.id && (
+                                <button
+                                  type="button"
+                                  className="direct-delete-message"
+                                  aria-label="Apagar minha mensagem"
+                                  title="Apagar mensagem"
+                                  disabled={deleting === m.id}
+                                  onClick={() => void removeMessage(m)}
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              )}
                             </article>
                           ))}
                         </>
@@ -391,6 +457,11 @@ export function DirectMessages({
                         </p>
                       )}
                       <FriendActions
+                        allowConversationRequest
+                        messageRequest={
+                          friendshipWith(friends.rows, user?.id, selected)?.request_kind ===
+                          "message"
+                        }
                         state={selectedState}
                         busy={friends.busy || friends.loading}
                         onAction={(action) => selected && void friends.act(selected, action)}

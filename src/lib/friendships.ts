@@ -3,10 +3,20 @@ export type Friendship = {
   requester_id: string;
   recipient_id: string;
   status: "pending" | "accepted";
+  request_kind?: "friendship" | "message";
   created_at?: string;
 };
 export type FriendshipState = "none" | "friend" | "incoming" | "outgoing";
-export type FriendAction = "request" | "accept" | "remove";
+export type FriendAction = "request" | "request-message" | "accept" | "remove";
+export function matchesPersonName(name: string, query: string) {
+  const normalize = (value: string) =>
+    value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase()
+      .trim();
+  return normalize(name).includes(normalize(query));
+}
 export function friendshipWith(
   rows: Friendship[],
   self: string | undefined,

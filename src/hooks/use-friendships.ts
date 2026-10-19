@@ -17,7 +17,7 @@ export function useFriendships(userId?: string) {
     try {
       const result = await db
         .from("community_friendships")
-        .select("id,requester_id,recipient_id,status,created_at")
+        .select("id,requester_id,recipient_id,status,created_at,request_kind")
         .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`);
       if (current.current !== userId || run !== sequence.current) return;
       if (result.error) throw result.error;
@@ -55,10 +55,14 @@ export function useFriendships(userId?: string) {
     try {
       const row = friendshipWith(rows, userId, other);
       let result;
-      if (action === "request")
+      if (action === "request" || action === "request-message")
         result = await db
           .from("community_friendships")
-          .insert({ requester_id: userId, recipient_id: other });
+          .insert({
+            requester_id: userId,
+            recipient_id: other,
+            request_kind: action === "request-message" ? "message" : "friendship",
+          });
       else if (!row) throw new Error("Solicitação não encontrada. Atualize suas amizades.");
       else if (action === "accept")
         result = await db
@@ -73,7 +77,7 @@ export function useFriendships(userId?: string) {
             ? "Já existe uma solicitação entre vocês. Atualize a lista."
             : "Não foi possível atualizar a amizade. Tente novamente.",
         );
-      if (action !== "request" && !result.data?.length)
+      if (action !== "request" && action !== "request-message" && !result.data?.length)
         throw new Error("A solicitação já mudou. Atualize a lista.");
       await refresh();
     } catch (e) {

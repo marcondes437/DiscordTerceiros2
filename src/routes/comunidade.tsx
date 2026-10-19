@@ -1,3 +1,6 @@
+import { useCommunityTheme } from "@/hooks/use-community-theme";
+import { CommunityThemeToggle } from "@/components/community-theme-toggle";
+import "./community-layout.css";
 import { CommunityHub } from "@/components/community-hub";
 import "./community-hub.css";
 import { useActivityPresence } from '@/components/activity-presence';
@@ -122,6 +125,8 @@ function dayLabel(iso: string) {
 const timeLabel = (iso: string) => new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
 function Community() {
+  const {theme: communityTheme,toggle: toggleCommunityTheme}=useCommunityTheme();
+  const themeControl=<CommunityThemeToggle theme={communityTheme} onToggle={toggleCommunityTheme}/>;
   const [overview, setOverview] = useState(true);
   const [space, setSpace] = useState<Space>('geral');
   const [active, setActive] = useState('geral');
@@ -300,11 +305,11 @@ function Community() {
   };
 
   return (
-    <div className={`community-app ${showMembers && !voiceView ? '' : 'no-members'} ${directView ? 'is-direct-view' : ''} ${profileView && user ? 'is-profile-view' : ''}`}>
+    <div data-community-theme={communityTheme} className={`community-app ${showMembers && !voiceView ? '' : 'no-members'} ${directView ? 'is-direct-view' : ''} ${profileView && user ? 'is-profile-view' : ''}`}>
       {/* ───────── Barra lateral ───────── */}
       <aside className={`sidebar ${drawer ? 'is-open' : ''}`} aria-label="Canais">
         <nav className="community-spaces" aria-label="Espaços da comunidade">
-          <DirectMessages user={user} profiles={profiles} requestedRecipient={directRecipient} onSignIn={() => setAuthOpen(true)} open={directView} setOpen={(open) => { setDirectView(open); if (open) { setProfileView(false); setDirectRecipient(null); } }} sidebarTarget={directSidebar} mainTarget={directMain} />
+          <DirectMessages themeControl={themeControl} user={user} profiles={profiles} requestedRecipient={directRecipient} onSignIn={() => setAuthOpen(true)} open={directView} setOpen={(open) => { setDirectView(open); if (open) { setProfileView(false); setDirectRecipient(null); } }} sidebarTarget={directSidebar} mainTarget={directMain} />
           {availableSpaces.map((s) => <button key={s.id} type="button" title={s.name} aria-label={s.name} aria-pressed={space === s.id} onClick={() => selectSpace(s.id)}><strong>{s.badge}</strong><span>{s.name}</span></button>)}
         </nav>
         <div className="direct-sidebar-target" ref={setDirectSidebar} />
@@ -447,6 +452,7 @@ function Community() {
           <h1 className="topbar-title">{overview ? "Explorar comunidade" : voiceView ? roomName(voiceView) : channel.name}</h1>
           {!voiceView && <span className="topbar-about">{overview ? spaceName : channel.about}</span>}
           <div className="topbar-tools">
+            {themeControl}
             {!voiceView && !overview && (
               <label className="search">
                 <Search />

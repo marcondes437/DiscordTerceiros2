@@ -6,10 +6,27 @@ import { DirectMessages } from "@/components/direct-messages";
 const fixtures = vi.hoisted(() => ({
   friends: [] as { id: string; requester_id: string; recipient_id: string; status: string }[],
   insert: vi.fn(),
+  messages: [] as {
+    id: string;
+    sender_id: string;
+    recipient_id: string;
+    body: string;
+    created_at: string;
+    read_at: string | null;
+  }[],
+  remove: vi.fn(),
+  equal: vi.fn(),
 }));
 beforeEach(() => {
+  Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+    configurable: true,
+    value: vi.fn(),
+  });
   fixtures.friends = [];
   fixtures.insert.mockClear();
+  fixtures.messages = [];
+  fixtures.remove.mockClear();
+  fixtures.equal.mockClear();
 });
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
@@ -21,6 +38,14 @@ vi.mock("@/integrations/supabase/client", () => ({
         fixtures.insert(table, payload);
         return query;
       };
+      query.delete = () => {
+        fixtures.remove(table);
+        return query;
+      };
+      query.eq = (column: string, value: string) => {
+        fixtures.equal(column, value);
+        return query;
+      };
       query.then = (resolve: (value: unknown) => unknown) =>
         Promise.resolve({
           data:
@@ -28,7 +53,9 @@ vi.mock("@/integrations/supabase/client", () => ({
               ? [{ id: "colleague", display_name: "Colega" }]
               : table === "community_friendships"
                 ? fixtures.friends
-                : [],
+                : table === "direct_messages"
+                  ? fixtures.messages
+                  : [],
           error: null,
         }).then(resolve);
       return query;
@@ -39,6 +66,52 @@ vi.mock("@/integrations/supabase/client", () => ({
 afterEach(() => {
   cleanup();
   document.body.replaceChildren();
+});
+
+it("lets the sender delete their own message without exposing deletion on someone else's", async () => {
+  fixtures.friends = [
+    { id: "friend", requester_id: "member", recipient_id: "colleague", status: "accepted" },
+  ];
+  fixtures.messages = [
+    {
+      id: "own",
+      sender_id: "member",
+      recipient_id: "colleague",
+      body: "Minha mensagem",
+      created_at: "2026-10-19T10:00:00Z",
+      read_at: "2026-10-19T10:01:00Z",
+    },
+    {
+      id: "other",
+      sender_id: "colleague",
+      recipient_id: "member",
+      body: "Mensagem do colega",
+      created_at: "2026-10-19T10:02:00Z",
+      read_at: "2026-10-19T10:03:00Z",
+    },
+  ];
+  const sidebar = document.createElement("div");
+  const main = document.createElement("div");
+  document.body.append(sidebar, main);
+  render(
+    <DirectMessages
+      user={{ id: "member", user_metadata: {} } as User}
+      requestedRecipient="colleague"
+      onSignIn={vi.fn()}
+      open
+      setOpen={vi.fn()}
+      sidebarTarget={sidebar}
+      mainTarget={main}
+    />,
+  );
+  expect(await screen.findByText("Minha mensagem")).toBeInTheDocument();
+  expect(screen.getAllByRole("button", { name: "Apagar minha mensagem" })).toHaveLength(1);
+  fireEvent.click(screen.getByRole("button", { name: "Apagar minha mensagem" }));
+  await waitFor(() => expect(screen.queryByText("Minha mensagem")).not.toBeInTheDocument());
+  expect(screen.getByText("Mensagem do colega")).toBeInTheDocument();
+  expect(fixtures.remove).toHaveBeenCalledWith("direct_messages");
+  expect(fixtures.equal).toHaveBeenCalledWith("id", "own");
+  expect(fixtures.equal).toHaveBeenCalledWith("sender_id", "member");
 });
 
 it("renders private messages in the channel and main panels without a dialog", async () => {

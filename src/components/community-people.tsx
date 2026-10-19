@@ -1,12 +1,20 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Gamepad2, Headphones, MessageCircle, Search, Users } from "lucide-react";
 import { games } from "@/data/games";
 import type { ActivityMember } from "@/components/activity-presence";
 import { ProfilePhoto } from "@/components/profile-photo";
 import { FriendActions } from "./friend-actions";
-import { friendshipState, type Friendship, type FriendAction } from "@/lib/friendships";
+import {
+  friendshipState,
+  friendshipWith,
+  matchesPersonName,
+  type Friendship,
+  type FriendAction,
+} from "@/lib/friendships";
 export type DirectoryPerson = { id: string; display_name: string; avatarSrc?: string };
 export function CommunityPeople({
+  themeControl,
+  section = "friends",
   people,
   online,
   unreadIds,
@@ -18,6 +26,8 @@ export function CommunityPeople({
   onFriendAction,
   loading = false,
 }: {
+  themeControl?: ReactNode;
+  section?: "friends" | "requests";
   people: DirectoryPerson[];
   online: ActivityMember[];
   unreadIds: string[];
@@ -29,25 +39,32 @@ export function CommunityPeople({
   onFriendAction: (id: string, action: FriendAction) => void;
   loading?: boolean;
 }) {
-  const [filter, setFilter] = useState<"online" | "all" | "unread" | "pending" | "add">("online");
+  const [friendFilter, setFilter] = useState<"online" | "all" | "unread" | "pending" | "add">(
+    "online",
+  );
+  const filter = section === "requests" ? "requests" : friendFilter;
   const [query, setQuery] = useState("");
   const input = useRef<HTMLInputElement>(null);
   const presence = new Map(online.map((p) => [p.id, p]));
   const relation = (id: string) => friendshipState(friendships, selfId, id);
   const incoming = friendships.filter(
-    (f) => f.recipient_id === selfId && f.status === "pending",
+    (f) => f.recipient_id === selfId && f.status === "pending" && f.request_kind !== "message",
   ).length;
   const filtered = people.filter(
     (p) =>
       p.id !== selfId &&
-      (filter === "add"
-        ? relation(p.id) !== "friend"
-        : filter === "pending"
-          ? ["incoming", "outgoing"].includes(relation(p.id))
-          : relation(p.id) === "friend" &&
-            (filter === "all" ||
-              (filter === "online" ? presence.has(p.id) : unreadIds.includes(p.id)))) &&
-      p.display_name.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()),
+      (filter === "requests"
+        ? friendshipWith(friendships, selfId, p.id)?.request_kind === "message" &&
+          ["incoming", "outgoing"].includes(relation(p.id))
+        : filter === "add"
+          ? relation(p.id) !== "friend"
+          : filter === "pending"
+            ? ["incoming", "outgoing"].includes(relation(p.id)) &&
+              friendshipWith(friendships, selfId, p.id)?.request_kind !== "message"
+            : relation(p.id) === "friend" &&
+              (filter === "all" ||
+                (filter === "online" ? presence.has(p.id) : unreadIds.includes(p.id)))) &&
+      matchesPersonName(p.display_name, query),
   );
   const active = people.filter(
     (p) => relation(p.id) === "friend" && (presence.get(p.id)?.room || presence.get(p.id)?.game),
@@ -82,41 +99,64 @@ export function CommunityPeople({
     <div className="people-view">
       <header className="people-toolbar">
         <h1>
-          <Users size={18} /> Amigos
+          <Users size={18} /> {section === "requests" ? "Solicitações de mensagens" : "Amigos"}
         </h1>
         <span className="people-toolbar-rule" />
-        <nav aria-label="Filtrar amigos">
-          <button
-            type="button"
-            aria-pressed={filter === "online"}
-            onClick={() => setFilter("online")}
-          >
-            Online
-          </button>
-          <button type="button" aria-pressed={filter === "all"} onClick={() => setFilter("all")}>
-            Todos
-          </button>
-          <button
-            type="button"
-            aria-pressed={filter === "pending"}
-            onClick={() => setFilter("pending")}
-          >
-            Pendentes {incoming > 0 && <span>{incoming}</span>}
-          </button>
-          <button
-            type="button"
-            aria-pressed={filter === "unread"}
-            onClick={() => setFilter("unread")}
-          >
-            Não lidas
-          </button>
-        </nav>
-        <button type="button" className="people-new" onClick={add} aria-pressed={filter === "add"}>
-          Adicionar amigos
-        </button>
+        {section === "friends" && (
+          <>
+            <nav aria-label="Filtrar amigos">
+              <button
+                type="button"
+                aria-pressed={filter === "online"}
+                onClick={() => setFilter("online")}
+              >
+                Online
+              </button>
+              <button
+                type="button"
+                aria-pressed={filter === "all"}
+                onClick={() => setFilter("all")}
+              >
+                Todos
+              </button>
+              <button
+                type="button"
+                aria-pressed={filter === "pending"}
+                onClick={() => setFilter("pending")}
+              >
+                Pendentes {incoming > 0 && <span>{incoming}</span>}
+              </button>
+              <button
+                type="button"
+                aria-pressed={filter === "unread"}
+                onClick={() => setFilter("unread")}
+              >
+                Não lidas
+              </button>
+            </nav>
+            <button
+              type="button"
+              className="people-new"
+              onClick={add}
+              aria-pressed={filter === "add"}
+            >
+              Adicionar amigos
+            </button>
+          </>
+        )}
+        {themeControl}
       </header>
       <div className="people-body">
         <main className="people-main">
+          {filter === "requests" && (
+            <div className="friend-discovery-intro">
+              <h2>Você escolhe quem pode conversar.</h2>
+              <p>
+                Estes pedidos não contêm mensagens. Ao aceitar, vocês se tornam amigos e a conversa
+                privada é liberada. Você também pode recusar ou cancelar um pedido enviado.
+              </p>
+            </div>
+          )}
           {filter === "add" && (
             <div className="friend-discovery-intro">
               <h2>Encontre sua turma.</h2>
@@ -137,15 +177,17 @@ export function CommunityPeople({
             <Search size={16} />
           </label>
           <h2>
-            {filter === "online"
-              ? "AMIGOS ONLINE"
-              : filter === "all"
-                ? "TODOS OS AMIGOS"
-                : filter === "pending"
-                  ? "PEDIDOS DE AMIZADE"
-                  : filter === "add"
-                    ? "COLEGAS DA COMUNIDADE"
-                    : "AMIGOS COM MENSAGENS NÃO LIDAS"}{" "}
+            {filter === "requests"
+              ? "SOLICITAÇÕES DE CONVERSA"
+              : filter === "online"
+                ? "AMIGOS ONLINE"
+                : filter === "all"
+                  ? "TODOS OS AMIGOS"
+                  : filter === "pending"
+                    ? "PEDIDOS DE AMIZADE"
+                    : filter === "add"
+                      ? "COLEGAS DA COMUNIDADE"
+                      : "AMIGOS COM MENSAGENS NÃO LIDAS"}{" "}
             — {filtered.length}
           </h2>
           {loading || (!connected && filter === "online") ? (
@@ -183,6 +225,10 @@ export function CommunityPeople({
                     </button>
                   )}
                   <FriendActions
+                    allowConversationRequest={filter === "add"}
+                    messageRequest={
+                      friendshipWith(friendships, selfId, p.id)?.request_kind === "message"
+                    }
                     state={relation(p.id)}
                     busy={busy}
                     onAction={(action) => onFriendAction(p.id, action)}
@@ -200,7 +246,7 @@ export function CommunityPeople({
               <h3>
                 {query
                   ? "Ninguém com esse nome."
-                  : filter === "pending"
+                  : filter === "pending" || filter === "requests"
                     ? "Nenhum pedido pendente."
                     : filter === "unread"
                       ? "Tudo em dia por aqui."
@@ -209,13 +255,15 @@ export function CommunityPeople({
                         : "Seus amigos aparecem aqui."}
               </h3>
               <p>
-                {filter === "pending"
-                  ? "Pedidos recebidos e enviados ficam nesta aba."
-                  : filter === "unread"
-                    ? "Você não tem mensagens não lidas de amigos."
-                    : "Entrar na comunidade não cria uma amizade nem uma conversa. Adicione alguém para começar."}
+                {filter === "requests"
+                  ? "Os pedidos para conversar aparecem aqui, sem liberar o envio de mensagens antes do seu aceite."
+                  : filter === "pending"
+                    ? "Pedidos recebidos e enviados ficam nesta aba."
+                    : filter === "unread"
+                      ? "Você não tem mensagens não lidas de amigos."
+                      : "Entrar na comunidade não cria uma amizade nem uma conversa. Adicione alguém para começar."}
               </p>
-              {filter !== "add" && (
+              {filter !== "add" && filter !== "requests" && (
                 <button type="button" onClick={add}>
                   Encontrar colegas
                 </button>
