@@ -10,6 +10,13 @@ const props = {
   online: [{ id: "ana", name: "Ana", room: "estudos" }],
   unreadIds: ["bia"],
   connected: true,
+  selfId: "self",
+  friendships: [
+    { id: "a", requester_id: "self", recipient_id: "ana", status: "accepted" as const },
+    { id: "b", requester_id: "bia", recipient_id: "self", status: "accepted" as const },
+  ],
+  busy: false,
+  onFriendAction: vi.fn(),
 };
 it("filters real presence, the directory and unread conversations", () => {
   render(<CommunityPeople {...props} onSelect={vi.fn()} />);
@@ -31,7 +38,7 @@ it("opens conversations from the list and live activity and focuses search", () 
   expect(onSelect).toHaveBeenLastCalledWith("ana");
   fireEvent.click(within(screen.getByRole("complementary")).getByRole("button", { name: /Ana/ }));
   expect(onSelect).toHaveBeenCalledTimes(2);
-  fireEvent.click(screen.getByRole("button", { name: "Nova conversa" }));
+  fireEvent.click(screen.getByRole("button", { name: "Adicionar amigos" }));
   expect(screen.getByRole("textbox", { name: "Buscar pessoas" })).toHaveFocus();
   fireEvent.change(screen.getByRole("textbox", { name: "Buscar pessoas" }), {
     target: { value: "Inexistente" },
@@ -42,9 +49,9 @@ it("shows connection and empty states without inventing activity", () => {
   const { rerender } = render(
     <CommunityPeople {...props} connected={false} online={[]} onSelect={vi.fn()} />,
   );
-  expect(screen.getByRole("status")).toHaveTextContent("Conectando");
+  expect(screen.getByRole("status")).toHaveTextContent("Carregando");
   rerender(<CommunityPeople {...props} online={[]} unreadIds={[]} onSelect={vi.fn()} />);
-  expect(screen.getByText("O ponto de encontro está tranquilo.")).toBeInTheDocument();
+  expect(screen.getByText("Seus amigos aparecem aqui.")).toBeInTheDocument();
   expect(screen.getByText("Por enquanto, tudo tranquilo.")).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Não lidas" }));
   expect(screen.getByText("Tudo em dia por aqui.")).toBeInTheDocument();

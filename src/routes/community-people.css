@@ -1,3 +1,56 @@
+.friend-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.friend-actions button {
+  border-radius: 5px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 10px;
+  font-weight: 650;
+  padding: 7px 10px;
+}
+.friend-actions button.friend-secondary {
+  background: var(--secondary);
+  color: var(--muted-foreground);
+}
+.friend-actions button:disabled {
+  opacity: 0.45;
+  cursor: wait;
+}
+.friend-actions > span {
+  font-size: 10px;
+  color: var(--muted-foreground);
+}
+.friend-conversation-gate {
+  margin: 0 20px 8px;
+  padding: 14px;
+  background: var(--ink-1);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+.friend-conversation-gate p {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+.friend-discovery-intro {
+  margin-bottom: 22px;
+}
+.friend-discovery-intro h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+.friend-discovery-intro p {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  line-height: 1.7;
+  margin-top: 8px;
+}
 .people-view {
   height: 100%;
   width: 100%;
