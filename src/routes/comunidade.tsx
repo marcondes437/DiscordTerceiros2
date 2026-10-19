@@ -4,6 +4,7 @@ import { CommunityThemeToggle } from "@/components/community-theme-toggle";
 import "./community-layout.css";
 import { CommunityHub } from "@/components/community-hub";
 import "./community-hub.css";
+import "./dark-matter.css";
 import { useActivityPresence } from '@/components/activity-presence';
 import { DeletedChannels } from '@/components/deleted-channels';
 ﻿import { AvatarDecoration } from '@/components/profile-decorations';
