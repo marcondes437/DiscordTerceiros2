@@ -45,10 +45,10 @@ export function CrimsonHomeHero({ online, connected }: { online: number; connect
               Só se for junto.
             </h2>
             <p>Rabisco & SlitherSenai. O intervalo ganhou um lugar.</p>
-            <Link to="/jogar" search={{ game: game.id }} aria-label={`Jogar ${game.name}`}>
+            <a href={`/jogar?game=${game.id}`} aria-label={`Jogar ${game.name}`}>
               Jogar {game.name}
               <ArrowUpRight size={17} />
-            </Link>
+            </a>
             <div className="crimson-game-tabs" aria-label="Escolher jogo">
               {featuredGames.map((item, index) => (
                 <button
