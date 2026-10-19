@@ -78,3 +78,118 @@
 @media (max-width: 1050px) { .dark .account-page.account-access { grid-template-columns: 1fr 1fr; padding: 14px; gap: 0; } .access-entry { padding-inline: 24px; } .account-access .auth-fields-panel { padding: 30px 24px; } .access-showcase { padding: 24px; } .access-demo-top > span { display: none; } .access-demo-body { padding: 12px; } .access-demo-bottom small { display: none; } }
 @media (max-width: 760px) { .dark .account-page.account-access { grid-template-columns: minmax(0,1fr); padding: 20px; } .access-entry { min-height: calc(100dvh - 40px); padding: 12px 0; } .access-showcase { display: none; } .access-form-wrap { padding-block: 30px; } .account-access .auth-fields-panel { padding: 30px 24px; } .access-footer { padding-top: 20px; } }
 @media (prefers-reduced-motion: reduce) { .access-demo { transform: none; } }
+
+/* Animated crimson atmosphere shared by login and signup. */
+.dark .account-page.account-access {
+  --ring: #ef4556;
+  --border: #ed35432b;
+  position: relative;
+  isolation: isolate;
+  background: #050304;
+}
+.access-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(circle,#ffffff14 1px,transparent 1.3px) 0 0 / 24px 24px;
+}
+.access-ambient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,#05030455,transparent 65%),linear-gradient(0deg,#050304aa,transparent 45%);
+  z-index: 1;
+}
+.access-ambient > i {
+  position: absolute;
+  width: 75vw;
+  height: 75vw;
+  max-height: 1100px;
+  max-width: 1100px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse,#b414283d,transparent 65%);
+  top: -40%;
+  left: -30%;
+  animation: access-crimson-drift 24s ease-in-out infinite alternate;
+}
+.access-ambient > i:nth-child(2) {
+  top: 10%; left: 48%;
+  background: radial-gradient(ellipse,#e3213540,transparent 65%);
+  animation-duration: 29s;
+  animation-delay: -12s;
+}
+.access-ambient > i:nth-child(3) {
+  width: 55vw; height: 55vw; top: 65%; left: 5%;
+  background: radial-gradient(ellipse,#74091c55,transparent 65%);
+  animation-duration: 33s;
+  animation-delay: -18s;
+}
+.access-ambient > span {
+  position: absolute;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: #f04e5d;
+  box-shadow: 0 0 14px #ed263b80;
+  left: 12%; top: 90%;
+  opacity: 0;
+  animation: access-ember-rise 27s linear infinite;
+}
+.access-ambient > span:nth-of-type(2) { left: 29%; top: 95%; animation-delay: -7s; animation-duration: 32s; }
+.access-ambient > span:nth-of-type(3) { left: 45%; top: 80%; animation-delay: -19s; width: 2px; height: 2px; background: #fff9; }
+.access-ambient > span:nth-of-type(4) { left: 58%; top: 95%; animation-delay: -12s; animation-duration: 35s; }
+.access-ambient > span:nth-of-type(5) { left: 72%; top: 85%; animation-delay: -24s; width: 2px; height: 2px; }
+.access-ambient > span:nth-of-type(6) { left: 86%; top: 90%; animation-delay: -5s; animation-duration: 31s; background: #fff9; }
+.access-ambient > span:nth-of-type(7) { left: 7%; top: 65%; animation-delay: -14s; animation-duration: 36s; width: 2px; height: 2px; }
+.access-ambient > span:nth-of-type(8) { left: 94%; top: 75%; animation-delay: -21s; animation-duration: 30s; }
+.access-entry { position: relative; }
+.access-logo .brand-mark { filter: none; }
+.account-access .auth-fields-panel {
+  background: linear-gradient(145deg,#1b1518f7,#111012fa);
+  border-color: #e7505926;
+  box-shadow: 0 24px 70px #0005,0 0 60px #e31a2b08,inset 0 1px #ffffff06;
+}
+.dark .account-access .auth-form input:not([type="radio"]) { background: #0e0b0d; border-color: #45343a; }
+.dark .account-access .auth-form input:focus-visible { border-color: #f06572; outline-color: #eb40516b; }
+.dark .account-access .auth-form form > button:hover { background: #fff; box-shadow: 0 0 24px #ef344330; }
+.dark .account-access .auth-switch button:hover { color: #ff8290; }
+.access-showcase { border-color: #ef53602b; background: radial-gradient(ellipse at 55% 40%,#7d10201a,transparent 65%),#07040540; }
+.access-orbit,.access-orbit::after { border-color: #ef566212; }
+.access-floating-label { background: linear-gradient(#24191d,#120c0f); border-color: #e754653b; box-shadow: 0 10px 50px #d41c2e17; color: #f5e4e7; }
+.access-floating-label svg { color: #f37782; }
+.access-demo { background: #130f12; border-color: #e6556433; box-shadow: 0 0 100px #c8192c16,0 35px 80px #0008; }
+.access-demo-rail { background: #0b0709; color: #ad7d84; }
+.access-demo-rail > span { background: #44202a; color: #ffb8be; }
+.access-demo-top > span { color: #b08e94; }
+.access-demo-cover > img { filter: grayscale(1) sepia(1) saturate(5) hue-rotate(315deg) brightness(.48); }
+.access-demo-cover small { color: #ffd0d5; }
+.access-demo-bottom > div { background: #ffffff04; border-color: #e5626e14; }
+.access-demo-bottom svg { color: #f0919a; }
+.access-demo-bottom small { color: #ad9199; }
+.access-floating-note { background: #201519; border-color: #e6526330; }
+.access-floating-note span { color: #ffb5be; background: #4c1b29; }
+.access-feature-line span:first-child { border-color: #e44859; color: #f6d9dd; }
+@keyframes access-crimson-drift {
+  from { transform: translate3d(-4%,-3%,0) scale(.95); opacity: .65; }
+  to { transform: translate3d(12%,10%,0) scale(1.13); opacity: 1; }
+}
+@keyframes access-ember-rise {
+  0% { transform: translate3d(0,0,0); opacity: 0; }
+  15% { opacity: .55; }
+  80% { opacity: .4; }
+  100% { transform: translate3d(50px,-65vh,0); opacity: 0; }
+}
+body[data-conecta-motion="off"] .access-ambient > i,
+body[data-conecta-motion="subtle"] .access-ambient > i { animation: none; }
+body[data-conecta-motion="off"] .access-ambient > span,
+body[data-conecta-motion="subtle"] .access-ambient > span { animation: none; opacity: 0; }
+@media(max-width:760px) {
+  .access-ambient > i { width: 150vw; height: 150vw; top: -5%; left: -80%; }
+  .access-ambient > i:nth-child(2) { left: 10%; top: 35%; }
+  .access-ambient > i:nth-child(3) { display: none; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .access-ambient > i { animation: none !important; }
+  .access-ambient > span { animation: none !important; opacity: 0; }
+}

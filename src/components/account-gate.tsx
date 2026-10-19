@@ -39,6 +39,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
   if (authenticated) return children;
   return (
     <main className="account-page account-access">
+      <div className="access-ambient" aria-hidden="true"><i/><i/><i/><span/><span/><span/><span/><span/><span/><span/><span/></div>
       <section className="access-entry" aria-label="Acesso ao Conecta">
         <div className="access-form-wrap">
           <div className="access-logo"><BrandLogo /></div>
