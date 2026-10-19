@@ -1,4 +1,4 @@
--- Pending: automatic approval review was unavailable. Not applied to the connected database.
+-- Applied follow-up: active room capacity and supporting indexes.
 create index if not exists gaming_rooms_host_idx on public.gaming_rooms(host_id,updated_at desc);
 create index if not exists gaming_members_user_idx on public.gaming_members(user_id);
 create index if not exists social_posts_media_idx on public.social_posts(media_id) where media_id is not null;

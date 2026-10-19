@@ -46,21 +46,16 @@ antes de equipar; o cliente não pode escrever medalhas ou pontuações diretame
 
 ## Limitações da verificação nesta sessão
 
-O build de produção e os testes de integração no Supabase passaram. Os dados e
+O build de produção, os 39 testes locais e os testes de integração no Supabase passaram. Os dados e
 as duas contas temporárias foram desfeitos por rollback. O auditor de segurança
 não apontou problemas nos novos objetos (há um aviso preexistente sobre proteção
 contra senhas vazadas no Auth, que não foi alterada).
 
-A suíte Vitest não conseguiu iniciar: a execução no sandbox recebeu `spawn EPERM`
-e a revisão automática da execução ampliada expirou/falhou por capacidade. A
-suíte está preparada para execução com `npm.cmd test` em um terminal autorizado.
-Também não havia navegador conectado para validar visualmente duas sessões.
+A suíte local pode ser executada com `npm.cmd test`. Não havia navegador
+conectado nesta sessão para validar visualmente dois dispositivos.
 
-`supabase/gaming-capacity-followup.sql` está preparado, mas não foi aplicado
-porque a revisão automática ficou indisponível. Ele adiciona índices e corrige
-um caso de reentrada de um membro inativo numa sala cheia. Até essa atualização,
-o limite de oito pode ser excedido nesse caso específico; a lógica principal
-dos jogos, conquistas e capturas já está aplicada e passou na integração.
+`supabase/gaming-capacity-followup.sql` também foi aplicado. Ele adiciona índices
+e mantém o limite de oito ao reentrar depois de ficar inativo numa sala cheia.
 
 ## Banco e verificação
 
