@@ -44,7 +44,7 @@ export function ChatMediaPicker({
 }: {
   draft: string;
   onChange: (draft: string) => void;
-  inputRef: RefObject<HTMLInputElement | null>;
+  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement | null>;
   disabled?: boolean;
   limit: number;
   userId?: string | undefined;
