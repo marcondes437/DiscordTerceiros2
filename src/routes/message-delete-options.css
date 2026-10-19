@@ -1,0 +1,35 @@
+.message-delete-dialog {
+  max-width: min(420px, calc(100vw - 30px));
+}
+.message-delete-choices {
+  display: grid;
+  gap: 10px;
+  margin-top: 4px;
+}
+.message-delete-choices > button {
+  height: auto;
+  min-height: 65px;
+  padding: 14px;
+  justify-content: flex-start;
+  gap: 13px;
+  white-space: normal;
+  text-align: left;
+}
+.message-delete-choices > button > span {
+  display: grid;
+  gap: 4px;
+}
+.message-delete-choices strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.message-delete-choices small {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+.message-delete-error {
+  font-size: 12px;
+  color: var(--destructive);
+}

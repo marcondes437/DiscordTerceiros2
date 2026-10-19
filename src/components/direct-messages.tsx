@@ -1,4 +1,7 @@
 import { useFriendships } from "@/hooks/use-friendships";
+import { useHiddenMessages } from "@/hooks/use-hidden-messages";
+import { MessageDeleteOptions } from "./message-delete-options";
+import { toast } from "sonner";
 import { friendshipState, friendshipWith, conversationIds } from "@/lib/friendships";
 import { FriendActions } from "./friend-actions";
 import { CommunityPeople } from "./community-people";
@@ -12,15 +15,7 @@ import { AvatarDecoration, ProfileEffect } from "./profile-decorations";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import type { User } from "@supabase/supabase-js";
-import {
-  ArrowLeft,
-  MessageCircle,
-  SendHorizontal,
-  Users,
-  Trash2,
-  Mail,
-  Palette,
-} from "lucide-react";
+import { ArrowLeft, MessageCircle, SendHorizontal, Users, Mail, Palette } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { CommunityProfile } from "@/hooks/use-community-profiles";
 
@@ -64,6 +59,7 @@ export function DirectMessages({
   mainTarget: HTMLElement | null;
 }) {
   const friends = useFriendships(user?.id);
+  const { hidden, hide: hideMessage } = useHiddenMessages(user?.id);
   const [section, setSection] = useState<"friends" | "requests" | "themes">("friends");
   const activity = useActivityPresence();
   const livePeople = mergeActivity([...activity.online, ...activity.classOnline]);
@@ -103,7 +99,8 @@ export function DirectMessages({
   const canMessage = !!selected && selectedState === "friend" && !friends.loading && !friends.error;
   const person = directory.find((p) => p.id === selected);
   const conversation = messages.filter(
-    (m) => m.sender_id === selected || m.recipient_id === selected,
+    (m) =>
+      (m.sender_id === selected || m.recipient_id === selected) && !hidden.direct.includes(m.id),
   );
   const surfaceMotion = useMotionSurface<HTMLDivElement>(`${open}:${selected || section}`);
   const messageMotion = useMessageMotion<HTMLDivElement>(
@@ -220,7 +217,7 @@ export function DirectMessages({
   }
 
   async function removeMessage(message: Message) {
-    if (!user || message.sender_id !== user.id || deleting) return;
+    if (!user || message.sender_id !== user.id || deleting) return false;
     setDeleting(message.id);
     try {
       const result = await db
@@ -230,10 +227,14 @@ export function DirectMessages({
         .eq("sender_id", user.id)
         .select("id");
       if (result.error) throw result.error;
+      if (!result.data?.some((row: { id: string }) => row.id === message.id))
+        throw new Error("Message was not deleted");
       setMessages((current) => current.filter((m) => m.id !== message.id));
       setError("");
+      return true;
     } catch {
       setError("Não foi possível apagar a mensagem. Tente novamente.");
+      return false;
     } finally {
       setDeleting(null);
     }
@@ -481,17 +482,25 @@ export function DirectMessages({
                                 </header>
                                 <ChatMessageContent content={m.body} />
                               </div>
-                              {m.sender_id === user?.id && (
-                                <button
-                                  type="button"
+                              {user && (
+                                <MessageDeleteOptions
                                   className="direct-delete-message"
-                                  aria-label="Apagar minha mensagem"
-                                  title="Apagar mensagem"
-                                  disabled={deleting === m.id}
-                                  onClick={() => void removeMessage(m)}
-                                >
-                                  <Trash2 size={15} />
-                                </button>
+                                  own={m.sender_id === user.id}
+                                  label={
+                                    m.sender_id === user.id
+                                      ? "Apagar minha mensagem"
+                                      : "Apagar mensagem recebida"
+                                  }
+                                  onHide={() => {
+                                    if (!hideMessage("direct", m.id))
+                                      toast.info(
+                                        "Mensagem ocultada nesta sessão. O navegador não permitiu salvar a preferência.",
+                                      );
+                                  }}
+                                  {...(m.sender_id === user.id
+                                    ? { onDeleteForEveryone: () => removeMessage(m) }
+                                    : {})}
+                                />
                               )}
                             </article>
                           ))}

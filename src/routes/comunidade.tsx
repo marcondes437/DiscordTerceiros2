@@ -1,4 +1,6 @@
 import { useCommunityTheme } from "@/hooks/use-community-theme";
+import { useHiddenMessages } from "@/hooks/use-hidden-messages";
+import { MessageDeleteOptions } from "@/components/message-delete-options";
 import { ChatMediaPicker } from "@/components/chat-media-picker";
 import { useMotionSurface, useMessageMotion } from "@/components/community-motion";
 import { ChatDraftMedia, ChatMessageContent } from "@/components/chat-message-content";
@@ -138,6 +140,7 @@ function Community() {
   const [active, setActive] = useState('geral');
   const [voiceView, setVoiceView] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const {hidden,hide:hideMessage}=useHiddenMessages(user?.id);
   const {theme: communityTheme,skin: communitySkin,selectSkin,toggle: toggleCommunityTheme,storageNotice}=useCommunityTheme(user?.id);
   const themeControl=<><NotificationBell/><CommunityThemeToggle theme={communityTheme} onToggle={toggleCommunityTheme}/></>;
   const [authOpen, setAuthOpen] = useState(false);
@@ -209,20 +212,25 @@ function Community() {
     let live = true;
     setMessages([]);
     setLoading(true);
-    async function load() {
+    async function load(quiet = false) {
       const { data, error } = await supabase.from('community_messages').select('*').eq('channel', messageChannel).order('created_at', { ascending: false }).limit(100);
       if (!live) return;
-      if (error) toast.error('Não foi possível carregar as mensagens. Recarregue a página.');
-      else setMessages((data ?? []).reverse());
+      if (error) {if(!quiet)toast.error('Não foi possível carregar as mensagens. Recarregue a página.');}
+      else {const next=(data??[]).reverse();setMessages(previous=>previous.length===next.length && previous.every((message,index)=>message.id===next[index]?.id && message.content===next[index]?.content && message.display_name===next[index]?.display_name)?previous:next);}
       setLoading(false);
     }
     void load();
     const ch = supabase
       .channel(`community-chat:${messageChannel}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'community_messages', filter: `channel=eq.${messageChannel}` }, () => void load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'community_messages', filter: `channel=eq.${messageChannel}` }, () => void load(true))
       .subscribe();
+    const refresh=()=>{if(!document.hidden)void load(true);};
+    const timer=window.setInterval(refresh,5000);
+    window.addEventListener('focus',refresh);
     return () => {
       live = false;
+      window.clearInterval(timer);
+      window.removeEventListener('focus',refresh);
       void supabase.removeChannel(ch);
     };
   }, [messageChannel, user?.id, textUnavailable]);
@@ -257,9 +265,12 @@ function Community() {
   }
 
   async function remove(id: string) {
-    const { error } = await supabase.from('community_messages').delete().eq('id', id);
-    if (error) toast.error('Não foi possível apagar a mensagem.');
-    else setMessages((prev) => prev.filter((m) => m.id !== id));
+    if(!user || !messages.some(m=>m.id===id && m.user_id===user.id))return false;
+    try {
+      const {data,error}=await supabase.from('community_messages').delete().eq('id',id).eq('user_id',user.id).select('id');
+      if(error || !data?.some(m=>m.id===id)){toast.error('Não foi possível apagar a mensagem.');return false;}
+      setMessages(prev=>prev.filter(m=>m.id!==id));return true;
+    }catch{toast.error('Não foi possível apagar a mensagem.');return false;}
   }
 
   function selectSpace(next: Space) {
@@ -308,8 +319,8 @@ function Community() {
 
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return q ? messages.filter((m) => `${m.content} ${m.display_name}`.toLowerCase().includes(q)) : messages;
-  }, [messages, search]);
+    return messages.filter(m=>!hidden.channel.includes(m.id) && (!q || `${m.content} ${m.display_name}`.toLowerCase().includes(q)));
+  }, [messages, search,hidden.channel]);
 
   const peopleIn = (roomId: string) => {
     if (call.room === roomId && !call.connecting) return call.participants.map((p) => ({ id: p.peerId, name: p.name, speaking: call.speaking.has(p.peerId), muted: p.muted, deafened: p.deafened, sharing: p.sharing }));
@@ -537,11 +548,7 @@ function Community() {
                             )}
                             <ChatMessageContent content={m.content}/>
                           </div>
-                          {m.user_id === user?.id && (
-                            <Button className="message-delete" variant="ghost" size="icon" title="Apagar mensagem" onClick={() => void remove(m.id)}>
-                              <Trash2 />
-                            </Button>
-                          )}
+                          {user && <MessageDeleteOptions className="message-delete" own={m.user_id===user.id} onHide={()=>{if(!hideMessage('channel',m.id))toast.info('Mensagem ocultada nesta sessão. O navegador não permitiu salvar a preferência.');}} {...(m.user_id===user.id?{onDeleteForEveryone:()=>remove(m.id)}:{})}/>}
                         </li>
                       </Fragment>
                     );
@@ -549,6 +556,7 @@ function Community() {
                 </ol>
 
                 {search && !visible.length && <p className="chat-note">Nenhuma mensagem com “{search}”.</p>}
+                {!search && !!messages.length && !visible.length && <p className="chat-note">As mensagens desta conversa foram ocultadas para você neste navegador.</p>}
                 {user && !loading && !messages.length && !search && <p className="chat-note">Nenhuma mensagem ainda. Mande a primeira.</p>}
                 <div ref={bottom} />
               </div>

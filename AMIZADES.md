@@ -12,7 +12,7 @@ As solicitações são atualizadas a cada cinco segundos enquanto a aba está vi
 
 **Pendentes** reúne pedidos comuns de amizade. **Solicitações de mensagens**, no menu lateral, reúne pedidos de conversa sem texto. Em **Adicionar amigos**, a busca por nome ignora maiúsculas e acentos. Cada resultado permite adicionar como amigo ou solicitar uma conversa. Aceitar uma solicitação de conversa adiciona a amizade e libera as mensagens; recusar ou cancelar remove apenas o pedido.
 
-O botão de lixeira permite apagar somente mensagens próprias. A exclusão vale para todos os participantes, não apenas para o navegador de quem apagou. Não há permissão para excluir mensagens de outras pessoas. O histórico restante é preservado.
+O botão de lixeira abre as opções **Apagar para mim** (oculta qualquer mensagem para sua conta neste navegador) e **Apagar para todos** (remove do banco somente mensagens próprias). Não há permissão para excluir do banco mensagens de outras pessoas. Consulte `APAGAR-MENSAGENS.md` para os detalhes de persistência e atualização.
 
 O botão de sol/lua no topo alterna o tema da comunidade entre claro e escuro. A preferência é salva no navegador. O tema se aplica aos canais, mensagens privadas, amigos, solicitações e menus; não muda o perfil de jogos aprovado.
 

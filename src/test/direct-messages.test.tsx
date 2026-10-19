@@ -123,6 +123,7 @@ it("lets the sender delete their own message without exposing deletion on someon
   expect(await screen.findByText("Minha mensagem")).toBeInTheDocument();
   expect(screen.getAllByRole("button", { name: "Apagar minha mensagem" })).toHaveLength(1);
   fireEvent.click(screen.getByRole("button", { name: "Apagar minha mensagem" }));
+  fireEvent.click(screen.getByRole('button',{name:/^Apagar para todos/}));
   await waitFor(() => expect(screen.queryByText("Minha mensagem")).not.toBeInTheDocument());
   expect(screen.getByText("Mensagem do colega")).toBeInTheDocument();
   expect(fixtures.remove).toHaveBeenCalledWith("direct_messages");
