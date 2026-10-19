@@ -85,3 +85,28 @@ it('attaches screen and microphone before creating the answer', async () => {
     expect(t.sender.replaceTrack.mock.invocationCallOrder[0]).toBeLessThan(pc.createAnswer.mock.invocationCallOrder[0]!);
   }
 });
+
+it('reports missing offers on the answering side instead of waiting forever', async () => {
+  const failed = vi.fn();
+  const onChange = vi.fn();
+  engine = new VoiceEngine({ selfId: 'b', iceServers: [], onChange, send: vi.fn(), onPeerFailed: failed });
+  engine.syncPeers(['a', 'b']);
+  await vi.advanceTimersByTimeAsync(30_000);
+  expect(failed).toHaveBeenCalledWith('a', expect.stringContaining('não completou'));
+  expect(onChange.mock.lastCall?.[0].status.a).toBe('failed');
+  engine.syncPeers(['b']);
+  engine.syncPeers(['a', 'b']);
+  await vi.advanceTimersByTimeAsync(5_000);
+  expect(failed).toHaveBeenCalledTimes(1);
+});
+
+it('reports SDP errors rather than swallowing them and staying connecting', async () => {
+  const failed = vi.fn();
+  engine = new VoiceEngine({ selfId: 'a', iceServers: [], onChange: vi.fn(), send: vi.fn(), onPeerFailed: failed });
+  engine.syncPeers(['b']);
+  const pc = PeerConnection.instances[0]!;
+  pc.createOffer.mockRejectedValueOnce(new Error('SDP unavailable'));
+  await vi.advanceTimersByTimeAsync(0);
+  expect(failed).toHaveBeenCalledWith('b', expect.stringContaining('SDP unavailable'));
+  expect(pc.close).toHaveBeenCalled();
+});

@@ -36,7 +36,7 @@ export type EngineOptions = {
   iceServers: RTCIceServer[];
   send: (signal: Signal) => void;
   onChange: (snapshot: EngineSnapshot) => void;
-  onPeerFailed?: (peerId: string) => void;
+  onPeerFailed?: (peerId: string, reason?: string) => void;
 };
 
 type Role = 'mic' | 'screen' | 'screenAudio';
@@ -88,6 +88,7 @@ export class VoiceEngine {
   private meters = new Map<string, Meter>();
   private meterTimer: ReturnType<typeof setInterval> | null = null;
   private helloTimers = new Map<string, Timer>();
+  private helloAttempts = new Map<string, number>();
   private recreations = new Map<string, number>();
   private earlyCandidates = new Map<string, RTCIceCandidateInit[]>();
   private known = new Set<string>();
@@ -113,6 +114,15 @@ export class VoiceEngine {
     if (this.destroyed) return;
     const self = this.opts.selfId;
     const next = new Set(ids.filter((id) => id !== self));
+    for (const id of this.known) {
+      if (!next.has(id)) {
+        this.helloAttempts.delete(id);
+        this.recreations.delete(id);
+        const status = { ...this.snapshot.status };
+        delete status[id];
+        this.update({ status });
+      }
+    }
     this.known = next;
     for (const id of [...this.peers.keys()]) if (!next.has(id)) this.closePeer(id, true);
     for (const id of [...this.helloTimers.keys()]) if (!next.has(id)) this.clearHello(id);
@@ -135,6 +145,7 @@ export class VoiceEngine {
     if (signal.kind === 'offer') {
       if (this.isInitiator(from)) return;
       this.clearHello(from);
+      this.helloAttempts.delete(from);
       let peer = this.peers.get(from);
       if (!peer || peer.session !== signal.session) {
         if (peer) this.closePeer(from, false);
@@ -144,6 +155,7 @@ export class VoiceEngine {
         this.earlyCandidates.delete(key);
       }
       const p = peer;
+      this.watchConnection(p);
       this.enqueue(p, async () => {
         await p.pc.setRemoteDescription(signal.sdp);
         if (!p.tx.mic) await this.bindAnswererTransceivers(p);
@@ -377,9 +389,14 @@ export class VoiceEngine {
   /** An SDP answer does not mean ICE found a usable network route. */
   private watchConnection(p: Peer) {
     if (p.connectTimer) clearTimeout(p.connectTimer);
-    if (!p.initiator || p.closed || p.pc.connectionState === 'connected') return;
+    if (p.closed || p.pc.connectionState === 'connected') return;
     p.connectTimer = setTimeout(() => {
-      if (!p.closed && p.pc.connectionState !== 'connected') this.restartIce(p);
+      if (p.closed || p.pc.connectionState === 'connected') return;
+      if (p.initiator) this.restartIce(p);
+      else {
+        this.setStatus(p.id, 'reconnecting');
+        this.scheduleHello(p.id, 0);
+      }
     }, CONNECT_TIMEOUT_MS);
   }
 
@@ -390,10 +407,19 @@ export class VoiceEngine {
       setTimeout(() => {
         this.helloTimers.delete(id);
         if (this.destroyed || !this.known.has(id)) return;
+        if (this.snapshot.status[id] === 'failed') return;
         const p = this.peers.get(id);
         if (!p || p.pc.connectionState !== 'connected') {
+          const attempts = (this.helloAttempts.get(id) ?? 0) + 1;
+          this.helloAttempts.set(id, attempts);
+          if (attempts > MAX_RECREATIONS) {
+            this.closePeer(id, false);
+            this.setStatus(id, 'failed');
+            this.opts.onPeerFailed?.(id, 'O outro participante não completou a conexão. Saia e entre novamente na sala nos dois dispositivos.');
+            return;
+          }
           this.opts.send({ kind: 'hello', from: this.opts.selfId, to: id });
-          this.scheduleHello(id, delay * 2);
+          this.scheduleHello(id, HELLO_DELAY_MS);
         }
       }, delay),
     );
@@ -420,7 +446,11 @@ export class VoiceEngine {
 
   private enqueue(p: Peer, job: () => Promise<void>) {
     p.queue = p.queue.then(async () => { if (!p.closed) await job(); }).catch((err) => {
-      if (!p.closed) console.warn('[voz] falha na negociação com', p.id, err);
+      if (p.closed) return;
+      console.error('[voz] falha na negociação com', p.id, err);
+      this.closePeer(p.id, false);
+      this.setStatus(p.id, 'failed');
+      this.opts.onPeerFailed?.(p.id, `Falha ao preparar áudio/tela: ${err instanceof Error ? err.message : String(err)}`);
     });
   }
 

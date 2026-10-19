@@ -177,13 +177,13 @@ export function useCommunityCall() {
           onChange: (snapshot) => {
             if (current === generation.current) setMedia(snapshot);
           },
-          onPeerFailed: () => {
+          onPeerFailed: (_peerId, reason) => {
             if (failedNotice.current) return;
             failedNotice.current = true;
             toast.error(
-              hasRelayConfigured()
+              reason || (hasRelayConfigured()
                 ? 'Não foi possível conectar com um participante. Verifique a internet de vocês.'
-                : 'Não foi possível conectar com um participante. Redes de escola ou 4G costumam exigir um servidor TURN (veja LEIA-ME).',
+                : 'Não foi possível conectar com um participante. Redes de escola ou 4G costumam exigir um servidor TURN (veja LEIA-ME).'),
             );
           },
         });
