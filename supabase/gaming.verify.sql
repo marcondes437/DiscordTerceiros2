@@ -1,0 +1,64 @@
+-- Integration verification with two temporary users. Everything is rolled back.
+begin;
+insert into auth.users(id,aud,role,email,raw_app_meta_data,raw_user_meta_data,created_at,updated_at) values
+ ('10000000-0000-4000-8000-000000000001','authenticated','authenticated','gaming-test-1@example.invalid','{}','{}',now(),now()),
+ ('10000000-0000-4000-8000-000000000002','authenticated','authenticated','gaming-test-2@example.invalid','{}','{}',now(),now());
+insert into public.social_profiles(id,display_name) values('10000000-0000-4000-8000-000000000001','Gaming test 1'),('10000000-0000-4000-8000-000000000002','Gaming test 2') on conflict(id) do nothing;
+do $$
+declare room jsonb; other jsonb; roomid uuid; word text; snake jsonb; media uuid; head int;
+begin
+ execute 'set local role authenticated';
+ perform set_config('request.jwt.claims','{"sub":"10000000-0000-4000-8000-000000000001","role":"authenticated"}',true);
+ room:=public.gaming_action(null,'create','{"game":"rabisco"}'); roomid:=(room->>'id')::uuid;
+ begin perform public.gaming_action(roomid,'start'); raise exception 'TEST: Rabisco incorrectly starts with one player'; exception when others then if sqlerrm like 'TEST:%' then raise; end if; end;
+ perform set_config('request.jwt.claims','{"sub":"10000000-0000-4000-8000-000000000002","role":"authenticated"}',true);
+ perform public.gaming_action(roomid,'join');
+ begin perform public.gaming_action(roomid,'start'); raise exception 'TEST: non-host can start'; exception when others then if sqlerrm like 'TEST:%' then raise; end if; end;
+ perform set_config('request.jwt.claims','{"sub":"10000000-0000-4000-8000-000000000001","role":"authenticated"}',true);
+ room:=public.gaming_action(roomid,'start'); word:=room->>'word';
+ if word is null then raise exception 'TEST: drawer did not get secret'; end if;
+ perform public.gaming_action(roomid,'draw','{"points":[[0.1,0.2],[0.4,0.5]],"color":"#171717","width":5}');
+ perform set_config('request.jwt.claims','{"sub":"10000000-0000-4000-8000-000000000002","role":"authenticated"}',true);
+ other:=public.gaming_action(roomid,'view');
+ if other->>'word' is not null then raise exception 'TEST: secret leaked'; end if;
+ if jsonb_array_length(other->'state'->'strokes')<>1 then raise exception 'TEST: drawing not shared'; end if;
+ begin perform public.gaming_action(roomid,'draw','{"points":[[0,0]],"color":"#171717"}'); raise exception 'TEST: other player can draw'; exception when others then if sqlerrm like 'TEST:%' then raise; end if; end;
+ other:=public.gaming_action(roomid,'guess',jsonb_build_object('guess',word));
+ if not exists(select 1 from public.gaming_members where room_id=roomid and user_id=auth.uid() and score=10) then raise exception 'TEST: guess not scored'; end if;
+ if not exists(select 1 from public.gaming_badges where user_id=auth.uid() and badge='detective') then raise exception 'TEST: detective badge missing'; end if;
+ begin perform public.gaming_action(roomid,'guess',jsonb_build_object('guess',word)); raise exception 'TEST: repeat guess scored'; exception when others then if sqlerrm like 'TEST:%' then raise; end if; end;
+ perform public.gaming_action(null,'equip','{"frame":"detective","title":"detective"}');
+ begin perform public.gaming_action(null,'equip','{"frame":"serpent","title":"serpent"}'); raise exception 'TEST: locked cosmetic equipped'; exception when others then if sqlerrm like 'TEST:%' then raise; end if; end;
+ begin insert into public.gaming_badges(user_id,badge) values(auth.uid(),'serpent'); raise exception 'TEST: client forged badge'; exception when insufficient_privilege then null; end;
+ begin update public.gaming_members set score=999 where user_id=auth.uid(); raise exception 'TEST: client forged score'; exception when insufficient_privilege then null; end;
+ begin perform secret from public.gaming_rooms where id=roomid; raise exception 'TEST: client read secret column'; exception when insufficient_privilege then null; end;
+ perform set_config('request.jwt.claims','{"sub":"10000000-0000-4000-8000-000000000001","role":"authenticated"}',true);
+ snake:=public.gaming_action(null,'create','{"game":"slithersenai"}'); roomid:=(snake->>'id')::uuid;
+ perform public.gaming_action(roomid,'start');
+ execute 'reset role';
+ update public.gaming_rooms set state=jsonb_set(state,'{food}','[]') where id=roomid;
+ execute 'set local role authenticated';
+ snake:=public.gaming_action(roomid,'tick');
+ if jsonb_array_length(snake->'state'->'snakes'->auth.uid()::text->'body')<>3 then raise exception 'TEST: snake did not spawn'; end if;
+ head:=(snake->'state'->'snakes'->auth.uid()::text->'body'->>0)::int;
+ execute 'reset role';
+ update public.gaming_rooms set state=jsonb_set(state,'{food}',jsonb_build_array(head+1)) where id=roomid;
+ execute 'set local role authenticated';
+ perform pg_sleep(0.22); snake:=public.gaming_action(roomid,'tick');
+ if not exists(select 1 from public.gaming_members where room_id=roomid and user_id=auth.uid() and score=1) then raise exception 'TEST: snake food not scored'; end if;
+ begin insert into public.gaming_media(user_id,path,kind,title) values(auth.uid(),auth.uid()::text||'/missing.png','image','Missing file'); raise exception 'TEST: fake capture accepted'; exception when insufficient_privilege then null; end;
+ execute 'reset role';
+ insert into storage.objects(bucket_id,name,owner_id,metadata) values('gaming-captures','10000000-0000-4000-8000-000000000001/test.png','10000000-0000-4000-8000-000000000001','{"mimetype":"image/png","size":100}');
+ execute 'set local role authenticated';
+ insert into public.gaming_media(user_id,path,kind,title) values(auth.uid(),auth.uid()::text||'/test.png','image','Gaming integration capture') returning id into media;
+ insert into public.social_posts(author_id,body,media_id) values(auth.uid(),'Gaming integration test',media);
+ if not exists(select 1 from public.gaming_badges where user_id=auth.uid() and badge='collector') then raise exception 'TEST: capture badge missing'; end if;
+ perform set_config('request.jwt.claims','{"sub":"10000000-0000-4000-8000-000000000002","role":"authenticated"}',true);
+ begin insert into public.social_posts(author_id,body,media_id) values(auth.uid(),'Not my capture',media); raise exception 'TEST: another member attached owned capture'; exception when insufficient_privilege then null; end;
+ if (select count(*) from public.gaming_media where id=media)<>1 then raise exception 'TEST: community cannot view shared media'; end if;
+ perform set_config('request.jwt.claims','{}',true);
+ begin perform public.gaming_action(roomid,'view'); raise exception 'TEST: unauthenticated player accepted'; exception when others then if sqlerrm like 'TEST:%' then raise; end if; end;
+ execute 'reset role';
+end $$;
+rollback;
+select 'Passed: two-player drawing, secret isolation, turn/host ownership, scoring, badges, cosmetics, snake movement, uploads, social sharing, RLS and unauthenticated access. All fixtures rolled back.' as verification;

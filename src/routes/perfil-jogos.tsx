@@ -20,6 +20,8 @@ import { ProfilePhoto } from "@/components/profile-photo";
 import { useActivityPresence } from "@/components/activity-presence";
 import { useGamingAccount } from "@/hooks/use-gaming-account";
 import { games } from "@/data/games";
+import { GamingGallery, GamingAchievements } from "@/components/gaming-media";
+import { useGameCosmetics } from "@/hooks/use-game-cosmetics";
 import "./perfil-jogos.css";
 
 export const Route = createFileRoute("/perfil-jogos")({
@@ -38,6 +40,7 @@ export function GamingProfile() {
   const { user, profile, name, favorites, toggleFavorite, busy, error, refreshProfile } =
     useGamingAccount();
   const { online, classOnline, connected } = useActivityPresence();
+  const cosmetics = useGameCosmetics(user?.id);
   const [authOpen, setAuthOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [tab, setTab] = useState<Tab>("info");
@@ -94,7 +97,16 @@ export function GamingProfile() {
             <div className="console-identity">
               <div className="console-avatar-wrap">
                 <button
-                  className="console-avatar"
+                  className={`console-avatar ${cosmetics.frame ? "has-earned-frame" : ""}`}
+                  style={
+                    cosmetics.frame
+                      ? {
+                          outline: `4px solid ${cosmetics.frame.color}`,
+                          outlineOffset: "4px",
+                          boxShadow: `0 0 28px ${cosmetics.frame.color}40`,
+                        }
+                      : undefined
+                  }
                   onClick={edit}
                   aria-label="Alterar foto de perfil"
                 >
@@ -112,6 +124,11 @@ export function GamingProfile() {
               </div>
               <div className="console-person">
                 <h1>{name}</h1>
+                {cosmetics.title && (
+                  <span className="gaming-earned-title" style={{ color: cosmetics.title.color }}>
+                    {cosmetics.title.title}
+                  </span>
+                )}
                 <p className="console-tagline">
                   {profile?.bio || "Seu próximo jogo. Sua próxima história."}
                 </p>
@@ -310,14 +327,7 @@ export function GamingProfile() {
                 <div className="console-section-heading">
                   <h2>Conquistas</h2>
                 </div>
-                <div className="console-empty">
-                  <Trophy size={32} />
-                  <h3>Uma história para construir</h3>
-                  <p>Os jogos ainda não enviam conquistas ou pontuações para o Conecta.</p>
-                  <Link to="/jogos">
-                    Conhecer os jogos <ArrowUpRight size={15} />
-                  </Link>
-                </div>
+                {user && <GamingAchievements userId={user.id} onEquip={cosmetics.refresh} />}
               </section>
             )}
             {(tab === "info" || tab === "captures") && (
@@ -325,19 +335,7 @@ export function GamingProfile() {
                 <div className="console-section-heading">
                   <h2>Capturas</h2>
                 </div>
-                <div className="console-empty console-captures">
-                  <Images size={28} />
-                  <div>
-                    <h3>Seus melhores momentos vão ter lugar aqui.</h3>
-                    <p>
-                      O perfil ainda não possui uma galeria de capturas. Você pode compartilhar seus
-                      momentos no Social.
-                    </p>
-                  </div>
-                  <Link to="/social">
-                    Abrir Social <ArrowUpRight size={15} />
-                  </Link>
-                </div>
+                {user && <GamingGallery userId={user.id} />}
               </section>
             )}
             {tab === "info" && (

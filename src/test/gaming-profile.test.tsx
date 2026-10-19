@@ -17,6 +17,11 @@ vi.mock("@/components/social-site-shell", () => ({
   SocialSiteShell: ({ children }: any) => <main>{children}</main>,
 }));
 vi.mock("@/components/community-auth", () => ({ CommunityAuth: () => null }));
+vi.mock("@/components/gaming-media", () => ({
+  GamingGallery: () => <p>Galeria de capturas</p>,
+  GamingAchievements: () => <p>Medalhas desbloqueadas</p>,
+}));
+vi.mock("@/hooks/use-game-cosmetics", () => ({ useGameCosmetics: () => ({ refresh: vi.fn() }) }));
 vi.mock("@/components/community-profile-editor", () => ({
   CommunityProfileEditor: ({ onClose }: any) => (
     <section aria-label="Editar perfil">
@@ -45,10 +50,10 @@ it("switches profile sections using clicks and keyboard without inventing achiev
   render(<GamingProfile />);
   expect(screen.getByRole("heading", { name: "Samuel" })).toBeInTheDocument();
   fireEvent.click(screen.getByRole("tab", { name: "Conquistas" }));
-  expect(screen.getByRole("tabpanel")).toHaveTextContent("ainda não enviam conquistas");
+  expect(screen.getByRole("tabpanel")).toHaveTextContent("Medalhas desbloqueadas");
   fireEvent.keyDown(screen.getByRole("tab", { name: "Conquistas" }), { key: "ArrowRight" });
   expect(screen.getByRole("tab", { name: "Capturas" })).toHaveAttribute("aria-selected", "true");
-  expect(screen.getByRole("tabpanel")).toHaveTextContent("ainda não possui uma galeria");
+  expect(screen.getByRole("tabpanel")).toHaveTextContent("Galeria de capturas");
 });
 
 it("keeps favorites and profile editing connected to the existing actions", () => {

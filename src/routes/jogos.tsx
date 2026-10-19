@@ -241,8 +241,7 @@ function Games() {
             SENAI CONECTA <i /> JOGOS
           </span>
           <p>
-            Jogos feitos pela nossa turma. Quando disponíveis, as capas levam direto ao site de cada
-            jogo.
+            Jogos integrados à comunidade. Crie uma sala, copie o convite e chame a turma para jogar.
           </p>
         </footer>
       </div>

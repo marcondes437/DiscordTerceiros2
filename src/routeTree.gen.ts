@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ComunidadeRouteImport } from './routes/comunidade'
+import { Route as JogarRouteImport } from './routes/jogar'
 import { Route as JogosRouteImport } from './routes/jogos'
 import { Route as PerfilJogosRouteImport } from './routes/perfil-jogos'
 import { Route as SocialRouteImport } from './routes/social'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const ComunidadeRoute = ComunidadeRouteImport.update({
   id: '/comunidade',
   path: '/comunidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JogarRoute = JogarRouteImport.update({
+  id: '/jogar',
+  path: '/jogar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JogosRoute = JogosRouteImport.update({
@@ -50,6 +56,7 @@ const TurmasRoute = TurmasRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/comunidade': typeof ComunidadeRoute
+  '/jogar': typeof JogarRoute
   '/jogos': typeof JogosRoute
   '/perfil-jogos': typeof PerfilJogosRoute
   '/social': typeof SocialRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/comunidade': typeof ComunidadeRoute
+  '/jogar': typeof JogarRoute
   '/jogos': typeof JogosRoute
   '/perfil-jogos': typeof PerfilJogosRoute
   '/social': typeof SocialRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/comunidade': typeof ComunidadeRoute
+  '/jogar': typeof JogarRoute
   '/jogos': typeof JogosRoute
   '/perfil-jogos': typeof PerfilJogosRoute
   '/social': typeof SocialRoute
@@ -75,13 +84,27 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/comunidade' | '/jogos' | '/perfil-jogos' | '/social' | '/turmas'
+    | '/'
+    | '/comunidade'
+    | '/jogar'
+    | '/jogos'
+    | '/perfil-jogos'
+    | '/social'
+    | '/turmas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/comunidade' | '/jogos' | '/perfil-jogos' | '/social' | '/turmas'
+  to:
+    | '/'
+    | '/comunidade'
+    | '/jogar'
+    | '/jogos'
+    | '/perfil-jogos'
+    | '/social'
+    | '/turmas'
   id:
     | '__root__'
     | '/'
     | '/comunidade'
+    | '/jogar'
     | '/jogos'
     | '/perfil-jogos'
     | '/social'
@@ -91,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ComunidadeRoute: typeof ComunidadeRoute
+  JogarRoute: typeof JogarRoute
   JogosRoute: typeof JogosRoute
   PerfilJogosRoute: typeof PerfilJogosRoute
   SocialRoute: typeof SocialRoute
@@ -111,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/comunidade'
       fullPath: '/comunidade'
       preLoaderRoute: typeof ComunidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jogar': {
+      id: '/jogar'
+      path: '/jogar'
+      fullPath: '/jogar'
+      preLoaderRoute: typeof JogarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/jogos': {
@@ -147,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComunidadeRoute: ComunidadeRoute,
+  JogarRoute: JogarRoute,
   JogosRoute: JogosRoute,
   PerfilJogosRoute: PerfilJogosRoute,
   SocialRoute: SocialRoute,
