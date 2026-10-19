@@ -15,8 +15,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "sonner";
-import { AmbientParticles } from "../components/ambient-particles";
 import { AccountGate } from "../components/account-gate";
+import compactCss from "../compact.css?url";
 
 function NotFoundComponent() {
   return (
@@ -97,8 +97,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "stylesheet", href: compactCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -121,28 +121,13 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-/**
- * Fundo do site inteiro, no clima da seção da rivalidade: preto profundo, brilho
- * vermelho, grade em perspectiva e partículas. Fica montado entre rotas (sem tela branca).
- * Social e comunidade compartilham as partículas da página inicial.
- */
-function Scene({ particles }: { particles: boolean }) {
-  return (
-    <div className="scene" aria-hidden>
-      <div className="scene-grid" />
-      {particles && <AmbientParticles />}
-    </div>
-  );
-}
-
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ActivityPresence><Scene particles={pathname === '/' || pathname === '/social' || pathname === '/comunidade'} />
-      {/* A chave muda a cada rota: a nova página entra com fade + zoom suave. */}
+      <ActivityPresence>
       <div className="page-transition" key={pathname}>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <AccountGate><Outlet /></AccountGate>

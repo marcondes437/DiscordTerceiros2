@@ -18,7 +18,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { CommunityAuth } from "@/components/community-auth";
 import { BrandLogo } from "@/components/brand-logo";
 import { initials } from "@/components/voice-room";
-import { Rivalry } from "@/components/landing/rivalry";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -204,7 +203,11 @@ function Landing() {
 
           <main className="win-main live-main" data-scroller>
             <LiveHome />
-            <Rivalry />{" "}
+            <section className="home-classes" id="rivalidade" aria-label="Conheça as turmas">
+              <div><span className="side-label">NOSSA COMUNIDADE</span><h2>Duas turmas, o mesmo lugar.</h2><p>Cada turma com sua história. Todo mundo conectado.</p></div>
+              <Link to="/turmas" search={{ turma: "a" }}><span>A</span><div><strong>Terceiro A</strong><small>Conheça a nossa história</small></div><Compass size={18} /></Link>
+              <Link to="/turmas" search={{ turma: "b" }}><span>B</span><div><strong>Terceiro B</strong><small>Conheça a nossa história</small></div><Compass size={18} /></Link>
+            </section>
           </main>
         </div>
       </div>
