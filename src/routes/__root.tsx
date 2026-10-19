@@ -18,6 +18,7 @@ import { Toaster } from "sonner";
 import { AccountGate } from "../components/account-gate";
 import compactCss from "../compact.css?url";
 import communityCss from "../community-theme.css?url";
+import orbitCss from "../orbit.css?url";
 
 function NotFoundComponent() {
   return (
@@ -100,6 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "stylesheet", href: compactCss },
       { rel: "stylesheet", href: communityCss },
+      { rel: "stylesheet", href: orbitCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
     ],
   }),

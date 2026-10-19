@@ -11,7 +11,7 @@ import { useChannelNames } from "@/hooks/use-channel-names";
 import { supabase } from "@/integrations/supabase/client";
 import { games } from "@/data/games";
 import { ProfilePhoto } from "@/components/profile-photo";
-import bannerImage from "@/assets/community-lab.jpg";
+import { OrbitScene } from "./orbit-scene";
 import "@/routes/home.css";
 type Post = { id: string; author_id: string; body: string; created_at: string };
 const defaults: Record<string, string> = {
@@ -27,6 +27,7 @@ export function LiveHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [query, setQuery] = useState("");
+  const [scene, setScene] = useState<"orbit" | "eclipse">("orbit");
   const members = mergeActivity([...online, ...classOnline]);
   const calls = members.filter((m) => m.room && !isChannelDeleted(m.room, "voice"));
   const roomIds = [...new Set(calls.map((m) => m.room!))];
@@ -101,50 +102,73 @@ export function LiveHome() {
     );
   }
   return (
-    <div className="live-home">
+    <div className="live-home" data-scene={scene}>
       <div className="live-center">
         <header className="live-top">
           <span>
-            <i /> A TURMA EM TEMPO REAL
+            <i /> CONECTA / FORA DA ÓRBITA
           </span>
           <small>{new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}</small>
         </header>
         <section className="live-hero">
-          <img src={bannerImage} alt="" className="community-hero-art" />
-          <div className="live-hero-shade" />
+          <OrbitScene />
           <div className="live-hero-copy">
             <span className="home-featured-label">
-              <Radio size={13} /> SEU PONTO DE ENCONTRO
+              <Radio size={13} /> O INTERVALO GANHOU OUTRA DIMENSÃO
             </span>
             <h1>
-              Sua turma. Seu espaço.
+              O sinal
               <br />
-              <span>Bora se conectar.</span>
+              <span>é nosso.</span>
             </h1>
             <p>
-              Conversas que viram ideias. Partidas que viram histórias. O espaço da nossa turma,
-              construído por quem faz parte dela.
+              Desliga o automático. Encontra a turma, entra na partida e cria alguma coisa que só
+              poderia acontecer aqui.
             </p>
             <div className="home-featured-actions">
               <Link to="/comunidade" className="btn-red">
-                <Volume2 size={17} /> Entrar na comunidade <ArrowUpRight size={17} />
+                <Volume2 size={17} /> Entrar na frequência <ArrowUpRight size={17} />
               </Link>
               <Link to="/jogos" className="home-secondary-action">
                 <Gamepad2 size={17} /> Explorar jogos
               </Link>
             </div>
           </div>
-          <div className="live-hero-label">
-            <Radio size={14} /> A conexão continua por aqui.
+          <div className="orbit-controls" aria-label="Cenário da página">
+            <span>ATMOSFERA</span>
+            <button
+              type="button"
+              aria-pressed={scene === "orbit"}
+              onClick={() => setScene("orbit")}
+            >
+              Órbita
+            </button>
+            <button
+              type="button"
+              aria-pressed={scene === "eclipse"}
+              onClick={() => setScene("eclipse")}
+            >
+              Eclipse
+            </button>
           </div>
         </section>
+        <div className="frequency-strip">
+          <span>
+            <i /> SINAL DA TURMA
+          </span>
+          <p>
+            {connected ? members.length : "—"} online <b>/</b> {calls.length} em voz <b>/</b>{" "}
+            {players.length} com jogo aberto
+          </p>
+          <span>SOROCABA, BR ↗</span>
+        </div>
         <nav className="home-destinations" aria-label="Explore o Conecta">
           <Link to="/comunidade">
             <span>
               <MessageCircle size={22} />
             </span>
             <div>
-              <strong>A conversa está aqui</strong>
+              <strong>Entre na frequência</strong>
               <small>Canais, ideias e salas de voz</small>
             </div>
             <ArrowUpRight size={17} />
@@ -154,7 +178,7 @@ export function LiveHome() {
               <Users size={22} />
             </span>
             <div>
-              <strong>O que a turma conta</strong>
+              <strong>Deixe sua marca</strong>
               <small>Publicações e novidades</small>
             </div>
             <ArrowUpRight size={17} />
@@ -164,7 +188,7 @@ export function LiveHome() {
               <Gamepad2 size={22} />
             </span>
             <div>
-              <strong>Seu próximo intervalo</strong>
+              <strong>Comece outra partida</strong>
               <small>Descubra os jogos da turma</small>
             </div>
             <ArrowUpRight size={17} />
