@@ -113,21 +113,62 @@ export function LiveHome() {
           <img src={bannerImage} alt="Alunos no laboratório do SENAI" />
           <div className="live-hero-shade" />
           <div className="live-hero-copy">
-            <span>SENAI CONECTA / NOSSO ESPAÇO</span>
+            <span className="home-featured-label">
+              <Radio size={13} /> SUA COMUNIDADE. SEU PRÓXIMO MOMENTO.
+            </span>
             <h1>
-              O que está rolando
-              <br />
-              na aula de hoje<span>?</span>
+              A aula acaba.
+              <br />A conexão <span>continua.</span>
             </h1>
-            <p>As conversas, as ideias e os momentos da nossa turma. Tudo se encontra aqui.</p>
-            <Link to="/comunidade" className="btn-red">
-              Encontrar a turma <ArrowUpRight size={17} />
-            </Link>
+            <p>
+              Entre na call, descubra um jogo ou acompanhe o que está rolando. O ponto de encontro
+              da sua turma é aqui.
+            </p>
+            <div className="home-featured-actions">
+              <Link to="/comunidade" className="btn-red">
+                <Volume2 size={17} /> Entrar na comunidade <ArrowUpRight size={17} />
+              </Link>
+              <Link to="/jogos" className="home-secondary-action">
+                <Gamepad2 size={17} /> Explorar jogos
+              </Link>
+            </div>
           </div>
           <div className="live-hero-label">
             <Radio size={14} /> A conexão continua por aqui.
           </div>
         </section>
+        <nav className="home-destinations" aria-label="Explore o Conecta">
+          <Link to="/comunidade">
+            <span>
+              <MessageCircle size={22} />
+            </span>
+            <div>
+              <strong>A conversa está aqui</strong>
+              <small>Canais, ideias e salas de voz</small>
+            </div>
+            <ArrowUpRight size={17} />
+          </Link>
+          <Link to="/social">
+            <span>
+              <Users size={22} />
+            </span>
+            <div>
+              <strong>O que a turma conta</strong>
+              <small>Publicações e novidades</small>
+            </div>
+            <ArrowUpRight size={17} />
+          </Link>
+          <Link to="/jogos">
+            <span>
+              <Gamepad2 size={22} />
+            </span>
+            <div>
+              <strong>Seu próximo intervalo</strong>
+              <small>Descubra os jogos da turma</small>
+            </div>
+            <ArrowUpRight size={17} />
+          </Link>
+        </nav>
         <div className="live-stats">
           <a href="#live-online">
             <Users />
