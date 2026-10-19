@@ -2,7 +2,8 @@ import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthForm } from "@/components/community-auth";
 import { BrandLogo } from "@/components/brand-logo";
-import { Hash, Headphones, Gamepad2, MessageCircle, ShieldCheck } from "lucide-react";
+import { Hash, Headphones, Gamepad2, ArrowUpRight, Users, Sparkles } from "lucide-react";
+import "./account-access.css";
 
 export function AccountGate({ children }: { children: ReactNode }) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -37,93 +38,30 @@ export function AccountGate({ children }: { children: ReactNode }) {
 
   if (authenticated) return children;
   return (
-    <main className="account-page">
-      <div className="gamey-login-aura" aria-hidden="true" />
-      <header className="account-header">
-        <BrandLogo />
-        <span>O espaço da nossa turma</span>
-      </header>
-      <div className="account-layout">
-        <section className="account-story" aria-label="Terceiro A e Terceiro B">
-          <div className="community-login-mark" aria-hidden="true">
-            conecta<span>JOGUE. CONVERSE. FAÇA PARTE.</span>
-          </div>
-          <span className="account-eyebrow">
-            <span /> TERCEIRO A + TERCEIRO B
-          </span>
-          <h2>
-            Sua turma.
-            <br />
-            <span>Seu universo.</span>
-          </h2>
-          <p>Entre na conversa, encontre seus amigos e faça parte dos momentos que ficam.</p>
-          <div className="gamey-login-showcase" aria-hidden="true">
-            <img src="/games/rabisco-hero.svg" alt="" />
-            <div>
-              <span>CONVERSAS. JOGOS. CONQUISTAS.</span>
-              <strong>
-                O intervalo
-                <br />
-                ganhou um lugar.
-              </strong>
-              <span>
-                <Gamepad2 size={15} /> Feito para jogar junto
-              </span>
-            </div>
-            <i />
-          </div>
-          <div className="account-channels" aria-label="O que você encontra na comunidade">
-            <div>
-              <span className="account-channel-icon">
-                <Hash size={20} />
-              </span>
-              <span>
-                <strong>Um canal para cada conversa</strong>
-                <small>Ideias, projetos e o dia a dia da turma.</small>
-              </span>
-            </div>
-            <div>
-              <span className="account-channel-icon">
-                <Headphones size={20} />
-              </span>
-              <span>
-                <strong>Mais perto, mesmo de longe</strong>
-                <small>Salas de voz e compartilhamento de tela.</small>
-              </span>
-            </div>
-            <div>
-              <span className="account-channel-icon">
-                <Gamepad2 size={20} />
-              </span>
-              <span>
-                <strong>O intervalo também é aqui</strong>
-                <small>Jogos e momentos para curtir juntos.</small>
-              </span>
+    <main className="account-page account-access">
+      <section className="access-entry" aria-label="Acesso ao Conecta">
+        <div className="access-form-wrap">
+          <div className="access-logo"><BrandLogo /></div>
+          {checking ? <p className="access-loading" role="status">Preparando sua conexão…</p> : <AuthForm appearance="minimal" onSuccess={() => setAuthenticated(true)} />}
+        </div>
+        <footer className="access-footer">Um espaço para os estudantes.<br /><span>Terceiro A + Terceiro B · SENAI Conecta</span></footer>
+      </section>
+      <aside className="access-showcase" aria-label="Conheça o Conecta">
+        <div className="access-orbit" aria-hidden="true" />
+        <div className="access-preview" aria-hidden="true">
+          <div className="access-floating-label"><Sparkles size={15} /> Grandes momentos começam juntos.</div>
+          <div className="access-demo">
+            <div className="access-demo-rail"><span>C</span><Hash /><Gamepad2 /><Headphones /><Users /></div>
+            <div className="access-demo-body">
+              <div className="access-demo-top"><strong>Seu próximo encontro.</strong><span>PRÉVIA DO CONECTA</span></div>
+              <div className="access-demo-cover"><img src="/games/rabisco-hero.svg" alt="" /><div><small>JOGUE COM A TURMA</small><strong>Mais uma partida?<br />Só se for junto.</strong><span>Rabisco & SlitherSenai <ArrowUpRight size={14} /></span></div></div>
+              <div className="access-demo-bottom"><div><Headphones /><strong>Converse de perto</strong><small>Salas de voz e comunidade</small></div><div><Gamepad2 /><strong>Entre no jogo</strong><small>Salas, convites e conquistas</small></div></div>
             </div>
           </div>
-          <div className="account-community">
-            <span>
-              <MessageCircle size={16} />
-            </span>
-            <p>
-              Dois terceiros. <strong>Uma comunidade.</strong>
-            </p>
-          </div>
-        </section>
-        <section className="account-card" aria-label="Acesso à comunidade">
-          {checking ? (
-            <p role="status">Preparando sua conexão…</p>
-          ) : (
-            <AuthForm onSuccess={() => setAuthenticated(true)} />
-          )}
-          <p className="account-private">
-            <ShieldCheck size={14} /> Um espaço para os estudantes da comunidade.
-          </p>
-        </section>
-      </div>
-      <footer className="account-footer">
-        TERCEIRO A & TERCEIRO B <span>O último ano é só o começo.</span>
-      </footer>
+          <div className="access-floating-note"><span>✦</span> Seu lugar é aqui.</div>
+        </div>
+        <div className="access-showcase-copy"><span>UMA COMUNIDADE. MUITAS POSSIBILIDADES.</span><h2>A sua turma.<br />Um universo de conexões.</h2><p>Conversas, partidas e histórias que continuam depois da aula.</p><div className="access-feature-line"><span>Comunidade</span><span>Jogos</span><span>Social</span><span>Conquistas</span></div></div>
+      </aside>
     </main>
   );
 }

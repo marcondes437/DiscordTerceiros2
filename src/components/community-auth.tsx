@@ -18,7 +18,7 @@ export function CommunityAuth({ open, onOpenChange }: { open: boolean; onOpenCha
   return <Dialog open={open} onOpenChange={onOpenChange}><DialogContent className="max-w-sm"><AuthForm onSuccess={() => onOpenChange(false)} dialog /></DialogContent></Dialog>;
 }
 
-export function AuthForm({ onSuccess, dialog = false }: { onSuccess: () => void; dialog?: boolean }) {
+export function AuthForm({ onSuccess, dialog = false, appearance = 'default' }: { onSuccess: () => void; dialog?: boolean; appearance?: 'default' | 'minimal' }) {
   const [signup, setSignup] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -49,9 +49,10 @@ export function AuthForm({ onSuccess, dialog = false }: { onSuccess: () => void;
 
   function changeMode(value: boolean) { setSignup(value); setNotice(''); }
 
-  return <div className="auth-form">
+  return <div className={`auth-form ${appearance === 'minimal' ? 'auth-minimal' : ''}`}>
     <div className="brand-name"><span>SENAI</span> Conecta</div>
-    {dialog ? <><DialogTitle>{signup ? 'Criar conta' : 'Entrar na comunidade'}</DialogTitle><DialogDescription>Conecte-se com a sua turma.</DialogDescription></> : <><h1>{signup ? 'Sua turma te espera.' : 'Bom te ver por aqui.'}</h1><p className="auth-description">{signup ? 'Crie sua conta e faça parte dessa história.' : 'Entre na sua conta. A conexão começa aqui.'}</p></>}
+    {dialog ? <><DialogTitle>{signup ? 'Criar conta' : 'Entrar na comunidade'}</DialogTitle><DialogDescription>Conecte-se com a sua turma.</DialogDescription></> : <><h1>{appearance === 'minimal' ? (signup ? 'Crie sua conta no Conecta' : 'Bem-vindo de volta') : (signup ? 'Sua turma te espera.' : 'Bom te ver por aqui.')}</h1><p className="auth-description">{signup ? 'Crie sua conta e faça parte dessa história.' : 'Entre na sua conta. A conexão começa aqui.'}</p></>}
+    <div className="auth-fields-panel">
     <div className="auth-tabs" aria-label="Tipo de acesso"><button disabled={busy} type="button" aria-pressed={!signup} onClick={() => changeMode(false)}>Entrar</button><button disabled={busy} type="button" aria-pressed={signup} onClick={() => changeMode(true)}>Criar conta</button></div>
     <form onSubmit={submit} className="grid gap-4">
       <fieldset disabled={busy} className="grid min-w-0 gap-4">
@@ -64,5 +65,6 @@ export function AuthForm({ onSuccess, dialog = false }: { onSuccess: () => void;
       <Button disabled={busy} type="submit"><LogIn />{busy ? 'Aguarde…' : signup ? 'Criar minha conta' : 'Entrar na comunidade'}</Button>
     </form>
     <p className="auth-switch">{signup ? 'Já faz parte?' : 'Ainda não tem uma conta?'} <button disabled={busy} type="button" onClick={() => changeMode(!signup)}>{signup ? 'Entrar' : 'Cadastre-se'}</button></p>
+    </div>
   </div>;
 }
