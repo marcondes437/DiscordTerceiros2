@@ -1,44 +1,671 @@
-﻿.gaming-profile-page { position: relative; min-height: 100%; color: #eeeef2; background: #101012; }
-.gaming-profile-toolbar { position: absolute; top: 26px; left: 42px; right: 42px; z-index: 3; display: flex; justify-content: space-between; align-items: center; }
-.gaming-profile-toolbar > a { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; }
-.gaming-profile-toolbar > span { font-size: 9px; color: #999; letter-spacing: 2px; }
-.gaming-profile-hero { position: relative; isolation: isolate; min-height: 410px; }
-.gaming-profile-backdrop { position: absolute; inset: 0; z-index: -3; overflow: hidden; }
-.gaming-profile-backdrop img { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; opacity: .45; }
-.gaming-profile-hero-shade { position: absolute; inset: 0; z-index: -2; background: linear-gradient(0deg,#101012 0%,#101012c9 28%,#10101215 100%),radial-gradient(ellipse at 20% 5%,#5d455b35,transparent 65%); }
-.gaming-profile-eyebrow { position: absolute; top: 150px; left: 42px; font-size: 9px; font-weight: 750; color: #a19aa7; letter-spacing: 3px; }
-.gaming-profile-identity { display: flex; align-items: flex-end; gap: 22px; padding: 255px 42px 35px; }
-.gaming-profile-photo { position: relative; flex: none; width: 116px; height: 116px; background: #2c2633; border: 2px solid #43404a; border-radius: 12px; display: grid; place-items: center; font-size: 42px; font-weight: 750; overflow: hidden; }
-.gaming-profile-photo > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.gaming-profile-identity h1 { font-size: 25px; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
-.gaming-profile-identity > div:nth-child(2) { min-width: 0; flex: 1; }
-.gaming-profile-identity > div > span { color: #92929f; font-size: 12px; display: block; margin-top: 7px; }
-.gaming-profile-identity > div > p { color: #a6a6b2; font-size: 12px; line-height: 1.7; margin-top: 12px; max-width: 420px; white-space: pre-wrap; overflow-wrap: anywhere; }
-.gaming-profile-logout { display: flex; align-items: center; gap: 10px; flex: none; color: #f04c66; font-size: 10px; background: #24151a; padding: 12px 16px; border-radius: 4px; }
-.gaming-profile-content { padding: 20px 42px 0; }
-.gaming-profile-stats { display: grid; grid-template-columns: 1.2fr .8fr .8fr 1.6fr .9fr; gap: 10px; }
-.gaming-stat { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 10px; min-height: 145px; border-radius: 9px; background: #1a1a1e; padding: 20px 10px; }
-.gaming-stat > svg { width: 25px; height: 25px; color: #777781; }
-.gaming-stat > strong { font-size: 25px; font-weight: 750; line-height: 1.1; }
-.gaming-stat > span { font-size: 10px; color: #aaaab5; margin-top: 5px; }
-.gaming-stat > small { font-size: 9px; line-height: 1.5; color: #6e6e7b; }
-.gaming-stat-favorite > strong { font-size: 13px; }
-.gaming-stat-favorite > img { width: 95px; height: 55px; object-fit: cover; border-radius: 5px; }
-.gaming-stat-favorite > svg { color: #b796cc; }
-.gaming-library, .gaming-memories { margin-top: 55px; }
-.gaming-section-heading { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 22px; }
-.gaming-section-heading > div > span { display: block; font-size: 8px; letter-spacing: 1.8px; font-weight: 750; color: #888893; margin-bottom: 9px; }
-.gaming-section-heading h2 { font-size: 22px; font-weight: 750; }
-.gaming-section-heading > a { display: flex; align-items: center; gap: 7px; font-size: 10px; color: #a6a6b2; }
-.gaming-profile-game-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
-.gaming-availability-note { color: #858590; font-size: 11px; line-height: 1.8; margin-top: 20px; }
-.gaming-profile-error { margin: 20px 0; padding: 15px; background: #491d2a; color: #ffd1dc; font-size: 12px; border-radius: 5px; }
-.gaming-memory-empty { display: flex; align-items: center; gap: 20px; background: #19191d; border-radius: 8px; padding: 28px; }
-.gaming-memory-empty > svg { color: #6f6f7c; flex: none; }
-.gaming-memory-empty h3 { font-size: 14px; font-weight: 650; }
-.gaming-memory-empty p { font-size: 11px; color: #8f8f9b; margin-top: 7px; line-height: 1.7; }
-.gaming-profile-footer { padding: 45px 0; }
-.gaming-profile-footer > span { color: #6e6e7b; font-size: 8px; font-weight: 750; letter-spacing: 1.5px; }
-.gaming-profile-footer p { color: #666672; font-size: 10px; margin-top: 10px; }
-@media(max-width:1100px) { .gaming-profile-stats { grid-template-columns: repeat(3,minmax(0,1fr)); } .gaming-stat-favorite { grid-column: span 2; } }
-@media(max-width:700px) { .gaming-profile-toolbar { left: 20px; right: 20px; top: 22px; } .gaming-profile-toolbar > span { display: none; } .gaming-profile-eyebrow { left: 20px; font-size: 8px; top: 115px; } .gaming-profile-hero { min-height: 330px; } .gaming-profile-identity { padding: 185px 20px 25px; gap: 14px; align-items: center; flex-wrap: wrap; } .gaming-profile-photo { width: 84px; height: 84px; font-size: 32px; } .gaming-profile-identity h1 { font-size: 22px; } .gaming-profile-logout { margin-left: auto; } .gaming-profile-content { padding: 12px 20px 0; } .gaming-profile-stats { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; } .gaming-stat { min-height: 125px; padding: 16px 10px; } .gaming-stat-favorite { grid-column: auto; } .gaming-profile-stats > .gaming-stat:last-child { grid-column: span 2; } .gaming-profile-game-grid { gap: 14px; } .gaming-library, .gaming-memories { margin-top: 38px; } .gaming-section-heading h2 { font-size: 20px; } .gaming-section-heading > a { font-size: 9px; } .gaming-memory-empty { padding: 20px; gap: 15px; } }
+.console-profile {
+  --console-bg: #111212;
+  --console-panel: #1e1f1f;
+  --console-text: #f5f5f5;
+  --console-muted: #b4b5b5;
+  --console-line: #ffffff10;
+  min-height: 100%;
+  background: var(--console-bg);
+  color: var(--console-text);
+  padding-bottom: 32px;
+}
+.console-hero {
+  position: relative;
+  isolation: isolate;
+  padding: 22px 34px 0;
+}
+.console-cover {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 -12px;
+  overflow: hidden;
+  background: var(--profile-cover);
+}
+.console-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(0deg, var(--console-bg) 0%, #111212a6 60%, #11121266),
+    linear-gradient(90deg, #120d0e50, #11121277);
+}
+.console-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  opacity: 0.65;
+  filter: blur(5px);
+  transform: scale(1.04);
+}
+.console-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.console-topbar > a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.console-topbar > a > span {
+  font-size: 12px;
+  color: #d0d1d1;
+}
+.console-topbar > button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffffff14;
+  color: white;
+}
+.console-topbar > button:hover {
+  background: #ffffff28;
+}
+.console-identity {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  max-width: 1040px;
+  margin: 20px auto 0;
+  padding: 12px 0 24px;
+}
+.console-avatar-wrap {
+  position: relative;
+  flex: none;
+}
+.console-avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(140px, 19cqw, 210px);
+  height: clamp(140px, 19cqw, 210px);
+  background: #49353c;
+  border: 1px solid #ffffff26;
+  border-radius: 50%;
+  overflow: hidden;
+  font-size: 64px;
+  font-weight: 650;
+  color: white;
+}
+.console-avatar > .profile-photo-original,
+.console-avatar > .profile-photo-render {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.console-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.console-avatar:hover {
+  outline: 2px solid #ffffff70;
+  outline-offset: 3px;
+}
+.console-presence {
+  position: absolute;
+  bottom: 10%;
+  right: 2%;
+  width: 27px;
+  height: 27px;
+  border: 3px solid #151615;
+  border-radius: 50%;
+  background: #737773;
+  box-shadow: 0 0 0 1px #ffffff25;
+}
+.console-presence.is-online {
+  background: #1db70d;
+  box-shadow: 0 0 0 1px #70db5d;
+}
+.console-person {
+  flex: 1;
+  min-width: 0;
+}
+.console-person h1 {
+  font-size: clamp(26px, 3cqw, 36px);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  overflow-wrap: anywhere;
+}
+.console-tagline {
+  color: #d0cccc;
+  font-size: 15px;
+  margin-top: 5px;
+  line-height: 1.5;
+  max-width: 560px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.console-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 16px;
+  font-size: 12px;
+  color: #f0eded;
+  padding: 3px 0;
+}
+.console-edit:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.console-numbers {
+  display: flex;
+  gap: clamp(24px, 6cqw, 90px);
+  margin-top: 24px;
+}
+.console-numbers dt {
+  color: #c3c0c0;
+  font-size: 13px;
+}
+.console-numbers dd {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 15px;
+  margin-top: 4px;
+}
+.console-online-text {
+  color: #86d17b;
+}
+.console-library-bar {
+  max-width: 650px;
+  margin: 0 auto 26px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  border-radius: 5px;
+  background: #ffffff0b;
+  padding: 14px 18px;
+}
+.console-library-bar > div {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+}
+.console-library-bar small {
+  display: block;
+  font-size: 12px;
+  color: var(--console-muted);
+}
+.console-library-bar strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.console-library-bar > a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-left: 1px solid var(--console-line);
+  font-size: 13px;
+  color: #d4d4d4;
+}
+.console-library-bar > a:hover {
+  color: white;
+}
+.console-tabs {
+  display: flex;
+  gap: 24px;
+  padding: 0 34px;
+  border-bottom: 1px solid var(--console-line);
+  overflow-x: auto;
+}
+.console-tabs > button {
+  position: relative;
+  flex: none;
+  padding: 15px 6px 13px;
+  color: var(--console-muted);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 3px solid transparent;
+}
+.console-tabs > button:hover {
+  color: white;
+}
+.console-tabs > button[aria-selected="true"] {
+  color: white;
+  border-bottom-color: white;
+}
+.console-content {
+  max-width: 1160px;
+  padding: 0 34px;
+  margin: 0 auto;
+  min-height: 340px;
+}
+.console-section {
+  padding-top: 28px;
+}
+.console-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.console-section-heading h2 {
+  font-size: 16px;
+  font-weight: 550;
+}
+.console-section-heading > a,
+.console-section-heading > button,
+.console-section-heading > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--console-muted);
+}
+.console-section-heading > a:hover,
+.console-section-heading > button:hover {
+  color: white;
+}
+.console-games {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.console-game {
+  display: flex;
+  gap: 14px;
+  min-width: 0;
+}
+.console-game-cover {
+  display: block;
+  width: 100px;
+  height: 142px;
+  flex: none;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--console-panel);
+}
+.console-game-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+.console-game-cover:hover img {
+  transform: scale(1.04);
+}
+.console-game-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+}
+.console-game h3 {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.console-game-info > p {
+  font-size: 10px;
+  color: var(--console-muted);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.console-game-info > span {
+  color: #9d9e9e;
+  font-size: 10px;
+  margin-top: 10px;
+}
+.console-game-info > span.is-available {
+  color: #8bc784;
+}
+.console-game-info > button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #c6c7c7;
+  margin-top: auto;
+  padding-top: 10px;
+  text-align: left;
+}
+.console-game-info > button[aria-pressed="true"] {
+  color: #dfb4c1;
+}
+.console-game-info > button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.console-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.console-stat-grid > div {
+  padding: 17px 16px;
+  background: var(--console-panel);
+  border-radius: 4px;
+}
+.console-stat-grid > div > span {
+  font-size: 11px;
+  color: #c8c9c9;
+}
+.console-stat-grid strong {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 22px;
+  font-size: 21px;
+  font-weight: 400;
+}
+.console-stat-grid small {
+  color: #b2b3b3;
+  font-size: 10px;
+  font-weight: 400;
+}
+.console-stat-grid svg {
+  flex: none;
+}
+.console-now,
+.console-activity-empty {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 5px;
+  background: var(--console-panel);
+}
+.console-now > img {
+  width: 58px;
+  height: 70px;
+  border-radius: 3px;
+  object-fit: cover;
+}
+.console-now > div,
+.console-activity-empty > div {
+  flex: 1;
+  min-width: 0;
+}
+.console-now h3,
+.console-activity-empty strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.console-now p,
+.console-activity-empty p {
+  color: var(--console-muted);
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.console-now > div > span {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  color: #83d278;
+  font-size: 9px;
+  margin-bottom: 4px;
+}
+.console-now i {
+  width: 5px;
+  height: 5px;
+  background: #83d278;
+  border-radius: 50%;
+}
+.console-now > a,
+.console-activity-empty > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #dedfdf;
+}
+.console-activity-empty > svg {
+  color: #939793;
+  flex: none;
+}
+.console-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 44px 24px;
+  background: var(--console-panel);
+  border-radius: 5px;
+}
+.console-empty > svg {
+  color: #999f99;
+  flex: none;
+}
+.console-empty h3 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.console-empty p {
+  color: var(--console-muted);
+  font-size: 12px;
+  max-width: 440px;
+  line-height: 1.7;
+}
+.console-empty a {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  color: #d9e0d7;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.console-captures {
+  flex-direction: row;
+  text-align: left;
+  padding: 20px;
+  gap: 16px;
+}
+.console-captures > div {
+  flex: 1;
+}
+.console-captures p {
+  font-size: 11px;
+  margin-top: 4px;
+}
+.console-captures > a {
+  flex: none;
+}
+.console-biography > p {
+  color: #b9bbbb;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.console-membership {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+}
+.console-membership > span {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: #614596;
+  color: #e5d7ff;
+  border: 2px solid #a27bd4;
+  border-radius: 13px;
+}
+.console-membership strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.console-membership small {
+  display: block;
+  color: var(--console-muted);
+  font-size: 11px;
+  margin-top: 4px;
+}
+.console-membership > svg {
+  color: #858985;
+  margin-left: auto;
+}
+.console-error {
+  padding: 12px;
+  color: #ffc0c0;
+  background: #492328;
+  margin-top: 20px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.console-profile :focus-visible {
+  outline: 2px solid #b6d6ad;
+  outline-offset: 4px;
+}
+@media (max-width: 1200px) {
+  .console-games {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .console-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .console-hero {
+    padding: 18px 20px 0;
+  }
+  .console-identity {
+    gap: 22px;
+  }
+  .console-avatar {
+    width: 140px;
+    height: 140px;
+  }
+  .console-numbers {
+    gap: 22px;
+    margin-top: 18px;
+  }
+  .console-numbers dt {
+    font-size: 11px;
+  }
+  .console-numbers dd {
+    font-size: 12px;
+  }
+  .console-tagline {
+    font-size: 13px;
+  }
+  .console-tabs {
+    gap: 14px;
+    padding-inline: 20px;
+  }
+  .console-content {
+    padding-inline: 20px;
+  }
+  .console-captures {
+    flex-wrap: wrap;
+  }
+  .console-captures > a {
+    margin-left: 44px;
+  }
+  .console-game-cover {
+    width: 82px;
+    height: 122px;
+  }
+}
+@media (max-width: 480px) {
+  .console-identity {
+    gap: 18px;
+    flex-wrap: wrap;
+    padding-bottom: 22px;
+  }
+  .console-avatar {
+    width: 112px;
+    height: 112px;
+    font-size: 44px;
+  }
+  .console-person {
+    flex-basis: calc(100% - 130px);
+  }
+  .console-person h1 {
+    font-size: 24px;
+  }
+  .console-presence {
+    width: 21px;
+    height: 21px;
+    border-width: 2px;
+  }
+  .console-numbers {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .console-numbers dt {
+    font-size: 10px;
+  }
+  .console-numbers dd {
+    font-size: 12px;
+  }
+  .console-edit {
+    font-size: 10px;
+    margin-top: 10px;
+  }
+  .console-games {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .console-library-bar {
+    padding: 12px;
+    gap: 8px;
+  }
+  .console-library-bar > a {
+    font-size: 11px;
+    gap: 5px;
+  }
+  .console-library-bar > div {
+    gap: 8px;
+  }
+  .console-library-bar strong {
+    font-size: 12px;
+  }
+  .console-stat-grid {
+    gap: 8px;
+  }
+  .console-stat-grid > div {
+    padding: 14px 12px;
+  }
+  .console-stat-grid strong {
+    gap: 7px;
+    font-size: 19px;
+    flex-wrap: wrap;
+  }
+  .console-stat-grid > div > span {
+    font-size: 10px;
+  }
+  .console-activity-empty {
+    flex-wrap: wrap;
+  }
+  .console-activity-empty > a {
+    margin-left: 40px;
+  }
+  .console-tabs {
+    gap: 12px;
+    padding-inline: 14px;
+  }
+  .console-tabs > button {
+    font-size: 10px;
+  }
+  .console-captures > div {
+    min-width: 150px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .console-game-cover img {
+    transition: none;
+  }
+}
