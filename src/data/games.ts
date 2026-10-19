@@ -22,7 +22,7 @@ export const games: BrowserGame[] = [
   {
     id: "rabisco",
     name: "Rabisco",
-    url: "/jogar?game=rabisco",
+    url: "https://rabisco-rho.vercel.app/",
     image: "/games/rabisco.svg",
     heroImage: "/games/rabisco-hero.svg",
     categories: ["Criatividade", "Com a turma"],

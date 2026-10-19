@@ -24,7 +24,7 @@ it("keeps the reference panel actions functional and switches the selected game"
   expect(screen.getByText("3 online agora")).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Jogar Rabisco" })).toHaveAttribute(
     "href",
-    "/jogar?game=rabisco",
+    "https://rabisco-rho.vercel.app/",
   );
   fireEvent.click(screen.getByRole("button", { name: "SlitherSenai" }));
   expect(screen.getByRole("link", { name: "Jogar SlitherSenai" })).toHaveAttribute(

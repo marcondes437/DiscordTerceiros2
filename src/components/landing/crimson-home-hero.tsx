@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { games } from '@/data/games';
 import { ArrowUpRight, Gamepad2, Hash, Headphones, Users } from "lucide-react";
 const featuredGames = [
   { id: "rabisco", name: "Rabisco", image: "/games/rabisco-hero.svg" },
@@ -45,7 +46,7 @@ export function CrimsonHomeHero({ online, connected }: { online: number; connect
               Só se for junto.
             </h2>
             <p>Rabisco & SlitherSenai. O intervalo ganhou um lugar.</p>
-            <a href={`/jogar?game=${game.id}`} aria-label={`Jogar ${game.name}`}>
+            <a href={games.find(item=>item.id===game.id)?.url || `/jogar?game=${game.id}`} target="_blank" rel="noopener noreferrer" aria-label={`Jogar ${game.name}`}>
               Jogar {game.name}
               <ArrowUpRight size={17} />
             </a>

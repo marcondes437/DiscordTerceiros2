@@ -4,8 +4,8 @@ import { badges, captureError, inviteUrl } from "@/lib/gaming";
 import { PostText } from "@/components/post-text";
 import { games } from "@/data/games";
 afterEach(cleanup);
-it("routes both game covers to integrated lobbies", () => {
-  expect(games.map((g) => g.url)).toEqual(["/jogar?game=rabisco", "/jogar?game=slithersenai"]);
+it("routes Rabisco to the published game and keeps SlitherSenai integrated", () => {
+  expect(games.map((g) => g.url)).toEqual(["https://rabisco-rho.vercel.app/", "/jogar?game=slithersenai"]);
 });
 it("validates capture type and upload limits", () => {
   expect(captureError({ type: "video/webm", size: 1024 })).toBeNull();
