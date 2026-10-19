@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { games } from '@/data/games';
+import { games } from "@/data/games";
 import { ArrowUpRight, Gamepad2, Hash, Headphones, Users } from "lucide-react";
 const featuredGames = [
   { id: "rabisco", name: "Rabisco", image: "/games/rabisco-hero.svg" },
@@ -9,6 +9,7 @@ const featuredGames = [
 export function CrimsonHomeHero({ online, connected }: { online: number; connected: boolean }) {
   const [selected, setSelected] = useState(0);
   const game = featuredGames[selected]!;
+  const details = games.find((item) => item.id === game.id)!;
   return (
     <section className="crimson-dashboard" aria-label="Seu próximo encontro">
       <nav className="crimson-rail" aria-label="Atalhos da home">
@@ -30,7 +31,9 @@ export function CrimsonHomeHero({ online, connected }: { online: number; connect
       </nav>
       <div className="crimson-dashboard-main">
         <header className="crimson-dashboard-header">
-          <h1>Seu próximo encontro.</h1>
+          <h1>
+            Início <small>Seu próximo intervalo começa aqui.</small>
+          </h1>
           <span>
             <i />
             {connected ? `${online} online agora` : "Conectando à turma…"}
@@ -39,16 +42,20 @@ export function CrimsonHomeHero({ online, connected }: { online: number; connect
         <div className="crimson-home-banner">
           <div className="crimson-home-glow" aria-hidden="true" />
           <div className="crimson-banner-copy">
-            <span>JOGUE COM A TURMA</span>
-            <h2>
-              Mais uma partida?
-              <br />
-              Só se for junto.
-            </h2>
-            <p>Rabisco & SlitherSenai. O intervalo ganhou um lugar.</p>
-            <a href={games.find(item=>item.id===game.id)?.url || `/jogar?game=${game.id}`} target="_blank" rel="noopener noreferrer" aria-label={`Jogar ${game.name}`}>
+            <span>ESCOLHA. CHAME A TURMA. JOGUE.</span>
+            <h2>{game.name}</h2>
+            <p>{details.description}</p>
+            <a
+              href={games.find((item) => item.id === game.id)?.url || `/jogar?game=${game.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Jogar ${game.name}`}
+            >
               Jogar {game.name}
               <ArrowUpRight size={17} />
+            </a>
+            <a className="home-explore-link" href="#home-catalog">
+              Explorar jogos <ArrowUpRight size={15} />
             </a>
             <div className="crimson-game-tabs" aria-label="Escolher jogo">
               {featuredGames.map((item, index) => (
@@ -58,7 +65,8 @@ export function CrimsonHomeHero({ online, connected }: { online: number; connect
                   aria-pressed={selected === index}
                   onClick={() => setSelected(index)}
                 >
-                  {item.name}
+                  <img src={item.image} alt="" />
+                  <span>{item.name}</span>
                 </button>
               ))}
             </div>

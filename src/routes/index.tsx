@@ -14,6 +14,7 @@ import {
   Volume2,
   X,
   Gamepad2,
+  UserRound,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CommunityAuth } from "@/components/community-auth";
@@ -110,7 +111,7 @@ function Landing() {
 
   return (
     <div className="glass-page">
-      <div className="window glass landing-window" ref={shell}>
+      <div className="window glass landing-window home-dashboard" ref={shell}>
         <header className="win-header">
           <button
             type="button"
@@ -185,6 +186,7 @@ function Landing() {
                 <MessageSquare />
                 Comunidade
               </Link>
+              <Link to="/perfil-jogos" className="side-link" onClick={closeMenu}><UserRound/>Perfil de jogos</Link>
               <a href="#salas" className="side-link" onClick={closeMenu}>
                 <Volume2 />
                 Salas de voz

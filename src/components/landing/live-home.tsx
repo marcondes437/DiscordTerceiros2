@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { games } from "@/data/games";
 import { ProfilePhoto } from "@/components/profile-photo";
 import { CrimsonHomeHero } from "./crimson-home-hero";
+import { HomeCatalog } from './home-catalog';
 import "@/routes/crimson-home.css";
 import "@/routes/home.css";
 type Post = { id: string; author_id: string; body: string; created_at: string };
@@ -111,6 +112,7 @@ export function LiveHome() {
           <small>{new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}</small>
         </header>
         <CrimsonHomeHero online={members.length} connected={connected} />
+        <HomeCatalog/>
         <nav className="home-destinations" aria-label="Explore o Conecta">
           <Link to="/comunidade">
             <span>
