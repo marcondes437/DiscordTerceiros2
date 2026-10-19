@@ -166,6 +166,53 @@
   gap: 8px;
   margin: 0 14px 10px;
 }
+.chat-gif-provider {
+  padding: 0 14px 16px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.chat-gif-provider > a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 6px;
+  background: var(--brand-soft);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+}
+.chat-gif-provider p {
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+  margin: 9px 0;
+}
+.chat-gif-provider input {
+  width: 100%;
+  padding: 9px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 11px;
+  min-width: 0;
+}
+.chat-gif-provider > button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 9px;
+  border-radius: 5px;
+  background: var(--secondary);
+  color: var(--foreground);
+  font-size: 11px;
+}
+.chat-gif-provider > button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 .chat-gif-categories button {
   display: flex;
   align-items: center;

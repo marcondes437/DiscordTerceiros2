@@ -16,13 +16,22 @@ export function safeGifUrl(value: unknown): string | null {
   try {
     const url = new URL(value);
     if (url.protocol !== "https:" || url.username || url.password || url.port) return null;
-    if (!/^(media\d*\.giphy\.com|i\.giphy\.com|media\d*\.tenor\.com)$/.test(url.hostname))
+    if (
+      !/^(media\d*\.giphy\.com|i\.giphy\.com|media\d*\.tenor\.com|static\.klipy\.com)$/.test(
+        url.hostname,
+      )
+    )
       return null;
     if (!/\.(gif|webp)$/i.test(url.pathname)) return null;
     return value;
   } catch {
     return null;
   }
+}
+export function klipySearchUrl(query: string) {
+  return query.trim()
+    ? `https://klipy.com/search?q=${encodeURIComponent(query.trim().slice(0, 100))}`
+    : "https://klipy.com/";
 }
 export function splitChatMedia(content: string): { text: string; gifs: string[] } {
   const gifs: string[] = [];

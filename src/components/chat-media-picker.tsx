@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { ArrowLeft, Clock, Search, Smile, Star, X } from "lucide-react";
+import { ArrowLeft, Clock, Search, Smile, Star, X, ExternalLink } from "lucide-react";
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
 import { emojiGroups } from "@/data/chat-emojis";
 import { starterGifs } from "@/data/chat-gifs";
@@ -9,6 +9,8 @@ import {
   normalizeGiphyResults,
   normalizeMediaSearch,
   searchGiphy,
+  safeGifUrl,
+  klipySearchUrl,
   type ChatGif,
 } from "@/lib/chat-media";
 import "@/routes/chat-media.css";
@@ -59,6 +61,7 @@ export function ChatMediaPicker({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [pastedGif, setPastedGif] = useState("");
   const [offset, setOffset] = useState(0);
   const [next, setNext] = useState(0);
   const [more, setMore] = useState(false);
@@ -353,6 +356,42 @@ export function ChatMediaPicker({
           </>
         ) : (
           <>
+            <div className="chat-gif-provider">
+              <a href={klipySearchUrl(query)} target="_blank" rel="noopener noreferrer">
+                Pesquisar mais GIFs no KLIPY <ExternalLink size={14} />
+              </a>
+              <p>Abre o catálogo em outra aba. Copie o endereço da imagem GIF e cole abaixo.</p>
+              <label>
+                <span className="sr-only">Endereço do GIF</span>
+                <input
+                  type="url"
+                  aria-label="Endereço do GIF"
+                  placeholder="Cole o link direto do GIF (.gif ou .webp)"
+                  maxLength={1500}
+                  value={pastedGif}
+                  onChange={(event) => {
+                    setPastedGif(event.target.value);
+                    setNotice("");
+                  }}
+                />
+              </label>
+              <button
+                type="button"
+                disabled={!pastedGif.trim()}
+                onClick={() => {
+                  const url = safeGifUrl(pastedGif.trim());
+                  if (!url) {
+                    setNotice(
+                      "Cole o endereço direto de uma imagem GIF/WebP do KLIPY, GIPHY ou Tenor. O link da página não é uma imagem.",
+                    );
+                    return;
+                  }
+                  chooseGif({ id: "pasted-gif", title: "GIF escolhido", url, preview: url });
+                }}
+              >
+                Adicionar GIF à mensagem
+              </button>
+            </div>
             <div className="chat-gif-categories">
               <button
                 type="button"

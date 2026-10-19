@@ -16,6 +16,14 @@ Favoritos guardam IDs por conta neste navegador, não uma cópia dos GIFs. Sem p
 
 ## Ativar busca completa
 
+### Alternativa sem chave: KLIPY
+
+O painel também oferece **Pesquisar mais GIFs no KLIPY**. A busca abre em outra aba, usando o termo digitado. No site, copie o endereço direto da imagem GIF/WebP e cole no campo **Endereço do GIF**; depois clique em **Adicionar GIF à mensagem** e envie normalmente. O conteúdo aparece como GIF no chat e na prévia do rascunho.
+
+Essa opção funciona sem chave de API. Os links diretos do CDN `static.klipy.com` são aceitos; links de páginas e outros hosts continuam bloqueados como mídia. A busca externa foi verificada no endereço público do KLIPY. Não há uma busca automática do catálogo KLIPY dentro do seletor: a integração por API requer uma chave própria, conforme a [documentação do provedor](https://klipy.com/developers). Os testes cobrem a busca externa, inclusão do GIF e rejeição de páginas/hosts falsos.
+
+### GIPHY dentro do seletor
+
 1. Crie uma chave para Web no [painel GIPHY Developers](https://developers.giphy.com/dashboard/).
 2. Na Vercel, adicione **VITE_GIPHY_API_KEY** em Environment Variables, para os ambientes que usa.
 3. Faça um novo deploy. Para desenvolvimento local, use a mesma variável no `.env` e reinicie o servidor.

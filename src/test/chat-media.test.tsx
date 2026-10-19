@@ -9,6 +9,7 @@ import {
   normalizeGiphyResults,
   safeGifUrl,
   splitChatMedia,
+  klipySearchUrl,
 } from "@/lib/chat-media";
 import { starterGifs } from "@/data/chat-gifs";
 
@@ -17,6 +18,42 @@ afterEach(() => {
   localStorage.clear();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
+});
+it("opens KLIPY search and accepts direct GIFs without a provider API key", () => {
+  const change = vi.fn();
+  render(
+    <ChatMediaPicker draft="" onChange={change} inputRef={createRef()} limit={2000} apiKey="" />,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Escolher GIF" }));
+  fireEvent.change(screen.getByRole("textbox", { name: "Buscar GIFs" }), {
+    target: { value: "gato feliz" },
+  });
+  expect(screen.getByRole("link", { name: /Pesquisar mais GIFs no KLIPY/ })).toHaveAttribute(
+    "href",
+    "https://klipy.com/search?q=gato%20feliz",
+  );
+  const url = "https://static.klipy.com/ii/example/cat.gif";
+  fireEvent.change(screen.getByRole("textbox", { name: "Endereço do GIF" }), {
+    target: { value: url },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Adicionar GIF à mensagem" }));
+  expect(change).toHaveBeenCalledWith(url);
+  expect(splitChatMedia(url).gifs).toEqual([url]);
+  expect(safeGifUrl("https://static.klipy.com.evil.test/cat.gif")).toBeNull();
+  expect(klipySearchUrl("")).toBe("https://klipy.com/");
+});
+it("rejects page links and unrelated hosts instead of embedding them", () => {
+  const change = vi.fn();
+  render(
+    <ChatMediaPicker draft="" onChange={change} inputRef={createRef()} limit={2000} apiKey="" />,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Escolher GIF" }));
+  fireEvent.change(screen.getByRole("textbox", { name: "Endereço do GIF" }), {
+    target: { value: "https://klipy.com/gifs/cat" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Adicionar GIF à mensagem" }));
+  expect(screen.getByRole("status")).toHaveTextContent("O link da página não é uma imagem");
+  expect(change).not.toHaveBeenCalled();
 });
 it("embeds only GIFs on trusted HTTPS media hosts and keeps other content as text", () => {
   for (const value of [
