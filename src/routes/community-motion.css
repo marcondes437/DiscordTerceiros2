@@ -1,0 +1,226 @@
+/* Native animation adaptation inspired by BetterAnimations by arg0NNY.
+   No BetterDiscord patches, downloaded animation packs or Electron code. */
+body[data-conecta-motion="full"] {
+  --conecta-motion-duration: 240ms;
+  --conecta-popup-duration: 180ms;
+}
+body[data-conecta-motion="subtle"] {
+  --conecta-motion-duration: 120ms;
+  --conecta-popup-duration: 100ms;
+}
+body[data-conecta-motion]:not([data-conecta-motion="off"]) .page-transition {
+  animation: conecta-page-in var(--conecta-motion-duration) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+body[data-conecta-motion]:not([data-conecta-motion="off"])
+  :is(.account-access .auth-fields-panel, .profile-main-target, .theme-store, .community-hub) {
+  animation: conecta-panel-in var(--conecta-motion-duration) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+body[data-conecta-motion]:not([data-conecta-motion="off"]):has(.community-app)
+  :is([role="dialog"], [role="menu"], [role="tooltip"])[data-state="open"] {
+  animation: conecta-pop-in var(--conecta-popup-duration) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+body[data-conecta-motion]:not([data-conecta-motion="off"]):has(.community-app)
+  :is([role="dialog"], [role="menu"], [role="tooltip"])[data-state="closed"] {
+  animation: conecta-pop-out 100ms ease-in;
+}
+body[data-conecta-motion]:not([data-conecta-motion="off"])
+  .community-app
+  :is(
+    .nav-item,
+    .community-overview-link,
+    .direct-directory-link,
+    .community-spaces strong,
+    .hub-room,
+    .hub-channel,
+    .theme-store-card,
+    .chat-gif-option,
+    .chat-emoji-grid > button
+  ) {
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (hover: hover) {
+  body[data-conecta-motion="full"]
+    .community-app
+    :is(.hub-room, .hub-channel, .theme-store-card):hover {
+    transform: translateY(-3px);
+  }
+  body[data-conecta-motion="full"] .community-app .community-spaces button:hover strong {
+    transform: translateY(-2px);
+  }
+  body[data-conecta-motion="full"] .chat-media-popover .chat-emoji-grid > button:hover {
+    transform: scale(1.12);
+  }
+}
+body[data-conecta-motion="subtle"]
+  .community-app
+  :is(.hub-room, .hub-channel, .theme-store-card):hover {
+  transform: none;
+}
+body[data-conecta-motion="subtle"]
+  :is(
+    .page-transition,
+    .profile-main-target,
+    .theme-store,
+    .community-hub,
+    .account-access .auth-fields-panel
+  ) {
+  animation-name: conecta-fade-in;
+}
+body[data-conecta-motion="subtle"]:has(.community-app)
+  :is([role="dialog"], [role="menu"], [role="tooltip"])[data-state="open"] {
+  animation-name: conecta-fade-in;
+}
+body[data-conecta-motion="off"]
+  :is(
+    .page-transition,
+    .profile-main-target,
+    .theme-store,
+    .community-hub,
+    .account-access .auth-fields-panel
+  ),
+body[data-conecta-motion="off"]:has(.community-app)
+  :is([role="dialog"], [role="menu"], [role="tooltip"]) {
+  animation: none !important;
+}
+body[data-conecta-motion="off"]
+  .community-app
+  :is(
+    .nav-item,
+    .community-overview-link,
+    .direct-directory-link,
+    .community-spaces strong,
+    .hub-room,
+    .hub-channel,
+    .theme-store-card,
+    .chat-gif-option,
+    .chat-emoji-grid > button
+  ) {
+  transition: none;
+}
+.community-motion-settings {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 17px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--skin-radius);
+}
+.community-motion-settings > div {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.community-motion-settings > div > svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.community-motion-settings span > strong,
+.community-motion-settings span > small {
+  display: block;
+}
+.community-motion-settings strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+.community-motion-settings small {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  margin-top: 4px;
+}
+.community-motion-settings select {
+  font-size: 11px;
+  color: var(--foreground);
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 8px 28px 8px 10px;
+}
+@keyframes conecta-page-in {
+  from {
+    opacity: 0.4;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes conecta-panel-in {
+  from {
+    opacity: 0.4;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes conecta-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes conecta-pop-in {
+  from {
+    opacity: 0;
+    scale: 0.97;
+    translate: 0 5px;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+@keyframes conecta-pop-out {
+  from {
+    opacity: 1;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-conecta-motion]
+    :is(
+      .page-transition,
+      .profile-main-target,
+      .theme-store,
+      .community-hub,
+      .account-access .auth-fields-panel
+    ),
+  body[data-conecta-motion]:has(.community-app)
+    :is([role="dialog"], [role="menu"], [role="tooltip"]) {
+    animation: none !important;
+  }
+  body[data-conecta-motion]
+    .community-app
+    :is(
+      .nav-item,
+      .community-overview-link,
+      .direct-directory-link,
+      .community-spaces strong,
+      .hub-room,
+      .hub-channel,
+      .theme-store-card,
+      .chat-gif-option,
+      .chat-emoji-grid > button
+    ) {
+    transition: none !important;
+    transform: none !important;
+  }
+}

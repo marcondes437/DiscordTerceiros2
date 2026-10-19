@@ -1,6 +1,7 @@
 import { useState, type CSSProperties, type ReactNode } from "react";
 import { ArrowLeft, Check, ExternalLink, Hash, Palette, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MotionSettings } from "./community-motion";
 import { communitySkins, findCommunitySkin, type CommunitySkin } from "@/lib/community-themes";
 import "@/routes/community-theme-store.css";
 
@@ -140,6 +141,7 @@ export function CommunityThemeStore({
             <ThemePreview skin={active} />
           </div>
         </div>
+        <MotionSettings />
         <div className="theme-store-tools">
           <div className="theme-store-filters" aria-label="Filtrar temas">
             {filters.map((f) => (

@@ -1,5 +1,6 @@
 import { useCommunityTheme } from "@/hooks/use-community-theme";
 import { ChatMediaPicker } from "@/components/chat-media-picker";
+import { useMotionSurface, useMessageMotion } from "@/components/community-motion";
 import { ChatDraftMedia, ChatMessageContent } from "@/components/chat-message-content";
 import { NotificationBell } from "@/components/notifications";
 import { CommunityThemeToggle } from "@/components/community-theme-toggle";
@@ -177,6 +178,8 @@ function Community() {
   const groups = (space === 'geral' ? generalGroups : classGroups).map(group => ({ ...group, channels: group.channels.filter(c => !isChannelDeleted(spaceChannel(space, c.id), 'text')).map(c => ({ ...c, name: channelName(spaceChannel(space, c.id), 'text', c.name) })) }));
   const allChannels = groups.flatMap((g) => g.channels);
   const messageChannel = spaceChannel(space, active);
+  const mainMotion = useMotionSurface<HTMLElement>(`${space}:${overview ? 'overview' : voiceView || active}:${directView}:${profileView}`);
+  const messageMotion = useMessageMotion<HTMLOListElement>(`${user?.id}:${messageChannel}`,messages.map(m=>m.id),!!user && !loading && !overview && !directView && !voiceView);
   const rooms = baseRooms.filter(r => !isChannelDeleted(spaceChannel(space, r.id), 'voice')).map((r) => ({ ...r, id: spaceChannel(space, r.id), name: channelName(spaceChannel(space, r.id), 'voice', r.name) }));
   const spaceName = availableSpaces.find((s) => s.id === space)?.name ?? 'Geral';
   const selectedChannel = useRef(messageChannel);
@@ -452,7 +455,7 @@ function Community() {
       {drawer && <div className="scrim" onClick={() => setDrawer(false)} />}
 
       {/* ───────── Conteúdo ───────── */}
-      <main className={`main ${voiceView ? 'is-stage' : ''}`}>
+      <main ref={mainMotion} className={`main ${voiceView ? 'is-stage' : ''}`}>
         <header className="topbar">
           <Button variant="ghost" size="icon" className="menu-button" title="Abrir canais" onClick={() => setDrawer(true)}>
             <Menu />
@@ -511,7 +514,7 @@ function Community() {
 
                 {loading && !messages.length && <p className="chat-note">Carregando mensagens…</p>}
 
-                <ol className="messages" key={active}>
+                <ol ref={messageMotion} className="messages" key={active}>
                   {visible.map((m, i) => {
                     const prev = visible[i - 1];
                     const newDay = !prev || dayKey(prev.created_at) !== dayKey(m.created_at);
@@ -523,7 +526,7 @@ function Community() {
                             <span>{dayLabel(m.created_at)}</span>
                           </li>
                         )}
-                        <li className={`message ${grouped ? 'is-grouped' : ''}`}>
+                        <li data-message-id={m.id} className={`message ${grouped ? 'is-grouped' : ''}`}>
                           {grouped ? <time className="message-gutter-time">{timeLabel(m.created_at)}</time> : <CommunityProfileCard id={m.user_id} name={m.display_name} profile={profiles[m.user_id]} online={online.some(p => p.id === m.user_id)} self={m.user_id === user?.id} onMessage={openPrivateChat} onEdit={openProfileEditor}><Avatar name={profiles[m.user_id]?.display_name || m.display_name} src={profiles[m.user_id]?.avatarSrc} decoration={profiles[m.user_id]?.avatar_decoration} tone={m.user_id === user?.id ? 'brand' : 'plain'}/></CommunityProfileCard>}
                           <div className="message-body">
                             {!grouped && (

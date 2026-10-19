@@ -17,6 +17,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "sonner";
 import { AccountGate } from "../components/account-gate";
+import { CommunityMotionProvider } from "../components/community-motion";
 import compactCss from "../compact.css?url";
 import communityCss from "../community-theme.css?url";
 import gameyCss from "../gamey-theme.css?url";
@@ -140,15 +141,17 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ActivityPresence>
-        <NotificationsProvider>
-          <div className="page-transition" key={pathname}>
-            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-            <AccountGate>
-              <Outlet />
-            </AccountGate>
-          </div>
-        </NotificationsProvider>
-        <Toaster theme="dark" richColors position="top-center" />
+        <CommunityMotionProvider>
+          <NotificationsProvider>
+            <div className="page-transition" key={pathname}>
+              {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+              <AccountGate>
+                <Outlet />
+              </AccountGate>
+            </div>
+          </NotificationsProvider>
+          <Toaster theme="dark" richColors position="top-center" />
+        </CommunityMotionProvider>
       </ActivityPresence>
     </QueryClientProvider>
   );

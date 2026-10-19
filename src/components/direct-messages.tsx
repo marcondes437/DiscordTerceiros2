@@ -4,6 +4,7 @@ import { FriendActions } from "./friend-actions";
 import { CommunityPeople } from "./community-people";
 import { CommunityThemeStore } from "./community-theme-store";
 import { ChatMediaPicker } from "./chat-media-picker";
+import { useMotionSurface, useMessageMotion } from "./community-motion";
 import { ChatDraftMedia, ChatMessageContent } from "./chat-message-content";
 import { useActivityPresence, mergeActivity } from "./activity-presence";
 import "@/routes/community-people.css";
@@ -68,6 +69,7 @@ export function DirectMessages({
   const livePeople = mergeActivity([...activity.online, ...activity.classOnline]);
   const [people, setPeople] = useState<Person[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [messagesReady, setMessagesReady] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   useEffect(() => {
     if (open) {
@@ -103,6 +105,12 @@ export function DirectMessages({
   const conversation = messages.filter(
     (m) => m.sender_id === selected || m.recipient_id === selected,
   );
+  const surfaceMotion = useMotionSurface<HTMLDivElement>(`${open}:${selected || section}`);
+  const messageMotion = useMessageMotion<HTMLDivElement>(
+    `${user?.id}:${selected}`,
+    conversation.map((m) => m.id),
+    messagesReady && open && !!selected,
+  );
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -117,11 +125,13 @@ export function DirectMessages({
       return;
     }
     setMessages((result.data ?? []).reverse());
+    setMessagesReady(true);
     setError("");
   }, [user?.id]);
 
   useEffect(() => {
     if (!user) {
+      setMessagesReady(false);
       setMessages([]);
       setPeople([]);
       setSelected(null);
@@ -342,7 +352,7 @@ export function DirectMessages({
       {open &&
         mainTarget &&
         createPortal(
-          <div className="direct-workspace">
+          <div ref={surfaceMotion} className="direct-workspace">
             {friends.error && (
               <div className="direct-error" role="alert">
                 {friends.error}
@@ -418,7 +428,7 @@ export function DirectMessages({
                         <button onClick={() => void load()}>Tentar novamente</button>
                       </div>
                     )}
-                    <div className="direct-history" aria-live="polite">
+                    <div ref={messageMotion} className="direct-history" aria-live="polite">
                       {!selected ? (
                         <div className="direct-welcome">
                           <MessageCircle size={52} />
@@ -444,7 +454,7 @@ export function DirectMessages({
                             </p>
                           </div>
                           {conversation.map((m) => (
-                            <article className="direct-line" key={m.id}>
+                            <article data-message-id={m.id} className="direct-line" key={m.id}>
                               <span className="mini-avatar">
                                 {profiles[m.sender_id]?.avatarSrc ? (
                                   <img src={profiles[m.sender_id].avatarSrc} alt="" />
