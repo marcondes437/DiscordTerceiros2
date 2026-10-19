@@ -1,3 +1,5 @@
+import { MemberGameActivity } from '@/components/member-game-activity';
+import { GameActivityControl } from '@/components/game-activity-control';
 import { useCommunityTheme } from "@/hooks/use-community-theme";
 import { useHiddenMessages } from "@/hooks/use-hidden-messages";
 import { MessageActions } from "@/components/message-actions";
@@ -460,6 +462,7 @@ function Community() {
             <div className="me-name truncate">{name}</div>
             <div className="me-status">{user ? 'Online' : 'Não conectado'}</div>
           </div>
+          <GameActivityControl/>
           <Button variant="ghost" size="icon" title="Editar perfil" onClick={() => { if (user) { setProfileView(true); setDirectView(false); setDrawer(false); } else setAuthOpen(true); }}><Settings /></Button>
           <Button variant="ghost" size="icon" title={user ? 'Sair da conta' : 'Entrar'} onClick={() => (user ? void supabase.auth.signOut() : setAuthOpen(true))}>
             {user ? <LogOut /> : <LogIn />}
@@ -585,6 +588,7 @@ function Community() {
                       <CommunityProfileCard id={m.id} name={m.name} profile={profiles[m.id]} online room={m.room ? roomName(m.room) : undefined} self={m.id === user?.id} onMessage={openPrivateChat} onEdit={openProfileEditor} onRoom={() => m.room && selectRoom(m.room)}>{profiles[m.id]?.display_name || m.name}</CommunityProfileCard>
                       {m.id === user?.id ? ' (você)' : ''}
                     </div>
+                    <MemberGameActivity member={m} compact/>
                     {m.room && (
                       <button type="button" className="member-room" onClick={() => selectRoom(m.room!)}>
                         <Volume2 />
@@ -661,7 +665,7 @@ function Community() {
                 {online.map((m) => (
                   <div className="member" key={m.id}>
                     <Avatar name={profiles[m.id]?.display_name || m.name} src={profiles[m.id]?.avatarSrc} decoration={profiles[m.id]?.avatar_decoration} online tone="plain" />
-                    <div className="member-name">{profiles[m.id]?.display_name || m.name}</div>
+                    <div><div className="member-name">{profiles[m.id]?.display_name || m.name}</div><MemberGameActivity member={m} compact/></div>
                     {m.room && <span className="ml-auto text-xs text-muted-foreground">{roomName(m.room)}</span>}
                   </div>
                 ))}

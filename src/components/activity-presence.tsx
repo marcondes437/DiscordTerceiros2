@@ -11,24 +11,34 @@ import type { User, RealtimeChannel } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { memberClass, visibleRoom, type Space } from "@/lib/community-spaces";
 import { games } from "@/data/games";
+import { cleanGameName, gameActivity, type GameActivity } from "@/lib/game-activity";
 export type ActivityMember = {
   id: string;
   name: string;
   room: string | null;
   game?: string | null | undefined;
   gameUntil?: number | undefined;
+  gameName?: string | null | undefined;
+  gameStartedAt?: number | undefined;
 };
 export function mergeActivity(members: ActivityMember[], now = Date.now()) {
   const result = new Map<string, ActivityMember>();
   for (const m of members) {
     if (!m.id) continue;
     const old = result.get(m.id);
-    const valid = games.some((g) => g.id === m.game) && (m.gameUntil ?? 0) > now;
+    const incoming = gameActivity(m, now);
+    const previous = gameActivity(old, now);
+    const selected =
+      incoming && (!previous || (incoming.startedAt ?? 0) >= (previous.startedAt ?? 0))
+        ? incoming
+        : previous;
     result.set(m.id, {
       ...m,
       room: m.room || old?.room || null,
-      game: valid ? m.game : old?.game || null,
-      gameUntil: valid ? m.gameUntil : old?.gameUntil,
+      game: selected?.id ?? null,
+      gameUntil: selected?.until,
+      gameName: selected?.name ?? null,
+      gameStartedAt: selected?.startedAt ?? undefined,
     });
   }
   return [...result.values()].sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
@@ -41,6 +51,8 @@ type Activity = {
   setRoom: (room: string | null) => void;
   startGame: (id: string) => void;
   stopGame: () => void;
+  currentGame?: GameActivity | null;
+  setCustomGame: (name: string) => void;
 };
 const Context = createContext<Activity>({
   user: null,
@@ -50,6 +62,7 @@ const Context = createContext<Activity>({
   setRoom: () => {},
   startGame: () => {},
   stopGame: () => {},
+  setCustomGame: () => {},
 });
 export const useActivityPresence = () => useContext(Context);
 export function ActivityPresence({ children }: { children: ReactNode }) {
@@ -58,7 +71,7 @@ export function ActivityPresence({ children }: { children: ReactNode }) {
   const [classOnline, setClassOnline] = useState<ActivityMember[]>([]);
   const [connected, setConnected] = useState(false);
   const [room, setRoom] = useState<string | null>(null);
-  const [game, setGame] = useState<{ id: string; until: number } | null>(null);
+  const [game, setGame] = useState<GameActivity | null>(null);
   const channels = useRef<{ ch: RealtimeChannel; scope: Space; ready: boolean }[]>([]);
   const current = useRef({ room, game });
   current.current = { room, game };
@@ -90,8 +103,21 @@ export function ActivityPresence({ children }: { children: ReactNode }) {
     const read = () => {
       try {
         const saved = JSON.parse(localStorage.getItem(key) || "null");
+        const valid = gameActivity({
+          game: saved?.id,
+          gameName: saved?.name,
+          gameUntil: saved?.until,
+          gameStartedAt: saved?.startedAt,
+        });
         setGame(
-          saved && saved.until > Date.now() && games.some((g) => g.id === saved.id) ? saved : null,
+          valid
+            ? {
+                id: valid.id,
+                name: valid.name,
+                until: valid.until,
+                startedAt: valid.startedAt ?? Date.now(),
+              }
+            : null,
         );
       } catch {
         setGame(null);
@@ -136,6 +162,8 @@ export function ActivityPresence({ children }: { children: ReactNode }) {
             room: visibleRoom(current.current.room, item.scope),
             game: current.current.game?.id ?? null,
             gameUntil: current.current.game?.until ?? 0,
+            gameName: current.current.game?.name ?? null,
+            gameStartedAt: current.current.game?.startedAt ?? 0,
           });
       }),
     );
@@ -156,6 +184,8 @@ export function ActivityPresence({ children }: { children: ReactNode }) {
           room: visibleRoom(room, item.scope),
           game: game?.id ?? null,
           gameUntil: game?.until ?? 0,
+          gameName: game?.name ?? null,
+          gameStartedAt: game?.startedAt ?? 0,
         });
     });
   }, [room, game, user?.id, name]);
@@ -176,7 +206,11 @@ export function ActivityPresence({ children }: { children: ReactNode }) {
   }, [game, stopGame]);
   const startGame = (id: string) => {
     if (!user || !games.some((g) => g.id === id && g.url)) return;
-    const value = { id, until: Date.now() + 30 * 60 * 1000 };
+    const value = {
+      id,
+      startedAt: current.current.game?.id === id ? current.current.game.startedAt : Date.now(),
+      until: Date.now() + 30 * 60 * 1000,
+    };
     setGame(value);
     try {
       localStorage.setItem(`senai-game:${user.id}`, JSON.stringify(value));
@@ -184,9 +218,35 @@ export function ActivityPresence({ children }: { children: ReactNode }) {
       /* Optional storage. */
     }
   };
+  const setCustomGame = (value: string) => {
+    const name = cleanGameName(value);
+    if (!user || !name) return;
+    const next = {
+      id: "custom",
+      name,
+      startedAt: Date.now(),
+      until: Date.now() + 2 * 60 * 60 * 1000,
+    };
+    setGame(next);
+    try {
+      localStorage.setItem(`senai-game:${user.id}`, JSON.stringify(next));
+    } catch {
+      /* Optional storage. */
+    }
+  };
   return (
     <Context.Provider
-      value={{ user, online, classOnline, connected, setRoom, startGame, stopGame }}
+      value={{
+        user,
+        online,
+        classOnline,
+        connected,
+        setRoom,
+        startGame,
+        stopGame,
+        currentGame: game,
+        setCustomGame,
+      }}
     >
       {children}
     </Context.Provider>

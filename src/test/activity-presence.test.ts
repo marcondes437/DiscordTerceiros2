@@ -1,6 +1,30 @@
 import { describe, it, expect } from "vitest";
 import { mergeActivity } from "@/components/activity-presence";
 describe("activity presence", () => {
+  it("preserves a manual game across scopes and prefers the newest game across tabs", () => {
+    const [member] = mergeActivity(
+      [
+        { id: "a", name: "Ana", room: null, game: "rabisco", gameStartedAt: 10, gameUntil: 200 },
+        {
+          id: "a",
+          name: "Ana",
+          room: "conexao-livre",
+          game: "custom",
+          gameName: "Roblox",
+          gameStartedAt: 20,
+          gameUntil: 200,
+        },
+        { id: "a", name: "Ana", room: null, game: "rabisco", gameStartedAt: 10, gameUntil: 200 },
+      ],
+      100,
+    );
+    expect(member).toMatchObject({
+      game: "custom",
+      gameName: "Roblox",
+      gameStartedAt: 20,
+      room: "conexao-livre",
+    });
+  });
   it("deduplicates tabs while preserving calls and valid games", () => {
     const members = mergeActivity(
       [

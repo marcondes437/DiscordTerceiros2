@@ -1,0 +1,128 @@
+.member-game-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 1.5;
+  min-width: 0;
+  max-width: 100%;
+  margin-top: 3px;
+}
+.member-game-status > svg {
+  flex-shrink: 0;
+  color: #4ba36b;
+}
+.member-game-status > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.member-game-status strong {
+  font-weight: 500;
+}
+.member-game-card {
+  position: relative;
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 13px;
+  margin: 16px 0;
+  color: var(--foreground);
+}
+.member-game-card h3 {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--muted-foreground);
+}
+.member-game-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.member-game-details > img,
+.member-game-art {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  object-fit: cover;
+  background: var(--accent);
+}
+.member-game-art {
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+}
+.member-game-details > div:last-child {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.member-game-details strong {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.member-game-details small {
+  font-size: 10px;
+  color: var(--muted-foreground);
+}
+.member-game-clock {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+.member-game-clock svg {
+  color: #4ba36b;
+}
+.game-activity-control {
+  max-width: 460px;
+}
+.game-activity-control form {
+  display: grid;
+  gap: 10px;
+}
+.game-activity-control label {
+  font-weight: 600;
+  font-size: 13px;
+}
+.game-activity-control form p {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+.game-activity-control footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+.game-activity-current {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.game-activity-current > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.game-activity-current > svg {
+  color: #4ba36b;
+  flex-shrink: 0;
+}
+.community-app .has-game-activity {
+  color: #4ba36b;
+}

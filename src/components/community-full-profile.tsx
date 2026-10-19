@@ -1,3 +1,4 @@
+import { MemberGameActivity } from './member-game-activity';
 import { AvatarDecoration, ProfileEffect } from './profile-decorations';
 import { useState } from 'react';
 import { MessageCircle, Settings, Volume2 } from 'lucide-react';
@@ -27,7 +28,7 @@ export function CommunityFullProfile({ open, onOpenChange, id, name, profile, on
       <section className="full-profile-right">
         <div className="full-profile-tabs" role="tablist" aria-label="Informações do perfil"><button role="tab" id={`profile-activity-${id}`} aria-controls={`profile-panel-${id}`} aria-selected={tab === 'activity'} onClick={() => setTab('activity')}>Atividade</button><button role="tab" id={`profile-about-${id}`} aria-controls={`profile-panel-${id}`} aria-selected={tab === 'about'} onClick={() => setTab('about')}>Sobre o perfil</button></div>
         <div role="tabpanel" id={`profile-panel-${id}`} aria-labelledby={`profile-${tab}-${id}`}>
-          {tab === 'activity' ? <><h3 className="full-profile-section-label">Atividade atual</h3><div className="full-profile-activity"><Volume2 size={30}/><div><strong>{room ? 'Em uma sala de voz' : online ? 'Online na comunidade' : 'Offline'}</strong><p>{room || 'Nenhuma atividade de voz no momento.'}</p></div>{room && <button onClick={() => { onOpenChange(false); onRoom?.(); }}>Abrir sala de voz</button>}</div><p className="full-profile-footnote">A atividade é atualizada de acordo com a presença na comunidade.</p></> : <><h3 className="full-profile-section-label">Sobre mim</h3><div className="full-profile-about"><p>{profile?.bio || 'Este membro ainda não adicionou uma bio.'}</p>{since && <><h3>Na comunidade desde</h3><p>{since}</p></>}</div></>}
+          {tab === 'activity' ? <><MemberGameActivity memberId={id}/><h3 className="full-profile-section-label">Atividade atual</h3><div className="full-profile-activity"><Volume2 size={30}/><div><strong>{room ? 'Em uma sala de voz' : online ? 'Online na comunidade' : 'Offline'}</strong><p>{room || 'Nenhuma atividade de voz no momento.'}</p></div>{room && <button onClick={() => { onOpenChange(false); onRoom?.(); }}>Abrir sala de voz</button>}</div><p className="full-profile-footnote">A atividade é atualizada de acordo com a presença na comunidade.</p></> : <><h3 className="full-profile-section-label">Sobre mim</h3><div className="full-profile-about"><p>{profile?.bio || 'Este membro ainda não adicionou uma bio.'}</p>{since && <><h3>Na comunidade desde</h3><p>{since}</p></>}</div></>}
         </div>
       </section>
     </div>

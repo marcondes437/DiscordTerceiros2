@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useActivityPresence } from "@/components/activity-presence";
 import { Link } from "@tanstack/react-router";
 import { games } from "@/data/games";
 import { ArrowUpRight, Gamepad2, Hash, Headphones, Users } from "lucide-react";
@@ -7,6 +8,7 @@ const featuredGames = [
   { id: "slithersenai", name: "SlitherSenai", image: "/games/slithersenai-hero.svg" },
 ] as const;
 export function CrimsonHomeHero({ online, connected }: { online: number; connected: boolean }) {
+  const { startGame } = useActivityPresence();
   const [selected, setSelected] = useState(0);
   const game = featuredGames[selected]!;
   const details = games.find((item) => item.id === game.id)!;
@@ -47,6 +49,7 @@ export function CrimsonHomeHero({ online, connected }: { online: number; connect
             <p>{details.description}</p>
             <a
               href={games.find((item) => item.id === game.id)?.url || `/jogar?game=${game.id}`}
+              onClick={() => startGame(game.id)}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Jogar ${game.name}`}

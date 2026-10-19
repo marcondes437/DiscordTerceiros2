@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode } from "react";
 import { Gamepad2, Headphones, MessageCircle, Search, Users } from "lucide-react";
-import { games } from "@/data/games";
+import { gameActivity } from "@/lib/game-activity";
 import type { ActivityMember } from "@/components/activity-presence";
 import { ProfilePhoto } from "@/components/profile-photo";
 import { FriendActions } from "./friend-actions";
@@ -71,11 +71,11 @@ export function CommunityPeople({
   );
   const status = (id: string) => {
     const p = presence.get(id);
-    const game = games.find((g) => g.id === p?.game);
-    return p?.room
-      ? "Em sala de voz"
-      : game
-        ? `Jogando ${game.name}`
+    const game = gameActivity(p);
+    return game
+      ? `Jogando ${game.name}`
+      : p?.room
+        ? "Em sala de voz"
         : p
           ? "Online na comunidade"
           : "Offline";
