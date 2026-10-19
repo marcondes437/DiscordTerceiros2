@@ -1,4 +1,5 @@
 import { ActivityPresence } from "@/components/activity-presence";
+import { NotificationsProvider } from "@/components/notifications";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -132,12 +133,14 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ActivityPresence>
-        <div className="page-transition" key={pathname}>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <AccountGate>
-            <Outlet />
-          </AccountGate>
-        </div>
+        <NotificationsProvider>
+          <div className="page-transition" key={pathname}>
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <AccountGate>
+              <Outlet />
+            </AccountGate>
+          </div>
+        </NotificationsProvider>
         <Toaster theme="dark" richColors position="top-center" />
       </ActivityPresence>
     </QueryClientProvider>

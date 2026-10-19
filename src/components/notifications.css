@@ -1,0 +1,247 @@
+.notification-bell {
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 7px;
+  color: var(--muted-foreground);
+}
+.notification-bell:hover,
+.notification-bell[data-state="open"] {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+.notification-bell > span {
+  position: absolute;
+  right: -3px;
+  top: -4px;
+  min-width: 16px;
+  padding: 2px 4px;
+  border: 2px solid var(--background);
+  border-radius: 10px;
+  color: white;
+  background: var(--primary);
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 750;
+}
+.notification-popover {
+  width: 425px;
+  max-width: calc(100vw - 24px);
+  padding: 0;
+  overflow: hidden;
+  color: var(--foreground);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px #0004;
+}
+.notification-popover > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 19px 13px;
+}
+.notification-popover h2 {
+  font-size: 15px;
+  font-weight: 750;
+}
+.notification-popover > header > button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  color: var(--muted-foreground);
+}
+.notification-popover > header > button:disabled {
+  opacity: 0.4;
+}
+.notification-popover > nav {
+  display: flex;
+  gap: 15px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 19px;
+}
+.notification-popover > nav > button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 0;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  border-bottom: 2px solid transparent;
+}
+.notification-popover > nav > button[aria-pressed="true"] {
+  color: var(--foreground);
+  border-color: var(--community-cyan, var(--primary));
+}
+.notification-popover > nav span {
+  background: var(--secondary);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 9px;
+}
+.notification-list {
+  max-height: min(460px, 65dvh);
+  overflow-y: auto;
+}
+.notification-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 18px 19px;
+  border-bottom: 1px solid var(--border);
+}
+.notification-item:hover {
+  background: var(--secondary);
+}
+.notification-item.is-unread {
+  background: color-mix(in srgb, var(--primary) 5%, transparent);
+}
+.notification-avatar {
+  position: relative;
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: var(--brand-soft);
+  color: var(--community-cyan, var(--foreground));
+  font-size: 15px;
+  font-weight: 750;
+}
+.notification-avatar > i {
+  position: absolute;
+  right: -3px;
+  bottom: -2px;
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+.notification-copy {
+  flex: 1;
+  min-width: 0;
+}
+.notification-copy strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.notification-copy small {
+  display: block;
+  font-size: 9px;
+  color: var(--muted-foreground);
+  margin-top: 5px;
+}
+.notification-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--community-cyan, var(--primary));
+  flex-shrink: 0;
+}
+.notification-empty {
+  padding: 35px 25px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--muted-foreground);
+  line-height: 1.8;
+}
+.notification-more {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  font-size: 11px;
+  color: var(--community-cyan, var(--foreground));
+  border-top: 1px solid var(--border);
+}
+.notification-error {
+  padding: 12px 19px;
+  font-size: 10px;
+  color: var(--community-cyan, var(--foreground));
+  background: var(--brand-soft);
+}
+.notification-error button {
+  display: block;
+  margin-top: 6px;
+  text-decoration: underline;
+}
+body:has(.community-app[data-community-theme="light"]) .notification-popover {
+  --background: #ffffff;
+  --foreground: #292a32;
+  --card: #ffffff;
+  --secondary: #e9eaf0;
+  --muted-foreground: #666976;
+  --border: #26283912;
+  --primary: #c93646;
+  --brand-soft: #c9364610;
+  --community-cyan: #a92337;
+  color-scheme: light;
+}
+
+.game-invite-dialog {
+  max-width: 430px;
+}
+.game-invite-friends > input {
+  width: 100%;
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  border-radius: 7px;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+.game-invite-friends p {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  line-height: 1.8;
+}
+.game-invite-friends > div {
+  max-height: 350px;
+  overflow: auto;
+}
+.game-invite-person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+.game-invite-person > span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--foreground);
+}
+.game-invite-person strong {
+  font-size: 12px;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.game-invite-person button {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 5px;
+  padding: 7px 10px;
+  font-size: 10px;
+}
+.game-invite-person button:disabled {
+  opacity: 0.45;
+}
+.social-post[data-highlighted="true"] {
+  outline: 1px solid var(--primary);
+  outline-offset: 3px;
+}

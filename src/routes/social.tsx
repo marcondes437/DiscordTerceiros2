@@ -22,6 +22,12 @@ import { PostText } from "@/components/post-text";
 import "./social.css";
 
 export const Route = createFileRoute("/social")({
+  validateSearch: (search: Record<string, unknown>): { post?: string } => ({
+    ...(typeof search.post === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(search.post)
+      ? { post: search.post }
+      : {}),
+  }),
   head: () => ({
     meta: [
       { title: "Social | Terceiros" },
@@ -53,6 +59,8 @@ const displayName = (u: User | null) =>
 const short = (id: string) => id.slice(0, 8);
 
 function Social() {
+  const { post: focusedPost } = Route.useSearch();
+  const [focusedMissing, setFocusedMissing] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -89,7 +97,19 @@ function Social() {
       );
     } else {
       setError("");
-      setPosts(p.data || []);
+      let loadedPosts = p.data || [];
+      setFocusedMissing(false);
+      if (focusedPost && !loadedPosts.some((post: Post) => post.id === focusedPost)) {
+        const target = await db
+          .from("social_posts")
+          .select("*")
+          .eq("id", focusedPost)
+          .maybeSingle();
+        if (!target.error && target.data && !target.data.parent_id)
+          loadedPosts = [target.data, ...loadedPosts];
+        else setFocusedMissing(true);
+      }
+      setPosts(loadedPosts);
       setLikes(l.data || []);
       setFollows(f.data || []);
       setNames(
@@ -102,11 +122,18 @@ function Social() {
       );
     }
     setLoading(false);
-  }, []);
+  }, [focusedPost]);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
+  useEffect(() => {
+    if (!loading && focusedPost) {
+      const target = document.getElementById(`social-post-${focusedPost}`);
+      target?.scrollIntoView({ block: "center" });
+      target?.focus({ preventScroll: true });
+    }
+  }, [loading, focusedPost]);
   useEffect(() => {
     if (!user) return;
     void db
@@ -260,13 +287,24 @@ function Social() {
                 </div>
               </section>
               {error && <div className="social-error">{error}</div>}
+              {focusedMissing && (
+                <p className="social-status">
+                  Esta publicação foi removida ou não está mais disponível.
+                </p>
+              )}
               {loading && <p className="social-status">Carregando publicações...</p>}
               {!loading && !error && visible.length === 0 && (
                 <p className="social-status">Ainda não há publicações por aqui. Que tal começar?</p>
               )}
               {!error &&
                 visible.map((post) => (
-                  <article className="social-post" key={post.id}>
+                  <article
+                    className="social-post"
+                    key={post.id}
+                    id={`social-post-${post.id}`}
+                    tabIndex={-1}
+                    data-highlighted={post.id === focusedPost}
+                  >
                     <div className="social-avatar">
                       {author(post.author_id).slice(0, 1).toUpperCase()}
                     </div>

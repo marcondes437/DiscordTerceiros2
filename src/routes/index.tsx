@@ -1,4 +1,5 @@
 import { LiveHome } from "@/components/landing/live-home";
+import { NotificationBell } from "@/components/notifications";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import type { User } from "@supabase/supabase-js";
@@ -123,6 +124,7 @@ function Landing() {
             <BrandLogo />
           </Link>
           <div className="win-header-end">
+            <NotificationBell />
             {user ? (
               <div className="user-chip">
                 <span className="user-avatar">
@@ -204,9 +206,27 @@ function Landing() {
           <main className="win-main live-main" data-scroller>
             <LiveHome />
             <section className="home-classes" id="rivalidade" aria-label="Conheça as turmas">
-              <div><span className="side-label">NOSSA COMUNIDADE</span><h2>Duas turmas, o mesmo lugar.</h2><p>Cada turma com sua história. Todo mundo conectado.</p></div>
-              <Link to="/turmas" search={{ turma: "a" }}><span>A</span><div><strong>Terceiro A</strong><small>Conheça a nossa história</small></div><Compass size={18} /></Link>
-              <Link to="/turmas" search={{ turma: "b" }}><span>B</span><div><strong>Terceiro B</strong><small>Conheça a nossa história</small></div><Compass size={18} /></Link>
+              <div>
+                <span className="side-label">NOSSA COMUNIDADE</span>
+                <h2>Duas turmas, o mesmo lugar.</h2>
+                <p>Cada turma com sua história. Todo mundo conectado.</p>
+              </div>
+              <Link to="/turmas" search={{ turma: "a" }}>
+                <span>A</span>
+                <div>
+                  <strong>Terceiro A</strong>
+                  <small>Conheça a nossa história</small>
+                </div>
+                <Compass size={18} />
+              </Link>
+              <Link to="/turmas" search={{ turma: "b" }}>
+                <span>B</span>
+                <div>
+                  <strong>Terceiro B</strong>
+                  <small>Conheça a nossa história</small>
+                </div>
+                <Compass size={18} />
+              </Link>
             </section>
           </main>
         </div>

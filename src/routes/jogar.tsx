@@ -8,6 +8,7 @@ import { useActivityPresence } from "@/components/activity-presence";
 import { useGameRoom } from "@/hooks/use-game-room";
 import { gameAction, gamingDb, inviteUrl, type RoomSnapshot, type Stroke } from "@/lib/gaming";
 import { GameCaptureControls } from "@/components/gaming-media";
+import { GameInviteFriends } from "@/components/game-invite-friends";
 import "./gaming-features.css";
 
 export const Route = createFileRoute("/jogar")({
@@ -260,8 +261,9 @@ function GameRoom({ userId, roomId }: { userId: string; roomId: string }) {
           </button>
           <button disabled={shareBusy} onClick={() => void share()}>
             <Share2 size={15} />
-            Chamar a turma
+            Publicar convite no Social
           </button>
+          <GameInviteFriends roomId={room.id} userId={userId} />
         </div>
       </div>
       {error && (

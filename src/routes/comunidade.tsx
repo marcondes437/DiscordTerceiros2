@@ -1,4 +1,5 @@
 import { useCommunityTheme } from "@/hooks/use-community-theme";
+import { NotificationBell } from "@/components/notifications";
 import { CommunityThemeToggle } from "@/components/community-theme-toggle";
 import "./community-layout.css";
 import { CommunityHub } from "@/components/community-hub";
@@ -57,6 +58,7 @@ import type { Database } from '@/integrations/supabase/types';
 import { memberClass, visibleSpaces, spaceChannel, type Space } from '@/lib/community-spaces';
 
 export const Route = createFileRoute('/comunidade')({
+  validateSearch: (search: Record<string,unknown>): {dm?:string} => ({...(typeof search.dm === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(search.dm) ? {dm:search.dm} : {})}),
   head: () => ({
     meta: [
       { title: 'Comunidade | SENAI Conecta' },
@@ -125,8 +127,9 @@ function dayLabel(iso: string) {
 const timeLabel = (iso: string) => new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
 function Community() {
+  const {dm: notificationDm}=Route.useSearch();
   const {theme: communityTheme,toggle: toggleCommunityTheme}=useCommunityTheme();
-  const themeControl=<CommunityThemeToggle theme={communityTheme} onToggle={toggleCommunityTheme}/>;
+  const themeControl=<><NotificationBell/><CommunityThemeToggle theme={communityTheme} onToggle={toggleCommunityTheme}/></>;
   const [overview, setOverview] = useState(true);
   const [space, setSpace] = useState<Space>('geral');
   const [active, setActive] = useState('geral');
@@ -150,6 +153,7 @@ function Community() {
   const [directView, setDirectView] = useState(false);
   const [directRecipient, setDirectRecipient] = useState<string | null>(null);
   const [profileView, setProfileView] = useState(false);
+  useEffect(()=>{if(user && notificationDm && notificationDm!==user.id){setDirectRecipient(notificationDm);setDirectView(true);setProfileView(false);setOverview(false);setVoiceView(null);}},[user?.id,notificationDm]);
   const { profiles, refresh: refreshProfiles } = useCommunityProfiles(user?.id);
   const [directSidebar, setDirectSidebar] = useState<HTMLDivElement | null>(null);
   const [directMain, setDirectMain] = useState<HTMLDivElement | null>(null);

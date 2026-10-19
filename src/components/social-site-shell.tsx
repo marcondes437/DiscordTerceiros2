@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { NotificationBell } from "./notifications";
 import { Link } from "@tanstack/react-router";
 import type { User } from "@supabase/supabase-js";
 import {
@@ -43,6 +44,7 @@ export function SocialSiteShell({
             <BrandLogo />
           </Link>
           <div className="win-header-end">
+            <NotificationBell />
             {user ? (
               <div className="user-chip">
                 <span className="user-avatar">
