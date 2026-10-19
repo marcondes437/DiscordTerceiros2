@@ -38,7 +38,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
   if (authenticated) return children;
   return (
     <main className="account-page">
-      <div className="system-login-cover" aria-hidden="true" />
+      <div className="gamey-login-aura" aria-hidden="true" />
       <header className="account-header">
         <BrandLogo />
         <span>O espaço da nossa turma</span>
@@ -46,17 +46,32 @@ export function AccountGate({ children }: { children: ReactNode }) {
       <div className="account-layout">
         <section className="account-story" aria-label="Terceiro A e Terceiro B">
           <div className="community-login-mark" aria-hidden="true">
-            conecta<span>COMMUNITY OS / SOROCABA</span>
+            conecta<span>JOGUE. CONVERSE. FAÇA PARTE.</span>
           </div>
           <span className="account-eyebrow">
             <span /> TERCEIRO A + TERCEIRO B
           </span>
           <h2>
-            Sua próxima
+            Sua turma.
             <br />
-            <span>jornada.</span>
+            <span>Seu universo.</span>
           </h2>
           <p>Entre na conversa, encontre seus amigos e faça parte dos momentos que ficam.</p>
+          <div className="gamey-login-showcase" aria-hidden="true">
+            <img src="/games/rabisco-hero.svg" alt="" />
+            <div>
+              <span>CONVERSAS. JOGOS. CONQUISTAS.</span>
+              <strong>
+                O intervalo
+                <br />
+                ganhou um lugar.
+              </strong>
+              <span>
+                <Gamepad2 size={15} /> Feito para jogar junto
+              </span>
+            </div>
+            <i />
+          </div>
           <div className="account-channels" aria-label="O que você encontra na comunidade">
             <div>
               <span className="account-channel-icon">

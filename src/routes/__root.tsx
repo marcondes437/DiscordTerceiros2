@@ -19,7 +19,7 @@ import { Toaster } from "sonner";
 import { AccountGate } from "../components/account-gate";
 import compactCss from "../compact.css?url";
 import communityCss from "../community-theme.css?url";
-import systemCss from "../system-theme.css?url";
+import gameyCss from "../gamey-theme.css?url";
 
 function NotFoundComponent() {
   return (
@@ -102,7 +102,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "stylesheet", href: compactCss },
       { rel: "stylesheet", href: communityCss },
-      { rel: "stylesheet", href: systemCss },
+      { rel: "stylesheet", href: gameyCss },
+      {
+        rel: "preload",
+        href: "/fonts/barlow-condensed-700.ttf",
+        as: "font",
+        type: "font/ttf",
+        crossOrigin: "anonymous",
+      },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
     ],
   }),

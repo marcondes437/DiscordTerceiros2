@@ -11,7 +11,7 @@ import { useChannelNames } from "@/hooks/use-channel-names";
 import { supabase } from "@/integrations/supabase/client";
 import { games } from "@/data/games";
 import { ProfilePhoto } from "@/components/profile-photo";
-import { SystemDashboard } from "./system-dashboard";
+import { GameyHero, GameyFeatures, GameyFinale } from "./gamey-hero";
 import "@/routes/home.css";
 type Post = { id: string; author_id: string; body: string; created_at: string };
 const defaults: Record<string, string> = {
@@ -109,15 +109,17 @@ export function LiveHome() {
           </span>
           <small>{new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}</small>
         </header>
-        <SystemDashboard
-          name={
-            user ? displayName(user.id, user.user_metadata?.display_name || "Jogador") : "Jogador"
-          }
-          avatar={user ? profiles[user.id]?.avatarSrc : null}
+        <GameyHero
+          members={members.map((m) => ({
+            id: m.id,
+            name: displayName(m.id, m.name),
+            avatar: profiles[m.id]?.avatarSrc,
+          }))}
           connected={connected}
-          calls={calls.length}
           players={players.length}
+          calls={calls.length}
         />
+        <GameyFeatures />
         <nav className="home-destinations" aria-label="Explore o Conecta">
           <Link to="/comunidade">
             <span>
@@ -314,6 +316,7 @@ export function LiveHome() {
             </div>
           )}
         </section>
+        <GameyFinale />
         <footer className="live-footer">
           Duas turmas. Uma só conexão. <span>SENAI CONECTA</span>
         </footer>

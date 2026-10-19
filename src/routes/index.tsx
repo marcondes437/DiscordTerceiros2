@@ -123,6 +123,11 @@ function Landing() {
           <Link to="/" className="win-logo" aria-label="SENAI Conecta, início">
             <BrandLogo />
           </Link>
+          <nav className="gamey-header-nav" aria-label="Navegar pelo Conecta">
+            <Link to="/jogos">Jogos</Link>
+            <Link to="/comunidade">Comunidade</Link>
+            <Link to="/social">Social</Link>
+          </nav>
           <div className="win-header-end">
             <NotificationBell />
             {user ? (
