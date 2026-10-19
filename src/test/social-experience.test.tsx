@@ -231,6 +231,24 @@ it("opens a conversation and publishes a reply to the selected post", async () =
     ),
   );
 });
+it("retains reply context when closing a conversation opened through a shared link", async () => {
+  render(<SocialExperience user={user} focusedPost={id} />);
+  const dialog = await screen.findByRole("dialog", { name: "Conversa" });
+  await within(dialog).findByText("Respostas");
+  fireEvent.change(within(dialog).getByRole("textbox", { name: "Nova publicação" }), {
+    target: { value: "Resposta pelo link" },
+  });
+  fireEvent.click(within(dialog).getByRole("button", { name: "Close" }));
+  expect(await screen.findByText("Respondendo a Bia")).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByRole("button", { name: "Publicar" })).not.toBeDisabled());
+  fireEvent.click(screen.getByRole("button", { name: "Publicar" }));
+  await waitFor(() =>
+    expect(state.rpc).toHaveBeenCalledWith(
+      "social_publish",
+      expect.objectContaining({ p_parent: id, p_bodies: ["Resposta pelo link"] }),
+    ),
+  );
+});
 it("offers edit and delete only for own posts and confirms deletion", async () => {
   state.posts = [makePost({ author_id: self, author_name: "Ana" })];
   render(<SocialExperience user={user} />);

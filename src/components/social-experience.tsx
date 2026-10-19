@@ -66,6 +66,9 @@ export function SocialExperience({
     setReplyPage(0);
   }, [focusedPost]);
   useEffect(() => {
+    if (focusedPost && user?.id) composer.update({ parentId: focusedPost });
+  }, [focusedPost, user?.id]);
+  useEffect(() => {
     mutationId.current++;
     lock.current = false;
     setBusy(false);
