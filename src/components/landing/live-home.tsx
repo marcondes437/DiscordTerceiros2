@@ -11,7 +11,7 @@ import { useChannelNames } from "@/hooks/use-channel-names";
 import { supabase } from "@/integrations/supabase/client";
 import { games } from "@/data/games";
 import { ProfilePhoto } from "@/components/profile-photo";
-import { OrbitScene } from "./orbit-scene";
+import { SystemDashboard } from "./system-dashboard";
 import "@/routes/home.css";
 type Post = { id: string; author_id: string; body: string; created_at: string };
 const defaults: Record<string, string> = {
@@ -27,7 +27,6 @@ export function LiveHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [query, setQuery] = useState("");
-  const [scene, setScene] = useState<"orbit" | "eclipse">("orbit");
   const members = mergeActivity([...online, ...classOnline]);
   const calls = members.filter((m) => m.room && !isChannelDeleted(m.room, "voice"));
   const roomIds = [...new Set(calls.map((m) => m.room!))];
@@ -102,66 +101,23 @@ export function LiveHome() {
     );
   }
   return (
-    <div className="live-home" data-scene={scene}>
+    <div className="live-home">
       <div className="live-center">
         <header className="live-top">
           <span>
-            <i /> CONECTA / FORA DA ÓRBITA
+            <i /> CONECTA / COMMUNITY OS
           </span>
           <small>{new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}</small>
         </header>
-        <section className="live-hero">
-          <OrbitScene />
-          <div className="live-hero-copy">
-            <span className="home-featured-label">
-              <Radio size={13} /> O INTERVALO GANHOU OUTRA DIMENSÃO
-            </span>
-            <h1>
-              O sinal
-              <br />
-              <span>é nosso.</span>
-            </h1>
-            <p>
-              Desliga o automático. Encontra a turma, entra na partida e cria alguma coisa que só
-              poderia acontecer aqui.
-            </p>
-            <div className="home-featured-actions">
-              <Link to="/comunidade" className="btn-red">
-                <Volume2 size={17} /> Entrar na frequência <ArrowUpRight size={17} />
-              </Link>
-              <Link to="/jogos" className="home-secondary-action">
-                <Gamepad2 size={17} /> Explorar jogos
-              </Link>
-            </div>
-          </div>
-          <div className="orbit-controls" aria-label="Cenário da página">
-            <span>ATMOSFERA</span>
-            <button
-              type="button"
-              aria-pressed={scene === "orbit"}
-              onClick={() => setScene("orbit")}
-            >
-              Órbita
-            </button>
-            <button
-              type="button"
-              aria-pressed={scene === "eclipse"}
-              onClick={() => setScene("eclipse")}
-            >
-              Eclipse
-            </button>
-          </div>
-        </section>
-        <div className="frequency-strip">
-          <span>
-            <i /> SINAL DA TURMA
-          </span>
-          <p>
-            {connected ? members.length : "—"} online <b>/</b> {calls.length} em voz <b>/</b>{" "}
-            {players.length} com jogo aberto
-          </p>
-          <span>SOROCABA, BR ↗</span>
-        </div>
+        <SystemDashboard
+          name={
+            user ? displayName(user.id, user.user_metadata?.display_name || "Jogador") : "Jogador"
+          }
+          avatar={user ? profiles[user.id]?.avatarSrc : null}
+          connected={connected}
+          calls={calls.length}
+          players={players.length}
+        />
         <nav className="home-destinations" aria-label="Explore o Conecta">
           <Link to="/comunidade">
             <span>

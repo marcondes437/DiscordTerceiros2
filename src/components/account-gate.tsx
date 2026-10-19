@@ -2,7 +2,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthForm } from "@/components/community-auth";
 import { BrandLogo } from "@/components/brand-logo";
-import { OrbitScene } from "@/components/landing/orbit-scene";
 import { Hash, Headphones, Gamepad2, MessageCircle, ShieldCheck } from "lucide-react";
 
 export function AccountGate({ children }: { children: ReactNode }) {
@@ -39,7 +38,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
   if (authenticated) return children;
   return (
     <main className="account-page">
-      <OrbitScene />
+      <div className="system-login-cover" aria-hidden="true" />
       <header className="account-header">
         <BrandLogo />
         <span>O espaço da nossa turma</span>
@@ -47,15 +46,15 @@ export function AccountGate({ children }: { children: ReactNode }) {
       <div className="account-layout">
         <section className="account-story" aria-label="Terceiro A e Terceiro B">
           <div className="community-login-mark" aria-hidden="true">
-            conecta<span>FORA DA ÓRBITA / SOROCABA</span>
+            conecta<span>COMMUNITY OS / SOROCABA</span>
           </div>
           <span className="account-eyebrow">
             <span /> TERCEIRO A + TERCEIRO B
           </span>
           <h2>
-            O sinal
+            Sua próxima
             <br />
-            <span>é nosso.</span>
+            <span>jornada.</span>
           </h2>
           <p>Entre na conversa, encontre seus amigos e faça parte dos momentos que ficam.</p>
           <div className="account-channels" aria-label="O que você encontra na comunidade">
