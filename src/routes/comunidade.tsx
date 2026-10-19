@@ -1,6 +1,8 @@
 import { useCommunityTheme } from "@/hooks/use-community-theme";
 import { useHiddenMessages } from "@/hooks/use-hidden-messages";
-import { MessageDeleteOptions } from "@/components/message-delete-options";
+import { MessageActions } from "@/components/message-actions";
+import { MessageFeedback } from "@/components/message-feedback";
+import { useMessageMarks } from "@/hooks/use-message-marks";
 import { ChatMediaPicker } from "@/components/chat-media-picker";
 import { useMotionSurface, useMessageMotion } from "@/components/community-motion";
 import { ChatDraftMedia, ChatMessageContent } from "@/components/chat-message-content";
@@ -145,6 +147,7 @@ function Community() {
   const themeControl=<><NotificationBell/><CommunityThemeToggle theme={communityTheme} onToggle={toggleCommunityTheme}/></>;
   const [authOpen, setAuthOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const messageMarks = useMessageMarks('channel', user?.id, messages.map(m=>m.id));
   const [draft, setDraft] = useState('');
   const messageInput = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
@@ -547,8 +550,9 @@ function Community() {
                               </div>
                             )}
                             <ChatMessageContent content={m.content}/>
+                            {user && <MessageFeedback marks={messageMarks.rows.filter(r=>r.channel_message_id===m.id)} userId={user.id} busy={messageMarks.busy} onToggle={(kind,value)=>void messageMarks.toggle(m.id,kind,value)}/>}
                           </div>
-                          {user && <MessageDeleteOptions className="message-delete" own={m.user_id===user.id} onHide={()=>{if(!hideMessage('channel',m.id))toast.info('Mensagem ocultada nesta sessão. O navegador não permitiu salvar a preferência.');}} {...(m.user_id===user.id?{onDeleteForEveryone:()=>remove(m.id)}:{})}/>}
+                          {user && <MessageActions messageId={m.id} kind="channel" userId={user.id} marks={messageMarks.rows.filter(r=>r.channel_message_id===m.id)} marksBusy={messageMarks.busy} onToggle={(kind,value)=>void messageMarks.toggle(m.id,kind,value)} onEdited={content=>setMessages(previous=>previous.map(row=>row.id===m.id?{...row,content}:row))} content={m.content} onReply={()=>{setDraft(previous => (`> ${m.display_name}: ${m.content.slice(0, 300)}\n\n` + previous).slice(0, 4000));messageInput.current?.focus();}} own={m.user_id===user.id} onHide={()=>{if(!hideMessage('channel',m.id))toast.info('Mensagem ocultada nesta sessão. O navegador não permitiu salvar a preferência.');}} {...(m.user_id===user.id?{onDeleteForEveryone:()=>remove(m.id)}:{})}/>}
                         </li>
                       </Fragment>
                     );

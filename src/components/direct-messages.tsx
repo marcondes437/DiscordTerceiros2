@@ -1,6 +1,8 @@
 import { useFriendships } from "@/hooks/use-friendships";
 import { useHiddenMessages } from "@/hooks/use-hidden-messages";
-import { MessageDeleteOptions } from "./message-delete-options";
+import { MessageActions } from "./message-actions";
+import { MessageFeedback } from "./message-feedback";
+import { useMessageMarks } from "@/hooks/use-message-marks";
 import { toast } from "sonner";
 import { friendshipState, friendshipWith, conversationIds } from "@/lib/friendships";
 import { FriendActions } from "./friend-actions";
@@ -102,6 +104,7 @@ export function DirectMessages({
     (m) =>
       (m.sender_id === selected || m.recipient_id === selected) && !hidden.direct.includes(m.id),
   );
+  const messageMarks = useMessageMarks("direct", user?.id, open ? conversation.map(m=>m.id) : []);
   const surfaceMotion = useMotionSurface<HTMLDivElement>(`${open}:${selected || section}`);
   const messageMotion = useMessageMotion<HTMLDivElement>(
     `${user?.id}:${selected}`,
@@ -481,15 +484,18 @@ export function DirectMessages({
                                   </time>
                                 </header>
                                 <ChatMessageContent content={m.body} />
+                                {user && <MessageFeedback marks={messageMarks.rows.filter(r=>r.direct_message_id===m.id)} userId={user.id} busy={messageMarks.busy} onToggle={(kind,value)=>void messageMarks.toggle(m.id,kind,value)}/>}
                               </div>
                               {user && (
-                                <MessageDeleteOptions
-                                  className="direct-delete-message"
+                                <MessageActions
+                                  messageId={m.id} kind="direct" userId={user.id} marks={messageMarks.rows.filter(r=>r.direct_message_id===m.id)} marksBusy={messageMarks.busy} onToggle={(kind,value)=>void messageMarks.toggle(m.id,kind,value)} onEdited={body=>setMessages(previous=>previous.map(row=>row.id===m.id?{...row,body}:row))}
+                                  content={m.body}
+                                  {...(canMessage ? {onReply: () => {setDraft(previous => (`> ${m.sender_id === user.id ? "Você" : person?.display_name || "Mensagem"}: ${m.body.slice(0, 300)}\n\n` + previous).slice(0, 2000));messageInput.current?.focus();}} : {})}
                                   own={m.sender_id === user.id}
                                   label={
                                     m.sender_id === user.id
-                                      ? "Apagar minha mensagem"
-                                      : "Apagar mensagem recebida"
+                                      ? "Mais opções da minha mensagem"
+                                      : "Mais opções da mensagem recebida"
                                   }
                                   onHide={() => {
                                     if (!hideMessage("direct", m.id))

@@ -33,3 +33,174 @@
   font-size: 12px;
   color: var(--destructive);
 }
+.message[data-message-id],
+.direct-line[data-message-id] {
+  position: relative;
+}
+.community-app .message-action-bar {
+  position: absolute;
+  right: 12px;
+  top: -13px;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--popover);
+  color: var(--muted-foreground);
+  box-shadow: 0 3px 10px #0003;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+.community-app :is(.message, .direct-line):is(:hover, :focus-within) .message-action-bar,
+.community-app .message-action-bar:has([data-state="open"]) {
+  opacity: 1;
+  pointer-events: auto;
+}
+.community-app .message-action-bar > button,
+.community-app .message-action-bar > button[data-state] {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 28px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.community-app .message-action-bar button:hover,
+.community-app .message-action-bar button:focus-visible {
+  background: var(--accent);
+  color: var(--foreground);
+}
+.message-context-menu {
+  min-width: 225px;
+  padding: 7px;
+  border-radius: 9px;
+}
+.message-context-menu [role="menuitem"] {
+  gap: 11px;
+  padding: 10px 9px;
+  cursor: pointer;
+}
+.message-context-menu .message-context-delete {
+  color: var(--destructive);
+}
+.message-quick-reactions {
+  display: flex;
+  gap: 6px;
+  padding: 6px 5px 10px;
+}
+.message-quick-reactions button {
+  border: 0;
+  border-radius: 6px;
+  background: var(--secondary);
+  font-size: 23px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.message-quick-reactions button:hover {
+  background: var(--accent);
+}
+.message-context-menu [data-radix-menu-collection-item] {
+  gap: 11px;
+}
+.message-reaction-menu > div {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+.message-reaction-menu [role="menuitem"] {
+  font-size: 22px;
+  padding: 7px;
+  justify-content: center;
+  cursor: pointer;
+}
+.message-feedback {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.message-feedback:empty {
+  display: none;
+}
+.message-feedback > :is(span, button) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  margin-top: 5px;
+  padding: 3px 7px;
+  border-radius: 5px;
+  color: var(--muted-foreground);
+  background: var(--secondary);
+  border: 1px solid var(--border);
+}
+.message-feedback > button {
+  font-size: 15px;
+  cursor: pointer;
+}
+.message-feedback button[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--accent);
+  color: var(--foreground);
+}
+.message-command-dialog {
+  max-width: 460px;
+}
+.message-command-dialog textarea {
+  width: 100%;
+  resize: vertical;
+  background: var(--secondary);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 12px;
+}
+.message-command-dialog blockquote {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 100px;
+  overflow: auto;
+  border-left: 3px solid var(--primary);
+  padding: 6px 12px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+.message-forward-friends {
+  display: grid;
+  gap: 5px;
+  max-height: 200px;
+  overflow: auto;
+}
+.message-forward-friends button {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-align: left;
+}
+.message-forward-friends button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--primary);
+}
+.message-command-dialog footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+@media (hover: none), (pointer: coarse) {
+  .community-app .message-action-bar > button[title^="Reagir"] {
+    display: none;
+  }
+  .community-app .message-action-bar {
+    opacity: 1;
+    pointer-events: auto;
+    top: 3px;
+    box-shadow: none;
+  }
+  .community-app :is(.message-body, .direct-line > div:not(.message-action-bar)) {
+    padding-right: 65px;
+  }
+}

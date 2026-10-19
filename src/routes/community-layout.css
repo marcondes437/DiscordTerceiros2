@@ -262,17 +262,6 @@ body:has(.community-app[data-community-theme="light"])
 .dark .community-app[data-community-theme] .message:hover {
   background: var(--ink-1);
 }
-.dark .community-app[data-community-theme] .message-delete {
-  opacity: 1;
-  width: 26px;
-  height: 26px;
-  color: var(--muted-foreground);
-  background: transparent;
-}
-.dark .community-app[data-community-theme] .message-delete:hover {
-  background: var(--brand-soft);
-  color: var(--community-cyan);
-}
 .dark .community-app[data-community-theme] .composer {
   gap: 8px;
   padding: 15px 25px 22px;
@@ -375,21 +364,6 @@ body:has(.community-app[data-community-theme="light"])
 .dark .community-app[data-community-theme] .direct-line time {
   color: var(--muted-foreground);
   font-size: 9px;
-}
-.direct-delete-message {
-  position: absolute;
-  right: 5px;
-  top: 10px;
-  padding: 5px;
-  color: var(--muted-foreground);
-  border-radius: 4px;
-}
-.direct-delete-message:hover {
-  background: var(--brand-soft);
-  color: var(--community-cyan);
-}
-.direct-delete-message:disabled {
-  opacity: 0.4;
 }
 .dark .community-app[data-community-theme] .direct-compose input {
   background: var(--secondary);

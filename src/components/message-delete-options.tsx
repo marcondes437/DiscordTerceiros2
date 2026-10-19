@@ -1,20 +1,36 @@
-import { useState } from "react";
-import { EyeOff, Trash2 } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { Copy, EyeOff, MoreHorizontal, Reply, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import "@/routes/message-delete-options.css";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 export function MessageDeleteOptions({
   own,
   onHide,
   onDeleteForEveryone,
   className = "",
   label,
+  content,
+  onReply,
+  menuExtras,
+  toolbarExtras,
 }: {
   own: boolean;
   onHide: () => void;
   onDeleteForEveryone?: () => Promise<boolean>;
   className?: string;
   label?: string;
+  content?: string;
+  onReply?: () => void;
+  menuExtras?: ReactNode;
+  toolbarExtras?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -34,20 +50,62 @@ export function MessageDeleteOptions({
   };
   return (
     <>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className={className}
-        aria-label={label || "Apagar mensagem"}
-        title="Apagar mensagem"
-        onClick={() => {
-          setError("");
-          setOpen(true);
-        }}
-      >
-        <Trash2 size={15} />
-      </Button>
+      <div className={`message-action-bar ${className}`}>
+        {toolbarExtras}
+        {onReply && (
+          <button type="button" aria-label="Responder mensagem" title="Responder" onClick={onReply}>
+            <Reply size={17} />
+          </button>
+        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label={label || "Mais opções da mensagem"}
+              title="Mais opções"
+            >
+              <MoreHorizontal size={19} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" sideOffset={6} className="message-context-menu">
+            {menuExtras}
+            {onReply && (
+              <DropdownMenuItem onSelect={onReply}>
+                <Reply size={17} />
+                Responder
+              </DropdownMenuItem>
+            )}
+            {content !== undefined && (
+              <DropdownMenuItem
+                onSelect={() => {
+                  if (!navigator.clipboard) {
+                    toast.error("Seu navegador não permite copiar o texto.");
+                    return;
+                  }
+                  void navigator.clipboard.writeText(content).then(
+                    () => toast.success("Texto copiado"),
+                    () => toast.error("Não foi possível copiar o texto."),
+                  );
+                }}
+              >
+                <Copy size={17} />
+                Copiar texto
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="message-context-delete"
+              onSelect={() => {
+                setError("");
+                setOpen(true);
+              }}
+            >
+              <Trash2 size={17} />
+              Excluir mensagem
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       <Dialog
         open={open}
         onOpenChange={(next) => {

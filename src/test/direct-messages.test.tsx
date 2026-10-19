@@ -68,20 +68,32 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-it('opens the theme store directly below message requests and returns to friends', async () => {
-  const sidebar = document.createElement('div');
-  const main = document.createElement('div');
+it("opens the theme store directly below message requests and returns to friends", async () => {
+  const sidebar = document.createElement("div");
+  const main = document.createElement("div");
   document.body.append(sidebar, main);
   const choose = vi.fn();
-  render(<DirectMessages user={{id:'member',user_metadata:{}} as User} onSignIn={vi.fn()} open setOpen={vi.fn()} sidebarTarget={sidebar} mainTarget={main} onSelectSkin={choose}/>);
-  const store = screen.getByRole('button',{name:'Loja de temas Novo'});
-  expect(screen.getByRole('button',{name:'Solicitações de mensagens'}).nextElementSibling).toBe(store);
+  render(
+    <DirectMessages
+      user={{ id: "member", user_metadata: {} } as User}
+      onSignIn={vi.fn()}
+      open
+      setOpen={vi.fn()}
+      sidebarTarget={sidebar}
+      mainTarget={main}
+      onSelectSkin={choose}
+    />,
+  );
+  const store = screen.getByRole("button", { name: "Loja de temas Novo" });
+  expect(screen.getByRole("button", { name: "Solicitações de mensagens" }).nextElementSibling).toBe(
+    store,
+  );
   fireEvent.click(store);
-  expect(screen.getByRole('heading',{name:'Loja de temas'})).toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button',{name:'Usar tema Ocean'}));
-  expect(choose).toHaveBeenCalledWith('ocean');
-  fireEvent.click(screen.getByRole('button',{name:'Voltar para amigos'}));
-  expect(screen.queryByRole('heading',{name:'Loja de temas'})).not.toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "Loja de temas" })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Usar tema Ocean" }));
+  expect(choose).toHaveBeenCalledWith("ocean");
+  fireEvent.click(screen.getByRole("button", { name: "Voltar para amigos" }));
+  expect(screen.queryByRole("heading", { name: "Loja de temas" })).not.toBeInTheDocument();
 });
 
 it("lets the sender delete their own message without exposing deletion on someone else's", async () => {
@@ -121,9 +133,12 @@ it("lets the sender delete their own message without exposing deletion on someon
     />,
   );
   expect(await screen.findByText("Minha mensagem")).toBeInTheDocument();
-  expect(screen.getAllByRole("button", { name: "Apagar minha mensagem" })).toHaveLength(1);
-  fireEvent.click(screen.getByRole("button", { name: "Apagar minha mensagem" }));
-  fireEvent.click(screen.getByRole('button',{name:/^Apagar para todos/}));
+  expect(screen.getAllByRole("button", { name: "Mais opções da minha mensagem" })).toHaveLength(1);
+  fireEvent.keyDown(screen.getByRole("button", { name: "Mais opções da minha mensagem" }), {
+    key: "Enter",
+  });
+  fireEvent.click(screen.getByRole("menuitem", { name: "Excluir mensagem" }));
+  fireEvent.click(screen.getByRole("button", { name: /^Apagar para todos/ }));
   await waitFor(() => expect(screen.queryByText("Minha mensagem")).not.toBeInTheDocument());
   expect(screen.getByText("Mensagem do colega")).toBeInTheDocument();
   expect(fixtures.remove).toHaveBeenCalledWith("direct_messages");
@@ -200,8 +215,8 @@ it("blocks the composer and programmatic submit for a nonfriend opened from a pr
   expect(await screen.findByRole("button", { name: "Adicionar amigo" })).toBeInTheDocument();
   const input = screen.getByRole("textbox", { name: "Mensagem privada" });
   expect(input).toBeDisabled();
-  expect(screen.getByRole('button',{name:'Escolher GIF'})).toBeDisabled();
-  expect(screen.getByRole('button',{name:'Escolher emoji'})).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Escolher GIF" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Escolher emoji" })).toBeDisabled();
   fireEvent.change(input, { target: { value: "Não autorizado" } });
   fireEvent.submit(input.closest("form")!);
   expect(fixtures.insert).not.toHaveBeenCalled();
