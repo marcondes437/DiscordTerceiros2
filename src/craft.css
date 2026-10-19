@@ -1,0 +1,682 @@
+/* Editorial studio direction inspired by Artcraft. Console profile stays independent. */
+html.dark {
+  --ink-0: #0c0d10;
+  --ink-1: #101014;
+  --background: #121316;
+  --foreground: #f2f1ee;
+  --white: #f2f1ee;
+  --grey: #acadb1;
+  --card: #17181c;
+  --primary: #2464c3;
+  --primary-foreground: #ffffff;
+  --secondary: #202126;
+  --muted: #0c0d10;
+  --muted-foreground: #acadb1;
+  --accent: #27292f;
+  --border: #f2f1ee26;
+  --brand-soft: #2d81ff20;
+  --glass: #101014;
+  --glass-strong: #17181c;
+  --glass-soft: #202126;
+  --glass-line: #f2f1ee26;
+  --glass-line-hi: #f2f1ee45;
+  --stage: #0c0d10;
+  --stage-raised: #17181c;
+  --stage-hover: #27292f;
+  --stage-line: #f2f1ee26;
+  --stage-fg: #f2f1ee;
+  --stage-muted: #acadb1;
+  --craft-serif: "Instrument Serif", Georgia, serif;
+  --craft-display: "Archivo", "Segoe UI", sans-serif;
+  --craft-mono: "SFMono-Regular", Consolas, monospace;
+  --craft-blue: #74aaff;
+}
+.dark :focus-visible {
+  outline-color: var(--craft-blue);
+}
+.dark ::selection {
+  background: #2d81ff60;
+}
+.dark .win-header {
+  height: 62px;
+  min-height: 62px;
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+}
+.dark .brand-logo-text {
+  font-family: var(--craft-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+.dark .win-side {
+  background: var(--background);
+  padding: 26px 12px;
+}
+.dark .side-link {
+  min-height: 39px;
+  padding: 10px 12px;
+  border-radius: 2px;
+  font-size: 12px;
+}
+.dark .side-link.is-active {
+  background: #f2f1ee09;
+  box-shadow: none;
+  border-left: 1px solid var(--craft-blue);
+}
+.dark .side-link.is-active svg {
+  color: var(--craft-blue);
+}
+.dark .side-label,
+.dark .nav-label,
+.dark .side-foot,
+.dark .live-top,
+.dark .live-heading > div > span,
+.dark .games-eyebrow,
+.dark .games-section-heading > div > span,
+.dark .social-kicker {
+  font-family: var(--craft-mono);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+.dark .side-foot {
+  font-size: 9px;
+  line-height: 1.9;
+}
+.dark .btn-red {
+  background: var(--foreground);
+  color: #101014;
+  border: 1px solid var(--foreground);
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 12px 18px;
+}
+.dark .btn-red:hover {
+  background: #d8d7d4;
+  color: #101014;
+}
+.dark .btn-sm {
+  padding: 7px 12px;
+}
+.dark .user-avatar,
+.dark .live-avatar {
+  background: #29374b;
+}
+.dark .live-home {
+  max-width: 1500px;
+  grid-template-columns: minmax(0, 1fr) 240px;
+}
+.dark .live-center {
+  padding: 30px;
+}
+.dark .live-top {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+  margin-bottom: 0;
+  color: var(--muted-foreground);
+}
+.dark .live-top small {
+  font-family: var(--craft-mono);
+  font-size: 9px;
+}
+.dark .live-top i {
+  box-shadow: none;
+  width: 5px;
+  height: 5px;
+}
+.dark .live-hero {
+  position: relative;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: none;
+  padding: 38px 0 40px;
+}
+.dark .live-hero-shade {
+  display: none;
+}
+.craft-wordmark {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  font-family: var(--craft-display);
+  font-size: clamp(46px, 8vw, 118px);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.085em;
+  color: #f2f1ee;
+  padding-right: 0.07em;
+}
+.craft-wordmark > span {
+  display: block;
+  margin: 17px 0 0;
+  font-family: var(--craft-mono);
+  font-size: 8px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 2.3px;
+  color: #929399;
+}
+.dark .live-hero::before,
+.dark .live-hero::after {
+  content: "+";
+  position: absolute;
+  bottom: -9px;
+  color: #a5a5ad;
+  font-family: monospace;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 16px;
+}
+.dark .live-hero::before {
+  left: -5px;
+}
+.dark .live-hero::after {
+  right: -5px;
+}
+.dark .live-hero-copy {
+  padding: 30px 20px 0;
+  max-width: 630px;
+  text-align: center;
+}
+.dark .home-featured-label {
+  font-family: var(--craft-mono);
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #93949b;
+}
+.dark .home-featured-label svg {
+  color: var(--craft-blue);
+  width: 11px;
+}
+.dark .live-hero h1 {
+  font-family: var(--craft-display);
+  font-size: clamp(30px, 3.6vw, 49px);
+  font-weight: 500;
+  letter-spacing: -1.7px;
+  line-height: 1.1;
+  margin: 20px 0 16px;
+}
+.dark .live-hero h1 span {
+  font-family: var(--craft-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--foreground);
+  font-size: 1.2em;
+  letter-spacing: -1.4px;
+}
+.dark .live-hero p {
+  max-width: 400px;
+  margin: 0 auto;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 1.85;
+}
+.dark .home-featured-actions {
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+.dark .home-secondary-action {
+  border-radius: 2px;
+  border-color: var(--border);
+  background: transparent;
+  font-size: 12px;
+}
+.dark .home-secondary-action:hover {
+  background: #ffffff08;
+}
+.dark .home-destinations {
+  margin: 0 0 28px;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+}
+.dark .home-destinations > a {
+  background: none;
+  border: 0;
+  border-right: 1px solid var(--border);
+  border-radius: 0;
+  padding: 24px 14px;
+}
+.dark .home-destinations > a:last-child {
+  border-right: 0;
+}
+.dark .home-destinations > a:hover {
+  background: #ffffff04;
+}
+.dark .home-destinations > a > span {
+  background: none;
+  color: var(--craft-blue);
+  width: 26px;
+  height: 30px;
+}
+.dark .home-destinations strong {
+  font-family: var(--craft-display);
+  font-size: 11px;
+  font-weight: 500;
+}
+.dark .home-destinations small {
+  color: #96979f;
+}
+.dark .live-stats {
+  margin-bottom: 40px;
+}
+.dark .live-stats strong {
+  font-family: var(--craft-serif);
+  font-size: 35px;
+  font-weight: 400;
+}
+.dark .live-stats span {
+  font-family: var(--craft-mono);
+  font-size: 9px;
+  color: #93949b;
+}
+.dark .live-heading {
+  padding-top: 12px;
+  padding-bottom: 10px;
+  border-top: 1px solid var(--border);
+}
+.dark .live-heading h2 {
+  font-family: var(--craft-display);
+  font-size: 23px;
+  font-weight: 500;
+  letter-spacing: -0.8px;
+  margin-top: 12px;
+}
+.dark .live-heading h2 svg {
+  width: 17px;
+  color: #9b9da6;
+}
+.dark .live-heading > a {
+  font-family: var(--craft-mono);
+  font-size: 9px;
+}
+.dark .live-game,
+.dark .live-call,
+.dark .live-empty,
+.dark .live-post {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--ink-1);
+  box-shadow: none;
+}
+.dark .live-game-info {
+  padding: 20px;
+}
+.dark .live-game-info h3 {
+  font-family: var(--craft-display);
+  font-weight: 500;
+}
+.dark .live-online {
+  border-radius: 0;
+  border: 0;
+  border-left: 1px solid var(--border);
+  background: transparent;
+  margin: 30px 0;
+  padding: 0 16px;
+}
+.dark .live-online-title h2 {
+  font-family: var(--craft-display);
+  font-weight: 500;
+  font-size: 15px;
+}
+.dark .live-online input {
+  border-radius: 2px;
+  background: #ffffff04;
+  border: 1px solid var(--border);
+}
+.dark .home-classes {
+  border-top: 1px solid var(--border);
+  padding-block: 30px;
+}
+.dark .home-classes h2 {
+  font-family: var(--craft-serif);
+  font-size: 29px;
+  font-weight: 400;
+}
+.dark .home-classes > a {
+  border-radius: 2px;
+  background: none;
+  padding: 18px;
+}
+.dark .home-classes > a > span {
+  background: transparent;
+  border: 1px solid var(--border);
+  font-family: var(--craft-serif);
+  font-size: 26px;
+  font-weight: 400;
+  border-radius: 0;
+}
+
+/* Sign-in uses the same restrained studio typography and registration layout. */
+.dark .account-page {
+  background: var(--background);
+}
+.dark .account-header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.dark .account-header > span {
+  font-family: var(--craft-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.dark .account-layout {
+  max-width: 1100px;
+  grid-template-columns: minmax(0, 1fr) 410px;
+  gap: 80px;
+}
+.craft-login-mark {
+  font-family: var(--craft-display);
+  font-size: clamp(66px, 7.8vw, 112px);
+  font-weight: 500;
+  letter-spacing: -0.075em;
+  line-height: 1;
+  margin-bottom: 34px;
+}
+.craft-login-mark > span {
+  display: block;
+  font-family: var(--craft-mono);
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 2.6px;
+  color: #929399;
+  margin-top: 14px;
+}
+.dark .account-eyebrow {
+  font-family: var(--craft-mono);
+  font-size: 9px;
+  letter-spacing: 1.2px;
+}
+.dark .account-story h2 {
+  font-family: var(--craft-display);
+  font-size: clamp(30px, 3vw, 42px);
+  font-weight: 500;
+  letter-spacing: -1.4px;
+  margin-top: 18px;
+}
+.dark .account-story h2 span {
+  font-family: var(--craft-serif);
+  font-size: 1.24em;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--foreground);
+}
+.dark .account-story > p {
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+.dark .account-channel-icon {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  width: 25px;
+  height: 30px;
+  color: var(--craft-blue);
+}
+.dark .account-channels {
+  gap: 18px;
+  padding-top: 24px;
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.dark .account-channels strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.dark .account-channels small {
+  font-size: 11px;
+}
+.dark .account-community {
+  font-family: var(--craft-mono);
+  font-size: 10px;
+  border-top-color: var(--border);
+}
+.dark .account-card {
+  position: relative;
+  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 34px 30px;
+}
+.dark .account-card::before,
+.dark .account-card::after {
+  content: "+";
+  position: absolute;
+  color: #999ba3;
+  font: 16px monospace;
+  line-height: 16px;
+}
+.dark .account-card::before {
+  top: -9px;
+  left: -5px;
+}
+.dark .account-card::after {
+  bottom: -9px;
+  right: -5px;
+}
+.dark .auth-form h1 {
+  font-family: var(--craft-serif);
+  font-size: 38px;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.7px;
+}
+.dark .auth-description {
+  color: #a7a8af;
+  font-size: 12px;
+}
+.dark .auth-tabs {
+  background: transparent;
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+}
+.dark .auth-tabs button {
+  border-radius: 0;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 10px;
+}
+.dark .auth-tabs button[aria-pressed="true"] {
+  background: none;
+  border-bottom-color: var(--foreground);
+}
+.dark .auth-form input:not([type="radio"]) {
+  border: 1px solid var(--border);
+  background: #ffffff03;
+  border-radius: 2px;
+}
+.dark .auth-form input:focus-visible {
+  border-color: var(--craft-blue);
+}
+.dark .auth-form form > button {
+  border-radius: 2px;
+  background: var(--foreground);
+  color: #101014;
+}
+.dark .auth-switch button {
+  color: var(--craft-blue);
+}
+.dark .account-private,
+.dark .account-footer {
+  font-family: var(--craft-mono);
+  font-size: 9px;
+}
+
+/* Working areas remain focused, while adopting the same rules and accent. */
+.dark .community-app .nav-item.is-active {
+  color: #dceaff;
+  background: var(--brand-soft);
+  box-shadow: inset 2px 0 var(--craft-blue);
+}
+.dark .community-app .community-spaces button[aria-pressed="true"] strong {
+  background: var(--primary);
+}
+.dark .community-app .composer input {
+  border-radius: 3px;
+}
+.dark .community-app .voice-tile {
+  border-radius: 3px;
+}
+.dark .games-hero {
+  border-bottom: 1px solid var(--border);
+}
+.dark .games-hero-copy {
+  padding-top: 125px;
+}
+.dark .games-hero h1 {
+  font-family: var(--craft-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -2px;
+  font-size: clamp(48px, 6.6cqw, 88px);
+}
+.dark .games-play-button {
+  background: var(--foreground);
+  color: #101014 !important;
+  border-radius: 2px;
+}
+.dark .games-play-button:hover {
+  background: #d8d7d4;
+  box-shadow: none;
+}
+.dark .games-hero-actions > button,
+.dark .games-categories button,
+.dark .games-search,
+.dark .game-card-art {
+  border-radius: 2px;
+}
+.dark .games-categories button[aria-pressed="true"] {
+  border-color: #74aaff77;
+  background: var(--brand-soft);
+  color: #c2dbff;
+}
+.dark .games-section-heading h2,
+.dark .social-site-shell .social-header h1 {
+  font-family: var(--craft-display);
+  font-weight: 500;
+  letter-spacing: -1px;
+}
+.dark .social-site-shell .social-tabs button.active {
+  background: #ffffff09;
+  color: var(--foreground);
+  border-bottom: 1px solid var(--craft-blue);
+}
+.dark .social-site-shell .social-compose,
+.dark .social-site-shell .social-post,
+.dark .social-site-shell .social-info {
+  border-radius: 2px;
+}
+.dark .social-site-shell .social-avatar {
+  background: #29374b;
+  color: #dceaff;
+}
+.dark .social-site-shell .social-compose-footer button {
+  border-radius: 2px;
+}
+.dark .gaming-lobby-intro {
+  background: linear-gradient(110deg, #101014, #152039);
+  border-radius: 2px;
+}
+.dark .gaming-lobby-intro > span {
+  color: var(--craft-blue);
+  font-family: var(--craft-mono);
+}
+.dark .gaming-lobby-intro h1 {
+  font-family: var(--craft-display);
+  font-weight: 500;
+  letter-spacing: -1px;
+}
+.dark .gaming-room-grid > article,
+.dark .gaming-scoreboard {
+  border-radius: 2px;
+}
+.dark .gaming-post-link {
+  color: var(--craft-blue) !important;
+}
+@media (max-width: 1250px) {
+  .dark .live-home {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dark .live-online {
+    display: none;
+  }
+  .dark .account-layout {
+    gap: 40px;
+  }
+}
+@media (max-width: 900px) {
+  .dark .account-layout {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 420px;
+  }
+  .dark .live-hero {
+    min-height: 490px;
+  }
+  .dark .craft-wordmark {
+    font-size: clamp(58px, 13vw, 105px);
+  }
+}
+@media (max-width: 600px) {
+  .dark .live-center {
+    padding: 18px 14px;
+  }
+  .dark .live-hero {
+    min-height: 460px;
+    padding-top: 35px;
+  }
+  .dark .live-hero-copy {
+    padding-inline: 8px;
+  }
+  .dark .live-hero h1 {
+    font-size: 32px;
+  }
+  .dark .home-featured-label {
+    font-size: 7px;
+    letter-spacing: 0.5px;
+  }
+  .dark .home-featured-actions {
+    gap: 9px;
+  }
+  .dark .home-featured-actions a {
+    padding: 11px 12px;
+    font-size: 11px;
+  }
+  .dark .home-destinations {
+    grid-template-columns: 1fr;
+  }
+  .dark .home-destinations > a {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 17px 10px;
+  }
+  .dark .home-destinations > a:last-child {
+    border-bottom: 0;
+  }
+  .dark .home-destinations strong {
+    font-size: 12px;
+  }
+  .dark .live-heading h2 {
+    font-size: 21px;
+  }
+  .dark .account-card {
+    padding: 30px 22px;
+  }
+  .dark .account-header > span {
+    display: none;
+  }
+  .dark .games-hero h1 {
+    font-size: 57px;
+  }
+}

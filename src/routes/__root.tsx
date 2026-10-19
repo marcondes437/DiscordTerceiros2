@@ -1,4 +1,4 @@
-import { ActivityPresence } from '@/components/activity-presence';
+import { ActivityPresence } from "@/components/activity-presence";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -17,6 +17,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "sonner";
 import { AccountGate } from "../components/account-gate";
 import compactCss from "../compact.css?url";
+import craftCss from "../craft.css?url";
 
 function NotFoundComponent() {
   return (
@@ -98,6 +99,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "stylesheet", href: compactCss },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap",
+      },
+      { rel: "stylesheet", href: craftCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
     ],
   }),
@@ -128,11 +134,14 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ActivityPresence>
-      <div className="page-transition" key={pathname}>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <AccountGate><Outlet /></AccountGate>
-      </div>
-      <Toaster theme="dark" richColors position="top-center" />
-    </ActivityPresence></QueryClientProvider>
+        <div className="page-transition" key={pathname}>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <AccountGate>
+            <Outlet />
+          </AccountGate>
+        </div>
+        <Toaster theme="dark" richColors position="top-center" />
+      </ActivityPresence>
+    </QueryClientProvider>
   );
 }
