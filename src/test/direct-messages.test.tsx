@@ -199,6 +199,8 @@ it("blocks the composer and programmatic submit for a nonfriend opened from a pr
   expect(await screen.findByRole("button", { name: "Adicionar amigo" })).toBeInTheDocument();
   const input = screen.getByRole("textbox", { name: "Mensagem privada" });
   expect(input).toBeDisabled();
+  expect(screen.getByRole('button',{name:'Escolher GIF'})).toBeDisabled();
+  expect(screen.getByRole('button',{name:'Escolher emoji'})).toBeDisabled();
   fireEvent.change(input, { target: { value: "Não autorizado" } });
   fireEvent.submit(input.closest("form")!);
   expect(fixtures.insert).not.toHaveBeenCalled();

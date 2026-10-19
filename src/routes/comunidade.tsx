@@ -1,4 +1,6 @@
 import { useCommunityTheme } from "@/hooks/use-community-theme";
+import { ChatMediaPicker } from "@/components/chat-media-picker";
+import { ChatDraftMedia, ChatMessageContent } from "@/components/chat-message-content";
 import { NotificationBell } from "@/components/notifications";
 import { CommunityThemeToggle } from "@/components/community-theme-toggle";
 import "./community-layout.css";
@@ -140,6 +142,7 @@ function Community() {
   const [authOpen, setAuthOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState('');
+  const messageInput = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
   const [sending, setSending] = useState(false);
   const [drawer, setDrawer] = useState(false);
@@ -529,7 +532,7 @@ function Community() {
                                 <time className="message-time">{timeLabel(m.created_at)}</time>
                               </div>
                             )}
-                            <p className="message-text">{m.content}</p>
+                            <ChatMessageContent content={m.content}/>
                           </div>
                           {m.user_id === user?.id && (
                             <Button className="message-delete" variant="ghost" size="icon" title="Apagar mensagem" onClick={() => void remove(m.id)}>
@@ -547,8 +550,10 @@ function Community() {
                 <div ref={bottom} />
               </div>
 
-              <form className="composer" onSubmit={send}>
-                <Input aria-label="Mensagem" maxLength={4000} placeholder={user ? `Mensagem em #${channel.name}` : 'Entre para conversar'} value={draft} onChange={(e) => setDraft(e.target.value)} onFocus={() => !user && setAuthOpen(true)} />
+              <form className="composer chat-composer" onSubmit={send}>
+                <ChatDraftMedia draft={draft} onChange={setDraft}/>
+                <Input ref={messageInput} aria-label="Mensagem" maxLength={4000} placeholder={user ? `Mensagem em #${channel.name}` : 'Entre para conversar'} value={draft} onChange={(e) => setDraft(e.target.value)} onFocus={() => !user && setAuthOpen(true)} />
+                <ChatMediaPicker key={`${space}:${active}`} draft={draft} onChange={setDraft} inputRef={messageInput} limit={4000} userId={user?.id} disabled={!user || sending}/>
                 <Button size="icon" type="submit" disabled={sending || (!!user && !draft.trim())} title="Enviar">
                   <SendHorizontal />
                 </Button>

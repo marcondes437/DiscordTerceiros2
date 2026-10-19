@@ -3,6 +3,8 @@ import { friendshipState, friendshipWith, conversationIds } from "@/lib/friendsh
 import { FriendActions } from "./friend-actions";
 import { CommunityPeople } from "./community-people";
 import { CommunityThemeStore } from "./community-theme-store";
+import { ChatMediaPicker } from "./chat-media-picker";
+import { ChatDraftMedia, ChatMessageContent } from "./chat-message-content";
 import { useActivityPresence, mergeActivity } from "./activity-presence";
 import "@/routes/community-people.css";
 import { AvatarDecoration, ProfileEffect } from "./profile-decorations";
@@ -79,6 +81,7 @@ export function DirectMessages({
   const [sending, setSending] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
+  const messageInput = useRef<HTMLInputElement>(null);
   const unread = messages.filter((m) => m.recipient_id === user?.id && !m.read_at).length;
   const pendingFriends = friends.rows.filter(
     (f) => f.recipient_id === user?.id && f.status === "pending" && f.request_kind !== "message",
@@ -466,7 +469,7 @@ export function DirectMessages({
                                     })}
                                   </time>
                                 </header>
-                                <p>{m.body}</p>
+                                <ChatMessageContent content={m.body} />
                               </div>
                               {m.sender_id === user?.id && (
                                 <button
@@ -504,8 +507,10 @@ export function DirectMessages({
                         onAction={(action) => selected && void friends.act(selected, action)}
                       />
                     </div>
-                    <form className="direct-compose" onSubmit={send}>
+                    <form className="direct-compose chat-composer" onSubmit={send}>
+                      <ChatDraftMedia draft={draft} onChange={setDraft} />
                       <input
+                        ref={messageInput}
                         aria-label="Mensagem privada"
                         placeholder={
                           canMessage
@@ -517,7 +522,17 @@ export function DirectMessages({
                         value={draft}
                         onChange={(e) => setDraft(e.target.value)}
                       />
+                      <ChatMediaPicker
+                        key={selected}
+                        draft={draft}
+                        onChange={setDraft}
+                        inputRef={messageInput}
+                        limit={2000}
+                        userId={user?.id}
+                        disabled={!canMessage || sending}
+                      />
                       <button
+                        type="submit"
                         disabled={!canMessage || !draft.trim() || sending}
                         aria-label="Enviar mensagem privada"
                       >
