@@ -32,10 +32,12 @@ export async function getIceServers(): Promise<RTCIceServer[]> {
 
   const urls = env('VITE_TURN_URLS');
   if (urls) {
+    const username = env('VITE_TURN_USERNAME');
+    const credential = env('VITE_TURN_CREDENTIAL');
     servers.push({
       urls: urls.split(',').map((u) => u.trim()).filter(Boolean),
-      username: env('VITE_TURN_USERNAME'),
-      credential: env('VITE_TURN_CREDENTIAL'),
+      ...(username ? { username } : {}),
+      ...(credential ? { credential } : {}),
     });
   }
 
@@ -43,18 +45,25 @@ export async function getIceServers(): Promise<RTCIceServer[]> {
   const apiKey = env('VITE_METERED_API_KEY');
   if (domain && apiKey) {
     try {
-      const res = await fetch(`https://${domain}/api/v1/turn/credentials?apiKey=${encodeURIComponent(apiKey)}`);
-      if (res.ok) {
-        const list = (await res.json()) as RTCIceServer[];
-        if (Array.isArray(list)) servers.push(...list);
-      }
+      const res = await fetch(`https://${domain}/api/v1/turn/credentials?apiKey=${encodeURIComponent(apiKey)}`, {
+        signal: AbortSignal.timeout(8_000),
+      });
+      if (!res.ok) throw new Error('Não foi possível obter as credenciais TURN. Confira a configuração do provedor.');
+      const list = (await res.json()) as RTCIceServer[];
+      if (!Array.isArray(list) || !list.some(isRelay)) throw new Error('O provedor não retornou um servidor TURN válido.');
+      servers.push(...list);
     } catch {
-      /* sem TURN: segue só com STUN */
+      throw new Error('O servidor de chamadas TURN está indisponível. Confira o domínio e a chave configurados na Vercel.');
     }
   }
 
   cached = { at: Date.now(), servers };
   return servers;
+}
+
+function isRelay(server: RTCIceServer) {
+  const urls = Array.isArray(server.urls) ? server.urls : [server.urls];
+  return urls.some((url) => typeof url === 'string' && /^turns?:/.test(url));
 }
 
 export function hasRelayConfigured() {

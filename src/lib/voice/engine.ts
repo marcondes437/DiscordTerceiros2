@@ -54,6 +54,7 @@ type Peer = {
   flushTimer?: Timer;
   answerTimer?: Timer;
   disconnectTimer?: Timer;
+  connectTimer?: Timer;
   restarts: number;
   queue: Promise<void>;
   audio: Partial<Record<'mic' | 'screenAudio', HTMLAudioElement>>;
@@ -65,6 +66,7 @@ type Meter = { analyser: AnalyserNode; source: MediaStreamAudioSourceNode; buffe
 const SPEAKING_THRESHOLD = 0.012;
 const SPEAKING_HOLD_MS = 350;
 const ANSWER_TIMEOUT_MS = 10_000;
+const CONNECT_TIMEOUT_MS = 20_000;
 const HELLO_DELAY_MS = 5_000;
 const MAX_RECREATIONS = 4;
 
@@ -115,7 +117,7 @@ export class VoiceEngine {
     for (const id of [...this.peers.keys()]) if (!next.has(id)) this.closePeer(id, true);
     for (const id of [...this.helloTimers.keys()]) if (!next.has(id)) this.clearHello(id);
     for (const id of next) {
-      if (this.peers.has(id)) continue;
+      if (this.peers.has(id) || this.snapshot.status[id] === 'failed') continue;
       if (this.isInitiator(id)) this.startPeer(id);
       else this.scheduleHello(id);
     }
@@ -127,10 +129,7 @@ export class VoiceEngine {
     if (signal.kind === 'hello') {
       if (!this.isInitiator(from)) return;
       const peer = this.peers.get(from);
-      if (!peer || peer.pc.connectionState !== 'connected') {
-        this.recreations.set(from, 0);
-        this.startPeer(from);
-      }
+      if (!peer) this.recreate(from);
       return;
     }
     if (signal.kind === 'offer') {
@@ -147,7 +146,7 @@ export class VoiceEngine {
       const p = peer;
       this.enqueue(p, async () => {
         await p.pc.setRemoteDescription(signal.sdp);
-        if (!p.tx.mic) this.bindAnswererTransceivers(p);
+        if (!p.tx.mic) await this.bindAnswererTransceivers(p);
         await this.flushRemoteCandidates(p);
         await p.pc.setLocalDescription(await p.pc.createAnswer());
         const local = p.pc.localDescription;
@@ -162,6 +161,7 @@ export class VoiceEngine {
         if (p.pc.signalingState !== 'have-local-offer') return;
         await p.pc.setRemoteDescription(signal.sdp);
         if (p.answerTimer) clearTimeout(p.answerTimer);
+        this.watchConnection(p);
         await this.flushRemoteCandidates(p);
       });
       return;
@@ -208,7 +208,7 @@ export class VoiceEngine {
   setDisplay(stream: MediaStream | null) {
     if (this.destroyed) return;
     this.display = stream;
-    for (const p of this.peers.values()) this.attachDisplay(p);
+    for (const p of this.peers.values()) this.enqueue(p, () => this.attachDisplay(p));
   }
 
   setDeafened(deafened: boolean) {
@@ -274,7 +274,7 @@ export class VoiceEngine {
       p.tx.mic = pc.addTransceiver(micTrack ?? 'audio', { direction: 'sendrecv', streams: this.mic ? [this.mic] : [] });
       p.tx.screen = pc.addTransceiver('video', { direction: 'sendrecv' });
       p.tx.screenAudio = pc.addTransceiver('audio', { direction: 'sendrecv' });
-      this.attachDisplay(p);
+      this.enqueue(p, () => this.attachDisplay(p));
     }
 
     pc.ontrack = (e) => this.onTrack(p, e);
@@ -295,7 +295,7 @@ export class VoiceEngine {
   }
 
   /** O lado que responde recebe os transceivers da oferta e passa a enviar por eles. */
-  private bindAnswererTransceivers(p: Peer) {
+  private async bindAnswererTransceivers(p: Peer) {
     const list = p.pc.getTransceivers();
     ROLES.forEach((role, i) => {
       const t = list[i];
@@ -306,10 +306,10 @@ export class VoiceEngine {
     const micTrack = this.mic?.getAudioTracks()[0] ?? null;
     const sender = p.tx.mic?.sender;
     if (sender) {
-      void sender.replaceTrack(micTrack).catch(() => undefined);
+      await sender.replaceTrack(micTrack);
       if (this.mic && 'setStreams' in sender) sender.setStreams(this.mic);
     }
-    this.attachDisplay(p);
+    await this.attachDisplay(p);
   }
 
   private sendOffer(p: Peer, iceRestart: boolean) {
@@ -328,10 +328,11 @@ export class VoiceEngine {
   }
 
   private recreate(id: string) {
-    if (this.destroyed || !this.known.has(id)) return;
+    if (this.destroyed || !this.known.has(id) || this.snapshot.status[id] === 'failed') return;
     const count = (this.recreations.get(id) ?? 0) + 1;
     this.recreations.set(id, count);
     if (count > MAX_RECREATIONS) {
+      this.closePeer(id, false);
       this.setStatus(id, 'failed');
       this.opts.onPeerFailed?.(id);
       return;
@@ -343,6 +344,7 @@ export class VoiceEngine {
     if (p.closed) return;
     const state = p.pc.connectionState;
     if (state === 'connected') {
+      if (p.connectTimer) clearTimeout(p.connectTimer);
       if (p.disconnectTimer) clearTimeout(p.disconnectTimer);
       p.restarts = 0;
       this.recreations.set(p.id, 0);
@@ -372,6 +374,15 @@ export class VoiceEngine {
     this.sendOffer(p, true);
   }
 
+  /** An SDP answer does not mean ICE found a usable network route. */
+  private watchConnection(p: Peer) {
+    if (p.connectTimer) clearTimeout(p.connectTimer);
+    if (!p.initiator || p.closed || p.pc.connectionState === 'connected') return;
+    p.connectTimer = setTimeout(() => {
+      if (!p.closed && p.pc.connectionState !== 'connected') this.restartIce(p);
+    }, CONNECT_TIMEOUT_MS);
+  }
+
   private scheduleHello(id: string, delay = HELLO_DELAY_MS) {
     if (this.helloTimers.has(id)) return;
     this.helloTimers.set(
@@ -396,7 +407,7 @@ export class VoiceEngine {
 
   private flushOutbox(p: Peer) {
     if (p.flushTimer) clearTimeout(p.flushTimer);
-    p.flushTimer = undefined;
+    delete p.flushTimer;
     if (!p.outbox.length || p.closed) return;
     const candidates = p.outbox.splice(0);
     this.opts.send({ kind: 'candidates', from: this.opts.selfId, to: p.id, session: p.session, candidates });
@@ -408,7 +419,7 @@ export class VoiceEngine {
   }
 
   private enqueue(p: Peer, job: () => Promise<void>) {
-    p.queue = p.queue.then(job).catch((err) => {
+    p.queue = p.queue.then(async () => { if (!p.closed) await job(); }).catch((err) => {
       if (!p.closed) console.warn('[voz] falha na negociação com', p.id, err);
     });
   }
@@ -417,7 +428,7 @@ export class VoiceEngine {
     const p = this.peers.get(id);
     if (!p) return;
     p.closed = true;
-    [p.flushTimer, p.answerTimer, p.disconnectTimer].forEach((t) => t && clearTimeout(t));
+    [p.flushTimer, p.answerTimer, p.disconnectTimer, p.connectTimer].forEach((t) => t && clearTimeout(t));
     p.pc.ontrack = null;
     p.pc.onicecandidate = null;
     p.pc.onconnectionstatechange = null;
@@ -467,11 +478,13 @@ export class VoiceEngine {
     if (role === 'mic') this.addMeter(p.id, stream);
   }
 
-  private attachDisplay(p: Peer) {
+  private async attachDisplay(p: Peer) {
     const video = this.display?.getVideoTracks()[0] ?? null;
     const audio = this.display?.getAudioTracks()[0] ?? null;
-    if (p.tx.screen) void p.tx.screen.sender.replaceTrack(video).catch(() => undefined);
-    if (p.tx.screenAudio) void p.tx.screenAudio.sender.replaceTrack(audio).catch(() => undefined);
+    await Promise.all([
+      p.tx.screen?.sender.replaceTrack(video),
+      p.tx.screenAudio?.sender.replaceTrack(audio),
+    ]);
     if (video) this.tuneScreenSender(p);
   }
 
