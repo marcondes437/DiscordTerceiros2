@@ -11,7 +11,8 @@ import { useChannelNames } from "@/hooks/use-channel-names";
 import { supabase } from "@/integrations/supabase/client";
 import { games } from "@/data/games";
 import { ProfilePhoto } from "@/components/profile-photo";
-import { GameyHero, GameyFeatures, GameyFinale } from "./gamey-hero";
+import { CrimsonHomeHero } from "./crimson-home-hero";
+import "@/routes/crimson-home.css";
 import "@/routes/home.css";
 type Post = { id: string; author_id: string; body: string; created_at: string };
 const defaults: Record<string, string> = {
@@ -101,7 +102,7 @@ export function LiveHome() {
     );
   }
   return (
-    <div className="live-home">
+    <div className="live-home crimson-home">
       <div className="live-center">
         <header className="live-top">
           <span>
@@ -109,17 +110,7 @@ export function LiveHome() {
           </span>
           <small>{new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long" })}</small>
         </header>
-        <GameyHero
-          members={members.map((m) => ({
-            id: m.id,
-            name: displayName(m.id, m.name),
-            avatar: profiles[m.id]?.avatarSrc,
-          }))}
-          connected={connected}
-          players={players.length}
-          calls={calls.length}
-        />
-        <GameyFeatures />
+        <CrimsonHomeHero online={members.length} connected={connected} />
         <nav className="home-destinations" aria-label="Explore o Conecta">
           <Link to="/comunidade">
             <span>
@@ -316,7 +307,6 @@ export function LiveHome() {
             </div>
           )}
         </section>
-        <GameyFinale />
         <footer className="live-footer">
           Duas turmas. Uma só conexão. <span>SENAI CONECTA</span>
         </footer>

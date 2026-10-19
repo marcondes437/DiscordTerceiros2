@@ -40,6 +40,17 @@
   opacity: 0.35;
   cursor: not-allowed;
 }
+.dark .community-app .chat-composer .chat-media-tools > button:first-child {
+  width: 38px;
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+.dark .community-app .chat-composer .chat-media-tools > button:first-child[aria-expanded="true"] {
+  background: var(--brand-soft);
+  color: var(--primary);
+  border-color: var(--primary);
+}
 .chat-media-popover {
   width: 390px;
   max-width: calc(100vw - 20px);

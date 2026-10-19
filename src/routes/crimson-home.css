@@ -1,0 +1,429 @@
+.dark .landing-window:has(.crimson-home) {
+  --primary: #ed354b;
+  --primary-foreground: #fff;
+  --background: #090708;
+  --foreground: #f8f5f6;
+  --card: #151113;
+  --secondary: #251a1f;
+  --muted-foreground: #ad9da4;
+  --border: #ffffff12;
+  --ink-0: #080607;
+  --ink-1: #100c0e;
+  --brand-soft: #ed354b19;
+  --community-cyan: #fa8290;
+  background: #090708;
+}
+.dark .glass-page:has(.crimson-home) {
+  background: #070506;
+}
+.dark .landing-window:has(.crimson-home) .win-header {
+  background: #0b080af5;
+}
+.dark .landing-window:has(.crimson-home) .gamey-header-nav a:hover {
+  color: #ff929f;
+  background: #ed354b0d;
+}
+.dark .landing-window:has(.crimson-home) .user-avatar {
+  background: #4c1c2b;
+}
+.dark .landing-window:has(.crimson-home) .btn-red {
+  background: #db2940;
+  box-shadow: 0 4px 20px #ed354b20;
+}
+.dark .live-home.crimson-home {
+  background: radial-gradient(ellipse at 80% 0, #7e15221c, transparent 50%), #090708;
+  grid-template-columns: minmax(0, 1fr);
+}
+.dark .crimson-home .live-center {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 24px clamp(16px, 3vw, 42px) 60px;
+}
+.dark .crimson-home .live-top {
+  margin-bottom: 18px;
+}
+.dark .crimson-home .live-top > span {
+  color: #a78f98;
+}
+.crimson-dashboard {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  border: 1px solid #e05a6c26;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #100c0f;
+  box-shadow: 0 24px 70px #0003;
+}
+.crimson-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 8px;
+  background: #080607;
+  border-right: 1px solid #ffffff09;
+}
+.crimson-rail > a {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  color: #a27883;
+  border-radius: 8px;
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+.crimson-rail > a:hover {
+  background: #ed354b18;
+  color: #ff8494;
+}
+.crimson-rail > .crimson-home-mark {
+  background: #4b1c29;
+  color: #ffc7ce;
+  font-weight: 750;
+}
+.crimson-dashboard-main {
+  padding: 20px;
+  min-width: 0;
+}
+.crimson-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 20px;
+}
+.crimson-dashboard-header h1 {
+  font-size: 14px;
+  letter-spacing: -0.3px;
+  font-weight: 650;
+  color: #f6f0f2;
+}
+.crimson-dashboard-header > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #b2a3aa;
+}
+.crimson-dashboard-header i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #f15b6e;
+  box-shadow: 0 0 9px #ed354b66;
+}
+.crimson-home-banner {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 345px;
+  display: flex;
+  align-items: center;
+  border-radius: 9px;
+  background: #230b12;
+  border: 1px solid #f049601a;
+}
+.crimson-home-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, #16090ef7 10%, #200c1299 52%, #2d0b1666),
+    radial-gradient(circle, #ffffff16 0.7px, transparent 1px) 0 0/18px 18px;
+}
+.crimson-home-glow {
+  position: absolute;
+  inset: -30%;
+  z-index: -2;
+  background: radial-gradient(ellipse at 60% 50%, #ba183b80, transparent 60%);
+  animation: crimson-home-breathe 14s ease-in-out infinite alternate;
+}
+.crimson-banner-copy {
+  position: relative;
+  z-index: 2;
+  padding: 38px;
+  max-width: 65%;
+}
+.crimson-banner-copy > span {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  color: #e8adb9;
+  margin-bottom: 22px;
+}
+.crimson-banner-copy h2 {
+  font-family: inherit;
+  font-size: clamp(30px, 3.6vw, 53px);
+  font-weight: 650;
+  line-height: 1.08;
+  letter-spacing: -2px;
+  color: #fff;
+}
+.crimson-banner-copy p {
+  font-size: 11px;
+  line-height: 1.7;
+  margin-top: 18px;
+  color: #cdaeb8;
+}
+.crimson-banner-copy > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 23px;
+  padding: 11px 15px;
+  background: #f8f3f5;
+  border: 1px solid #ffffff22;
+  border-radius: 5px;
+  color: #2b0d17;
+  font-size: 12px;
+  font-weight: 650;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
+}
+.crimson-banner-copy > a:hover {
+  background: #fff;
+  box-shadow: 0 0 28px #ff54643b;
+}
+.crimson-game-tabs {
+  display: flex;
+  gap: 6px;
+  margin-top: 16px;
+}
+.crimson-game-tabs button {
+  border: 1px solid #fff2;
+  border-radius: 4px;
+  padding: 5px 9px;
+  color: #ccabb7;
+  font-size: 9px;
+}
+.crimson-game-tabs button[aria-pressed="true"] {
+  color: #fff;
+  background: #ed354b33;
+  border-color: #f16e8255;
+}
+.crimson-banner-art {
+  position: absolute;
+  right: -8%;
+  top: -6%;
+  width: 70%;
+  height: 112%;
+  object-fit: cover;
+  z-index: -2;
+  filter: grayscale(1) sepia(1) saturate(5) hue-rotate(310deg) brightness(0.85);
+  animation: crimson-home-float 13s ease-in-out infinite alternate;
+}
+.crimson-banner-stamp {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+  font-size: 8px;
+  letter-spacing: 2px;
+  line-height: 1.5;
+  color: #fff7;
+  text-align: right;
+}
+.crimson-home-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+.crimson-home-actions > a {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  min-height: 130px;
+  padding: 22px;
+  border: 1px solid #ffffff0e;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1b1317, #141013);
+  transition:
+    transform 0.2s,
+    border-color 0.2s,
+    background 0.2s;
+}
+.crimson-home-actions > a > svg:first-child {
+  color: #ef8b9b;
+  margin-bottom: 8px;
+}
+.crimson-home-actions strong {
+  color: #f8f0f3;
+  font-size: 13px;
+  font-weight: 600;
+}
+.crimson-home-actions span {
+  color: #a78e98;
+  font-size: 10px;
+}
+.crimson-card-arrow {
+  position: absolute;
+  top: 23px;
+  right: 20px;
+  color: #765460;
+}
+.crimson-home-actions > a:hover {
+  transform: translateY(-3px);
+  border-color: #ed354b55;
+  background: #24141b;
+}
+.dark .crimson-home .live-stats {
+  margin-top: 24px;
+}
+.dark .crimson-home .live-stats > a {
+  background: #141013;
+  border-color: #ed354b20;
+}
+.dark .crimson-home .live-stats strong {
+  font-family: inherit;
+  font-size: 28px;
+}
+.dark .crimson-home .live-stats svg,
+.dark .crimson-home .live-heading > a {
+  color: #ef8496;
+}
+.dark .crimson-home .live-heading h2 {
+  font-family: inherit;
+  font-size: 23px;
+  letter-spacing: -0.5px;
+}
+.dark .crimson-home .live-heading > div > span {
+  color: #b48a98;
+}
+.dark .crimson-home :is(.live-call, .live-empty, .live-game, .live-posts > a) {
+  background: #141013;
+  border-color: #ffffff12;
+}
+.dark .crimson-home .live-avatar {
+  background: #4b2231;
+}
+.dark .crimson-home .live-empty > a,
+.dark .crimson-home .live-call > a {
+  color: #ff9aa9;
+}
+.crimson-home a:focus-visible,
+.crimson-home button:focus-visible {
+  outline: 2px solid #ff8b9b;
+  outline-offset: 3px;
+}
+@keyframes crimson-home-float {
+  from {
+    transform: translate3d(0, -4px, 0) scale(1.02);
+  }
+  to {
+    transform: translate3d(-10px, 9px, 0) scale(1.06);
+  }
+}
+@keyframes crimson-home-breathe {
+  from {
+    transform: translate3d(-5%, 0, 0);
+    opacity: 0.55;
+  }
+  to {
+    transform: translate3d(5%, 7%, 0);
+    opacity: 1;
+  }
+}
+body[data-conecta-motion="off"] :is(.crimson-banner-art, .crimson-home-glow),
+body[data-conecta-motion="subtle"] :is(.crimson-banner-art, .crimson-home-glow) {
+  animation: none;
+}
+body[data-conecta-motion="off"] .crimson-home-actions > a {
+  transition: none;
+  transform: none;
+}
+@media (max-width: 850px) {
+  .crimson-dashboard {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+  .crimson-rail {
+    padding-inline: 5px;
+    gap: 17px;
+  }
+  .crimson-dashboard-main {
+    padding: 14px;
+  }
+  .crimson-banner-copy {
+    padding: 28px;
+    max-width: 80%;
+  }
+  .crimson-home-banner {
+    min-height: 330px;
+  }
+  .crimson-banner-art {
+    right: -22%;
+    width: 90%;
+    opacity: 0.75;
+  }
+}
+@media (max-width: 550px) {
+  .dark .crimson-home .live-center {
+    padding: 16px 12px 35px;
+  }
+  .crimson-dashboard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .crimson-rail {
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 8px;
+    border-right: 0;
+    border-bottom: 1px solid #ffffff0c;
+    gap: 8px;
+  }
+  .crimson-dashboard-header {
+    margin-bottom: 14px;
+  }
+  .crimson-dashboard-header h1 {
+    font-size: 12px;
+  }
+  .crimson-dashboard-header > span {
+    font-size: 8px;
+  }
+  .crimson-banner-copy {
+    padding: 26px 20px;
+    max-width: 100%;
+  }
+  .crimson-banner-copy h2 {
+    font-size: 34px;
+    letter-spacing: -1.2px;
+  }
+  .crimson-banner-copy > span {
+    font-size: 8px;
+  }
+  .crimson-banner-copy p {
+    max-width: 220px;
+  }
+  .crimson-banner-art {
+    right: -40%;
+    width: 130%;
+    opacity: 0.35;
+  }
+  .crimson-home-actions {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .crimson-home-actions > a {
+    min-height: 110px;
+    padding: 20px;
+  }
+  .crimson-banner-stamp {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crimson-banner-art,
+  .crimson-home-glow {
+    animation: none !important;
+  }
+  .crimson-home-actions > a {
+    transition: none !important;
+    transform: none !important;
+  }
+}
