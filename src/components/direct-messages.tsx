@@ -1,8 +1,11 @@
+import { CommunityPeople } from "./community-people";
+import { useActivityPresence, mergeActivity } from "./activity-presence";
+import "@/routes/community-people.css";
 import { AvatarDecoration, ProfileEffect } from './profile-decorations';
 ﻿import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { User } from '@supabase/supabase-js';
-import { ArrowLeft, MessageCircle, SendHorizontal } from 'lucide-react';
+import { ArrowLeft, MessageCircle, SendHorizontal, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import type { CommunityProfile } from '@/hooks/use-community-profiles';
 
@@ -12,10 +15,12 @@ type Person = { id: string; display_name: string };
 const db = supabase as any;
 
 export function DirectMessages({ user, onSignIn, open, setOpen, sidebarTarget, mainTarget, profiles = {}, requestedRecipient }: { requestedRecipient?: string | null; profiles?: Record<string, CommunityProfile>; user: User | null; onSignIn: () => void; open: boolean; setOpen: (open: boolean) => void; sidebarTarget: HTMLElement | null; mainTarget: HTMLElement | null }) {
+  const activity = useActivityPresence();
+  const livePeople = mergeActivity([...activity.online, ...activity.classOnline]);
   const [people, setPeople] = useState<Person[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
-  useEffect(() => { if (open && requestedRecipient) { setSelected(requestedRecipient); setDraft(''); } }, [open, requestedRecipient]);
+  useEffect(() => { if (open) { setSelected(requestedRecipient || null); setDraft(''); } }, [open, requestedRecipient]);
   const [search, setSearch] = useState('');
   const [draft, setDraft] = useState('');
   const [error, setError] = useState('');
@@ -86,11 +91,14 @@ export function DirectMessages({ user, onSignIn, open, setOpen, sidebarTarget, m
     {open && sidebarTarget && createPortal(
       <div className="direct-inbox">
         <label className="direct-find"><span className="sr-only">Encontrar colega</span><input aria-label="Encontrar colega" value={search} onChange={e => setSearch(e.target.value)} placeholder="Encontrar ou começar uma conversa"/></label>
+        <button type="button" className="direct-directory-link" onClick={() => setOpen(false)}><ArrowLeft size={16}/><span>Voltar aos canais</span></button>
+        <button type="button" className={`direct-directory-link ${!selected ? "is-active" : ""}`} onClick={() => setSelected(null)}><Users size={18}/><strong>Pessoas</strong></button>
         <div className="direct-inbox-heading"><MessageCircle size={18}/><strong>Mensagens diretas</strong></div>
         <div className="direct-people">{directory.filter(p => p.display_name.toLowerCase().includes(search.toLowerCase())).map(p => <button className={selected === p.id ? 'is-active' : ''} key={p.id} onClick={() => { setSelected(p.id); setDraft(''); }}><span className="mini-avatar">{p.avatarSrc ? <img src={p.avatarSrc} alt=""/> : p.display_name.slice(0,1).toUpperCase()}<AvatarDecoration theme={p.avatar_decoration}/></span><span>{p.display_name}</span>{messages.some(m => m.sender_id === p.id && m.recipient_id === user?.id && !m.read_at) && <i aria-label="Mensagens não lidas"/>}</button>)}{!people.length && <p>Nenhum colega disponível ainda.</p>}</div>
       </div>, sidebarTarget)}
     {open && mainTarget && createPortal(
       <div className="direct-workspace">
+        {!selected ? <><CommunityPeople people={directory} online={livePeople.filter(p => p.id !== user?.id)} unreadIds={[...new Set(messages.filter(m => m.recipient_id === user?.id && !m.read_at).map(m => m.sender_id))]} connected={activity.connected} onSelect={id => { setSelected(id); setDraft(''); }}/>{error && <div className="direct-error" role="alert">{error}<button onClick={() => void load()}>Tentar novamente</button></div>}</> : <>
         <header className="direct-topbar"><button className="icon-btn" aria-label="Voltar aos canais" onClick={() => setOpen(false)}><ArrowLeft size={18}/></button><span className="mini-avatar">{person?.avatarSrc ? <img src={person.avatarSrc} alt=""/> : person?.display_name.slice(0,1).toUpperCase() ?? '@'}</span><h1>{person?.display_name ?? 'Mensagens diretas'}</h1><span className="direct-private-label">Conversa privada</span></header>
         <div className="direct-workspace-body">
           <section className="direct-chat" aria-label="Conversa privada">{error && <div className="direct-error" role="alert">{error}<button onClick={() => void load()}>Tentar novamente</button></div>}
@@ -99,6 +107,7 @@ export function DirectMessages({ user, onSignIn, open, setOpen, sidebarTarget, m
           </section>
           {person && <aside className="direct-person-profile"><ProfileEffect theme={person.profile_effect}/><div className="direct-profile-cover" style={{ backgroundColor: person.banner_color }}>{person.bannerSrc && <img src={person.bannerSrc} alt=""/>}</div><div className="direct-profile-details"><span className="direct-profile-avatar">{person.avatarSrc ? <img src={person.avatarSrc} alt=""/> : person.display_name.slice(0,1).toUpperCase()}<AvatarDecoration theme={person.avatar_decoration}/></span><h2>{person.display_name}</h2><p>{person.bio || 'Aluno da comunidade'}</p><div className="direct-profile-note"><strong>Conversa privada</strong><p>Apenas você e {person.display_name} podem ler estas mensagens.</p></div></div></aside>}
         </div>
+        </>}
       </div>, mainTarget)}
   </>;
 }

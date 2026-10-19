@@ -23,7 +23,7 @@ it('renders private messages in the channel and main panels without a dialog', a
   render(<DirectMessages user={{ id: 'member', user_metadata: {} } as User} onSignIn={vi.fn()} open setOpen={setOpen} sidebarTarget={sidebar} mainTarget={main}/>);
 
   expect(sidebar.querySelector('input')).toHaveAttribute('placeholder', 'Encontrar ou começar uma conversa');
-  expect(await screen.findByRole('heading', { name: 'Mensagens diretas' })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { name: 'Pessoas' })).toBeInTheDocument();
   expect(main.querySelector('.direct-workspace')).toBeInTheDocument();
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'Voltar aos canais' }));

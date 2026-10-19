@@ -353,6 +353,7 @@ function Community() {
         </div>
 
         <nav className="sidebar-scroll">
+          <button type="button" className="community-overview-link" onClick={() => { setDirectRecipient(null); setDirectView(true); setProfileView(false); setDrawer(false); }}><Users size={17}/><span>Pessoas e mensagens</span></button>
           <button type="button" className={`community-overview-link ${overview && !directView && !profileView ? "is-active" : ""}`} onClick={() => { setOverview(true); setDirectView(false); setProfileView(false); setVoiceView(null); setDrawer(false); }}><House size={17}/><span>Explorar comunidade</span></button>
           <div className="space-heading"><strong>{spaceName}</strong><small>{space === 'geral' ? 'Terceiro A + Terceiro B' : 'Somente membros da sua turma'}</small></div>
           {!turma && <p className="space-missing">Sua conta ainda não tem uma turma vinculada. O espaço Geral continua disponível.</p>}
