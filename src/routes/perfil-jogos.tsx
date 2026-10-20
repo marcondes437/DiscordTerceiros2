@@ -261,7 +261,7 @@ export function GamingProfile() {
                           </Link>
                           <p>{game.categories.join(" · ")}</p>
                           <span className={game.url ? "is-available" : ""}>
-                            {game.url ? "Disponível para jogar" : "Em breve"}
+                            {game.url ? "Disponível para jogar" : game.unavailableReason ? "Indisponível" : "Em breve"}
                           </span>
                           <button
                             disabled={busy || !user}

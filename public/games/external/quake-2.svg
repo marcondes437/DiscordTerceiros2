@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#121319"/><stop offset="1" stop-color="#a96a3d"/></linearGradient><radialGradient id="glow"><stop stop-color="#a96a3d" stop-opacity=".85"/><stop offset="1" stop-color="#a96a3d" stop-opacity="0"/></radialGradient><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern></defs>
+  <rect width="800" height="500" fill="url(#bg)"/><rect width="800" height="500" fill="url(#grid)"/><ellipse cx="640" cy="215" rx="310" ry="310" fill="url(#glow)"/>
+  <g transform="translate(622 218) rotate(-18)" fill="none" stroke="#fff"><circle r="126" stroke-opacity=".12" stroke-width="1"/><circle r="91" stroke-opacity=".16" stroke-width="18"/><circle r="53" stroke-opacity=".45" stroke-width="2"/><path d="M-142 0H-73M73 0H142M0-142V-73M0 73V142" stroke-opacity=".65" stroke-width="3"/><path d="M-22 0H22M0-22V22" stroke-width="5" stroke-linecap="round" stroke-opacity=".85"/></g>
+  <path d="M0 420L800 310V500H0Z" fill="#000" fill-opacity=".23"/>
+  <g font-family="Arial, sans-serif" fill="#fff"><text x="42" y="53" font-size="12" letter-spacing="4" fill-opacity=".65">CONECTA / ARCADE</text><text x="755" y="53" font-size="15" text-anchor="end" fill-opacity=".6">22</text>
+  <text x="42" y="238" font-size="42" font-weight="800" letter-spacing="-1">Quake II</text>
+  <rect x="43" y="393" width="32" height="3" rx="1" fill="#a96a3d"/><text x="88" y="400" font-size="12" letter-spacing="2" fill-opacity=".65">BROWSER COLLECTION</text></g>
+  </svg>

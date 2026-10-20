@@ -1,4 +1,5 @@
-export type GameCategory = "Ação" | "Com a turma" | "Criatividade" | "Raciocínio" | "Corrida";
+import { externalGames } from "./external-games";
+export type GameCategory = "Ação" | "Com a turma" | "Criatividade" | "Raciocínio" | "Corrida" | "Offline" | "Online" | "Esportes" | "RPG" | "Coleções";
 export type BrowserGame = {
   id: string;
   name: string;
@@ -8,6 +9,9 @@ export type BrowserGame = {
   categories: GameCategory[];
   description: string;
   color: string;
+  external?: boolean;
+  unavailableReason?: string;
+  note?: string;
 };
 export function configuredGameUrl(value?: string): string | null {
   if (!value?.trim()) return null;
@@ -41,8 +45,11 @@ export const games: BrowserGame[] = [
       "Sua arena. Sua turma. Cresça, desvie dos adversários e dispute cada espaço nesta versão feita por nós.",
     color: "#326a55",
   },
+  ...externalGames,
 ];
-export const gameCategories = ["Todos", "Com a turma", "Criatividade", "Ação"] as const;
+export const communityGames = games.filter((game) => !game.external);
+export const gameCategories = ["Todos", "Com a turma", "Offline", "Online", "Ação", "Esportes", "Corrida", "RPG", "Raciocínio", "Criatividade", "Coleções"] as const;
+export const offlineCategoryNote = "Offline / solo: jogos com foco em jogar sozinho. Os sites externos precisam de internet para abrir; funcionamento sem conexão não é garantido.";
 export function filterGames(query: string, category: string) {
   const normalize = (value: string) =>
     value

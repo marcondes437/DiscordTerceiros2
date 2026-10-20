@@ -16,7 +16,7 @@ import { SocialSiteShell } from "@/components/social-site-shell";
 import { CommunityAuth } from "@/components/community-auth";
 import { GameCard } from "@/components/game-card";
 import { useGamingAccount } from "@/hooks/use-gaming-account";
-import { games, gameCategories, filterGames } from "@/data/games";
+import { communityGames, gameCategories, filterGames, offlineCategoryNote } from "@/data/games";
 import "./jogos.css";
 
 export const Route = createFileRoute("/jogos")({
@@ -41,7 +41,7 @@ function Games() {
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const catalog = useRef<HTMLElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
-  const featured = games[featuredIndex]!;
+  const featured = communityGames[featuredIndex]!;
   const visible = filterGames(query, category);
   return (
     <SocialSiteShell user={user} name={name} onSignIn={() => setAuthOpen(true)} activePage="games">
@@ -134,7 +134,7 @@ function Games() {
             </div>
           </div>
           <div className="games-featured-picker" aria-label="Escolher destaque">
-            {games.map((game, i) => (
+            {communityGames.map((game, i) => (
               <button
                 key={game.id}
                 className={featuredIndex === i ? "is-active" : ""}
@@ -150,7 +150,7 @@ function Games() {
           <span className="games-hero-number">
             0{featuredIndex + 1}
             <i />
-            {String(games.length).padStart(2, "0")}
+            {String(communityGames.length).padStart(2, "0")}
           </span>
         </section>
         <div className="games-studio-strip">
@@ -204,6 +204,9 @@ function Games() {
               {visible.length} {visible.length === 1 ? "jogo" : "jogos"}
             </span>
           </div>
+          <p className="games-catalog-note">
+            {category === "Offline" ? offlineCategoryNote : "Jogos da comunidade e uma seleção de sites externos. Os links externos abrem em uma nova aba; requisitos e disponibilidade dependem de cada projeto."}
+          </p>
           <div className="games-grid">
             {visible.map((game) => (
               <GameCard
@@ -241,7 +244,7 @@ function Games() {
             SENAI CONECTA <i /> JOGOS
           </span>
           <p>
-            Jogos integrados à comunidade. Crie uma sala, copie o convite e chame a turma para jogar.
+            Crie salas para Rabisco e SlitherSenai ou explore os jogos externos. Os sites externos mantêm seus próprios modos de jogo e requisitos.
           </p>
         </footer>
       </div>

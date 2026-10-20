@@ -10,7 +10,7 @@ import {
   Trophy,
   Users,
 } from "lucide-react";
-import { games } from "@/data/games";
+import { communityGames as games } from "@/data/games";
 import { ProfilePhoto } from "@/components/profile-photo";
 type Member = { id: string; name: string; avatar?: string };
 export function GameyHero({

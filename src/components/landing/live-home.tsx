@@ -219,7 +219,7 @@ export function LiveHome() {
             </Link>
           </div>
           <div className="live-game-grid">
-            {games.map((game) => {
+            {games.filter((game) => !game.external || players.some((member) => member.game === game.id)).map((game) => {
               const group = players.filter((m) => m.game === game.id);
               return (
                 <article className="live-game" key={game.id}>

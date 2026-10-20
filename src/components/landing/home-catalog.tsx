@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, Gamepad2, ArrowUpRight } from "lucide-react";
-import { filterGames, gameCategories } from "@/data/games";
+import { filterGames, gameCategories, offlineCategoryNote } from "@/data/games";
 import { GameCard } from "@/components/game-card";
 import "@/routes/jogos.css";
 export function HomeCatalog() {
@@ -13,8 +13,8 @@ export function HomeCatalog() {
       <div className="home-catalog-intro">
         <Gamepad2 size={24} />
         <div>
-          <strong>Feitos por nós. Para jogar juntos.</strong>
-          <p>Rabisco e SlitherSenai: os jogos da nossa comunidade.</p>
+          <strong>Seu próximo jogo começa aqui.</strong>
+          <p>Jogos da comunidade e uma seleção de experiências no navegador.</p>
         </div>
         <Link to="/jogos">
           Sua coleção <ArrowUpRight size={14} />
@@ -52,6 +52,7 @@ export function HomeCatalog() {
           {visible.length} {visible.length === 1 ? "jogo" : "jogos"}
         </span>
       </div>
+      {category === "Offline" && <p className="games-catalog-note">{offlineCategoryNote}</p>}
       <div className="home-catalog-grid">
         {visible.map((game) => (
           <GameCard key={game.id} game={game} />

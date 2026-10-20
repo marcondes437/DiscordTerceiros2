@@ -2,10 +2,10 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
 import { badges, captureError, inviteUrl } from "@/lib/gaming";
 import { PostText } from "@/components/post-text";
-import { games } from "@/data/games";
+import { communityGames } from "@/data/games";
 afterEach(cleanup);
 it("routes Rabisco to the published game and keeps SlitherSenai integrated", () => {
-  expect(games.map((g) => g.url)).toEqual(["https://rabisco-rho.vercel.app/", "/jogar?game=slithersenai"]);
+  expect(communityGames.map((g) => g.url)).toEqual(["https://rabisco-rho.vercel.app/", "/jogar?game=slithersenai"]);
 });
 it("validates capture type and upload limits", () => {
   expect(captureError({ type: "video/webm", size: 1024 })).toBeNull();

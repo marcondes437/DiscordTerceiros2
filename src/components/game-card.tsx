@@ -21,7 +21,7 @@ export function GameCard({
         <img src={game.image} alt={`Capa de ${game.name}`} loading="lazy" />
         <span className="game-card-badge">
           <Globe size={11} />
-          {game.url ? "Navegador" : "Em breve"}
+          {game.url ? (game.external ? "Site externo" : "Navegador") : (game.unavailableReason ? "Indisponível" : "Em breve")}
         </span>
         {game.url && (
           <span className="game-card-play">
@@ -37,7 +37,7 @@ export function GameCard({
         {game.url ? (
           <ArrowUpRight size={18} />
         ) : (
-          <span className="game-coming-label">Em breve</span>
+          <span className="game-coming-label">{game.unavailableReason ? "Indisponível" : "Em breve"}</span>
         )}
       </div>
     </>
@@ -58,9 +58,15 @@ export function GameCard({
       ) : (
         <div
           className={`game-card game-card-${game.id} game-coming-soon`}
-          aria-label={`${game.name} — em breve`}
+          aria-label={`${game.name} — ${game.unavailableReason ? "indisponível" : "em breve"}`}
         >
           {content}
+        </div>
+      )}
+      {game.external && (
+        <div className="game-card-details">
+          <p>{game.description}</p>
+          {(game.unavailableReason || game.note) && <small>{game.unavailableReason || game.note}</small>}
         </div>
       )}
       {onFavorite && (
