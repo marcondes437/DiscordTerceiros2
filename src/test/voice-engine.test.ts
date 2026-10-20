@@ -40,6 +40,20 @@ beforeEach(() => {
 });
 afterEach(() => { engine?.destroy(); vi.useRealTimers(); vi.unstubAllGlobals(); });
 
+it('recreates a disconnected connection when the other participant requests recovery', async () => {
+  engine = new VoiceEngine({ selfId: 'a', iceServers: [], onChange: vi.fn(), send: vi.fn() });
+  engine.syncPeers(['b']);
+  await vi.advanceTimersByTimeAsync(0);
+  const first = PeerConnection.instances[0]!;
+  engine.handleSignal({ kind: 'hello', from: 'b', to: 'a' });
+  expect(PeerConnection.instances).toHaveLength(1);
+  first.connectionState = 'disconnected';
+  engine.handleSignal({ kind: 'hello', from: 'b', to: 'a' });
+  await vi.advanceTimersByTimeAsync(0);
+  expect(first.close).toHaveBeenCalled();
+  expect(PeerConnection.instances).toHaveLength(2);
+});
+
 it('retries ICE after an answer when the media connection never connects, then reports failure', async () => {
   const failed = vi.fn();
   const signals: Signal[] = [];

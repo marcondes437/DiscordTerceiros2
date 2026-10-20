@@ -268,6 +268,7 @@ export function VoiceRoom({
 
   return (
     <div className="stage">
+      {call.connectionError && <div className="stage-banner" role="alert">{call.connectionError}</div>}
       {call.audioBlocked && (
         <div className="stage-banner">
           O navegador pausou o som da chamada.

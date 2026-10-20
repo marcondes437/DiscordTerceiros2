@@ -27,13 +27,16 @@ const env = (key: string) => {
 let cached: { at: number; servers: RTCIceServer[] } | null = null;
 
 export async function getIceServers(): Promise<RTCIceServer[]> {
-  if (cached && Date.now() - cached.at < 30 * 60_000) return cached.servers;
+  if (cached && Date.now() - cached.at < 60_000) return cached.servers;
   const servers: RTCIceServer[] = [STUN];
 
   const urls = env('VITE_TURN_URLS');
   if (urls) {
     const username = env('VITE_TURN_USERNAME');
     const credential = env('VITE_TURN_CREDENTIAL');
+    if (!username || !credential || !urls.split(',').every((url) => /^turns?:[^\s]+$/i.test(url.trim()))) {
+      throw new Error('Configure URLs TURN válidas, usuário e credencial na Vercel.');
+    }
     servers.push({
       urls: urls.split(',').map((u) => u.trim()).filter(Boolean),
       ...(username ? { username } : {}),
@@ -43,9 +46,14 @@ export async function getIceServers(): Promise<RTCIceServer[]> {
 
   const domain = env('VITE_METERED_DOMAIN');
   const apiKey = env('VITE_METERED_API_KEY');
+  if ((domain || apiKey) && !(domain && apiKey)) {
+    throw new Error('Configure VITE_METERED_DOMAIN e VITE_METERED_API_KEY juntos na Vercel.');
+  }
   if (domain && apiKey) {
     try {
-      const res = await fetch(`https://${domain}/api/v1/turn/credentials?apiKey=${encodeURIComponent(apiKey)}`, {
+      const host = new URL(domain.includes('://') ? domain : `https://${domain}`).hostname;
+      if (!host.endsWith('.metered.live')) throw new Error('Domínio Metered inválido.');
+      const res = await fetch(`https://${host}/api/v1/turn/credentials?apiKey=${encodeURIComponent(apiKey)}`, {
         signal: AbortSignal.timeout(8_000),
       });
       if (!res.ok) throw new Error('Não foi possível obter as credenciais TURN. Confira a configuração do provedor.');

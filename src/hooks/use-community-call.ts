@@ -58,6 +58,7 @@ function micErrorMessage(err: unknown) {
 export function useCommunityCall() {
   const [room, setRoom] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState('');
   const [participants, setParticipants] = useState<CallParticipant[]>([]);
   const [selfPeerId, setSelfPeerId] = useState('');
   const [muted, setMuted] = useState(false);
@@ -77,7 +78,8 @@ export function useCommunityCall() {
   const meta = useRef<CallParticipant | null>(null);
   const muteBeforeDeafen = useRef(false);
   const generation = useRef(0);
-  const joining = useRef(false);
+  const joining = useRef<number | null>(null);
+  const cancelJoin = useRef<(() => void) | null>(null);
   const failedNotice = useRef(false);
 
   const canShare = typeof navigator !== 'undefined' && !!navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices;
@@ -107,6 +109,10 @@ export function useCommunityCall() {
 
   const leave = useCallback(() => {
     generation.current++;
+    joining.current = null;
+    cancelJoin.current?.();
+    cancelJoin.current = null;
+    setConnectionError('');
     engine.current?.destroy();
     engine.current = null;
     if (channel.current) void supabase.removeChannel(channel.current);
@@ -130,10 +136,10 @@ export function useCommunityCall() {
 
   const join = useCallback(
     async (nextRoom: string, userId: string, name: string) => {
-      if (joining.current) return;
-      joining.current = true;
+      if (joining.current !== null) return;
       leave();
       const current = generation.current;
+      joining.current = current;
       setConnecting(true);
       setRoom(nextRoom);
       try {
@@ -168,17 +174,33 @@ export function useCommunityCall() {
         setVolumes(savedVolumes);
 
         const ch = supabase.channel(`senai-voice:${nextRoom}`, {
-          config: { private: true, presence: { key: peerId }, broadcast: { self: false } },
+          config: { private: true, presence: { key: peerId }, broadcast: { self: false, ack: true } },
         });
         const voice = new VoiceEngine({
           selfId: peerId,
           iceServers,
-          send: (signal: Signal) => void ch.send({ type: 'broadcast', event: 'signal', payload: signal }),
+          send: (signal: Signal) => {
+            void ch.send({ type: 'broadcast', event: 'signal', payload: signal }).then((result) => {
+              if (current === generation.current && result !== 'ok') setConnectionError('A comunicação da sala falhou. Saia e entre novamente.');
+            }).catch(() => {
+              if (current === generation.current) setConnectionError('A comunicação da sala falhou. Saia e entre novamente.');
+            });
+          },
           onChange: (snapshot) => {
-            if (current === generation.current) setMedia(snapshot);
+            if (current === generation.current) {
+              setMedia(snapshot);
+              const statuses = Object.values(snapshot.status);
+              if (statuses.length && statuses.every((status) => status === 'connected')) {
+                setConnectionError('');
+                failedNotice.current = false;
+              }
+            }
           },
           onPeerFailed: (_peerId, reason) => {
-            if (failedNotice.current) return;
+            if (current !== generation.current || failedNotice.current) return;
+            setConnectionError(hasRelayConfigured()
+              ? 'Não foi possível conectar áudio e tela. Saia e entre novamente para tentar reconectar.'
+              : 'A conexão direta falhou. O administrador precisa configurar um servidor TURN para conectar estas redes.');
             failedNotice.current = true;
             toast.error(
               reason || (hasRelayConfigured()
@@ -199,8 +221,10 @@ export function useCommunityCall() {
 
         // 3. Sinalização + presença
         await supabase.realtime.setAuth();
+        if (current !== generation.current) return;
         ch.on('broadcast', { event: 'signal' }, ({ payload }) => voice.handleSignal(payload as Signal));
         ch.on('presence', { event: 'sync' }, () => {
+          if (current !== generation.current) return;
           const state = ch.presenceState<CallParticipant>();
           const list = Object.values(state)
             .map((metas) => metas[metas.length - 1])
@@ -216,11 +240,27 @@ export function useCommunityCall() {
 
         meta.current = { peerId, userId, name, muted: !stream, deafened: false, sharing: false, joinedAt: Date.now() };
         await new Promise<void>((resolve, reject) => {
+          let settled = false;
+          const finish = (error?: Error) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            cancelJoin.current = null;
+            if (error) reject(error); else resolve();
+          };
+          const timer = setTimeout(() => finish(new Error('A sala não respondeu. Confira sua conexão e tente novamente.')), 15_000);
+          cancelJoin.current = () => finish(new Error('Entrada cancelada.'));
           ch.subscribe((status) => {
-            if (status === 'SUBSCRIBED') {
-              void ch.track(meta.current!).then(() => resolve());
-            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-              reject(new Error('Não foi possível entrar na sala. Confira sua conexão e tente de novo.'));
+            if (current !== generation.current) return;
+            if (status === 'SUBSCRIBED' && meta.current) {
+              void ch.track(meta.current).then((result) => {
+                if (result !== 'ok') finish(new Error('Não foi possível registrar sua presença na sala.'));
+                else finish();
+              }).catch(() => finish(new Error('Não foi possível registrar sua presença na sala.')));
+            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+              const error = new Error('A comunicação da sala foi interrompida. Saia e entre novamente.');
+              setConnectionError(error.message);
+              finish(error);
             }
           });
         });
@@ -232,7 +272,7 @@ export function useCommunityCall() {
           toast.error(e instanceof Error ? e.message : 'Não foi possível entrar na sala.');
         }
       } finally {
-        joining.current = false;
+        if (joining.current === current) joining.current = null;
       }
     },
     [leave, refreshDevices],
@@ -245,6 +285,10 @@ export function useCommunityCall() {
     if (!mic.current) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia(micConstraints(read(STORAGE.input) || undefined));
+        if (engine.current !== voice) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
         mic.current = stream;
         voice.setMic(stream);
         setMicAvailable(true);
@@ -286,7 +330,8 @@ export function useCommunityCall() {
   }, [deafened, muted, publish]);
 
   const toggleShare = useCallback(async () => {
-    if (!engine.current) return;
+    const voice = engine.current;
+    if (!voice) return;
     if (display.current) {
       stopDisplay();
       return;
@@ -303,12 +348,12 @@ export function useCommunityCall() {
         systemAudio: 'include',
         selfBrowserSurface: 'exclude',
       } as DisplayMediaStreamOptions);
-      if (!engine.current) {
+      if (engine.current !== voice) {
         stream.getTracks().forEach((t) => t.stop());
         return;
       }
       const video = stream.getVideoTracks()[0];
-      if (!video) return;
+      if (!video) { stream.getTracks().forEach((t) => t.stop()); return; }
       if ('contentHint' in video) video.contentHint = 'detail';
       video.addEventListener('ended', () => {
         if (display.current === stream) stopDisplay();
@@ -327,11 +372,16 @@ export function useCommunityCall() {
     async (deviceId: string) => {
       write(STORAGE.input, deviceId);
       setInputId(deviceId);
-      if (!engine.current) return;
+      const voice = engine.current;
+      if (!voice) return;
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: { deviceId: { exact: deviceId }, echoCancellation: true, noiseSuppression: true, autoGainControl: true },
         });
+        if (engine.current !== voice) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
         const old = mic.current;
         mic.current = stream;
         engine.current.setMic(stream);
@@ -385,6 +435,7 @@ export function useCommunityCall() {
   return {
     room,
     connecting,
+    connectionError,
     participants,
     selfPeerId,
     muted,

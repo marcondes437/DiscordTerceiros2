@@ -140,6 +140,7 @@ export class VoiceEngine {
       if (!this.isInitiator(from)) return;
       const peer = this.peers.get(from);
       if (!peer) this.recreate(from);
+      else if (peer.pc.connectionState === 'failed' || peer.pc.connectionState === 'disconnected') this.recreate(from);
       return;
     }
     if (signal.kind === 'offer') {
